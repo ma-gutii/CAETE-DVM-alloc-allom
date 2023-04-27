@@ -5,7 +5,7 @@ program program_alloc
     use types 
     use alloc2
 
-    !declaring variables:
+    ! declaring variables:
 
     real(r_4) :: npp = 1.
     ! C that enters in the logic (kgC/m2) for each PLS (attention it is not individual yet)
