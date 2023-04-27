@@ -5,10 +5,10 @@ program program_alloc
     use types 
     use alloc2
 
-    ! declaring variables:
+    !declaring variables:
 
     real(r_4) :: npp = 1.
-    ! C that enters in the logic (kgC/m2) for each PLS (attention it is not individual yet)
+    !C that enters in the logic (kgC/m2) for each PLS (attention it is not individual yet)
     real(r_8) :: scl1 = 1.5 !kgC/m2 initial C leaf input 
     real(r_8) :: sca1 = 0.0 !kgC/m2 initial C awood input
     real(r_8) :: scf1 = 1.  !kgC/m2 initial C root input    
