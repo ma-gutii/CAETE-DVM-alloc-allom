@@ -39,7 +39,7 @@ module alloc2
     subroutine allocation2(npp, scl1, sca1, scf1, scs1, sch1, sct1, &
         scl2, sca2, scf2, scs2, sch2, sct2)
 
-        !inputs
+        !inputs 
         real(r_4),intent(in) :: npp  ! npp (KgC/m2/yr) gpp (µmol m-2 s)
         real(r_8),intent(in) :: scl1 ! previous day carbon content on leaf compartment (KgC/m2)
         real(r_8),intent(in) :: scf1 ! previous day carbon content on fine roots compartment (KgC/m2)

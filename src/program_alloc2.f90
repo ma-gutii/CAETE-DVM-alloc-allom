@@ -2,7 +2,7 @@
 
 program program_alloc
     
-    use types
+    use types 
     use alloc2
 
     !declaring variables:
