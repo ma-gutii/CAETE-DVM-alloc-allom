@@ -29,7 +29,7 @@ program program_alloc
     real(r_8) :: sct2
 
 
-    !sca1 - sum of heartwood and sapwood
+    ! sca1 - sum of heartwood and sapwood
     sca1 = scs1 + sch1
 
     

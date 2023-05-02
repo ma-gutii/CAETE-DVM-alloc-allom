@@ -54,7 +54,7 @@ module alloc2
         real(r_8), intent(in) :: dens_in !ind/m2 initial density of individuals
 
         !input of carbon available gc/m2/time_step
-        real(r_4), intent(in) :: bminc_in !carbon (NPP) available to be allocated
+        real(r_4), intent(in) :: bminc_in ! carbon (NPP) available to be allocated
                                           !basically NPPt - NPPt-1. NPP accumulated in the year/month/day
                                          
         !VARIABLES OUTPUTS 
