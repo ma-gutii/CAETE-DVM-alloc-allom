@@ -36,39 +36,65 @@ module alloc2
 
     contains
 
-    subroutine allocation2(npp, scl1, sca1, scf1, scs1, sch1, sct1, &
-        scl2, sca2, scf2, scs2, sch2, sct2)
-
-        !inputs 
-        real(r_4),intent(in) :: npp  ! npp (KgC/m2/yr) gpp (µmol m-2 s)
-        real(r_8),intent(in) :: scl1 ! previous day carbon content on leaf compartment (KgC/m2)
-        real(r_8),intent(in) :: scf1 ! previous day carbon content on fine roots compartment (KgC/m2)
-        real(r_8),intent(in) :: scs1 ! previous day carbon content on sapwood compartment (KgC/m2)
-        real(r_8),intent(in) :: sch1 ! previous day carbon content on heartwood compartment (KgC/m2)
-        real(r_8),intent(in) :: sct1 ! previous day carbon content on storage compartment (KgC/m2)
-        real(r_8),intent(in) :: sca1 ! previous day carbon content on aboveground woody biomass compartment(KgC/m2)
-                                     ! sum of sapwood and heartwood
-
-
-        !outputs
-        real(r_8),intent(out) :: scl2 ! final carbon content on leaf compartment (KgC/m2)
-        real(r_8),intent(out) :: scf2 ! final carbon content on fine roots compartment (KgC/m2)
-        real(r_8),intent(out) :: scs2 ! final carbon content on sapwood compartment (KgC/m2)
-        real(r_8),intent(out) :: sch2 ! final carbon content on heartwood compartment (KgC/m2)
-        real(r_8),intent(out) :: sct2 ! final carbon content on storage compartment (KgC/m2)
-        real(r_8),intent(out) :: sca2 ! final carbon content on aboveground woody biomass compartment (KgC/m2)
-                                      ! sum of sapwood and heartwood
+    subroutine allocation2(bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in, storage_in, dens_in,&
+        leaf_out, wood_out, root_out, sap_out, heart_out, storage_out)
 
         
+        !VARIABLE INPUTS
 
-        !initialize all outputs
-        scl2 = 0.0D0
-        scf2 = 0.0D0
-        sca2 = 0.0D0
-        scs2 = 0.0D0
-        sct2 = 0.0D0
-        sch2 = 0.0D0
-  
+        !carbon inputs (kgC/m2)
+        real(r_8), intent(in) :: leaf_in
+        real(r_8), intent(in) :: root_in
+        real(r_8), intent(in) :: sap_in
+        real(r_8), intent(in) :: heart_in
+        real(r_8), intent(in) :: storage_in
+        real(r_8), intent(in) :: wood_in
+
+        !input of individuals density (ind/m2)
+        real(r_8), intent(in) :: dens_in !ind/m2 initial density of individuals
+
+        !input of carbon available gc/m2/time_step
+        real(r_4), intent(in) :: bminc_in !carbon (NPP) available to be allocated
+                                          !basically NPPt - NPPt-1. NPP accumulated in the year/month/day
+                                         
+        !VARIABLES OUTPUTS 
+        !carbon inputs (kgC/m2)
+        real(r_8), intent(out) :: leaf_out
+        real(r_8), intent(out) :: root_out
+        real(r_8), intent(out) :: sap_out
+        real(r_8), intent(out) :: heart_out
+        real(r_8), intent(out) :: storage_out
+        real(r_8), intent(out) :: wood_out
+
+
+        !INTERNAL VARIABLES
+
+        !carbon (gC) in compartments considering the density (ind/m2)
+        real(r_8) :: leaf_in_ind
+        real(r_8) :: root_in_ind
+        real(r_8) :: sap_in_ind
+        real(r_8) :: heart_in_ind
+        real(r_8) :: storage_in_ind
+        real(r_8) :: wood_in_ind 
+
+
+        !carbon available for allocation (gC) considering the density of individuals
+        real(r_8) :: bminc_in_ind
+        
+        !initializing variables
+        leaf_in_ind = 0.0D0
+        root_in_ind = 0.0D0
+        sap_in_ind = 0.0D0
+        heart_in_ind = 0.0D0
+        wood_in_ind = 0.0D0
+        storage_in_ind = 0.0D0
+
+        leaf_out = 0.0D0
+        root_out = 0.0D0
+        sap_out  = 0.0D0
+        heart_out = 0.0D0
+        storage_out = 0.0D0
+        wood_out = 0.0D0
 
         print*, 'calling module alloc2'
 

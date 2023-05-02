@@ -15,6 +15,8 @@ program program_alloc
     real(r_8) :: scs1 = 1.  !kgC/m2 initial C sapwood input  
     real(r_8) :: sch1 = 1.  !kgC/m2 initial C heart input  
     real(r_8) :: sct1 = 1.  !kgC/m2 initial C storage input  
+    real(r_8) :: dens1 = 1.  !kgC/m2 initial C storage input  
+
 
 
 
@@ -31,7 +33,7 @@ program program_alloc
     sca1 = scs1 + sch1
 
     
-    call allocation2(npp, scl1, sca1, scf1, scs1, sch1, sct1, &
+    call allocation2(npp, scl1, sca1, scf1, scs1, sch1, sct1, dens1, &
     scl2, sca2, scf2, scs2, sch2, sct2)
 
 
