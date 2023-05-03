@@ -36,35 +36,37 @@ module alloc2
 
     contains
 
-    subroutine allocation2(bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in, storage_in, dens_in,&
-        leaf_out, wood_out, root_out, sap_out, heart_out, storage_out)
-
+    ! subroutine allocation2(bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in, storage_in, dens_in,&
+    !     leaf_out, wood_out, root_out, sap_out, heart_out, storage_out)
+    
+    subroutine allocation2(bminc_in, leaf_in, wood_in, root_in)
+    
         
         !VARIABLE INPUTS
 
         !carbon inputs (kgC/m2)
         real(r_8), intent(in) :: leaf_in
         real(r_8), intent(in) :: root_in
-        real(r_8), intent(in) :: sap_in
-        real(r_8), intent(in) :: heart_in
-        real(r_8), intent(in) :: storage_in
+        ! real(r_8), intent(in) :: sap_in
+        ! real(r_8), intent(in) :: heart_in
+        ! real(r_8), intent(in) :: storage_in
         real(r_8), intent(in) :: wood_in
 
         !input of individuals density (ind/m2)
-        real(r_8), intent(in) :: dens_in !ind/m2 initial density of individuals
+        ! real(r_8), intent(in) :: dens_in !ind/m2 initial density of individuals
 
         !input of carbon available gc/m2/time_step
         real(r_4), intent(in) :: bminc_in ! carbon (NPP) available to be allocated
                                           !basically NPPt - NPPt-1. NPP accumulated in the year/month/day
                                          
         !VARIABLES OUTPUTS 
-        !carbon inputs (kgC/m2)
-        real(r_8), intent(out) :: leaf_out
-        real(r_8), intent(out) :: root_out
-        real(r_8), intent(out) :: sap_out
-        real(r_8), intent(out) :: heart_out
-        real(r_8), intent(out) :: storage_out
-        real(r_8), intent(out) :: wood_out
+        !carbon outputs (kgC/m2)
+        ! real(r_8), intent(out) :: leaf_out
+        ! real(r_8), intent(out) :: root_out
+        ! real(r_8), intent(out) :: sap_out
+        ! real(r_8), intent(out) :: heart_out
+        ! real(r_8), intent(out) :: storage_out
+        ! real(r_8), intent(out) :: wood_out
 
 
         !INTERNAL VARIABLES
@@ -81,6 +83,37 @@ module alloc2
         !carbon available for allocation (gC) considering the density of individuals
         real(r_8) :: bminc_in_ind
         
+        !Functions to the logic
+        !dwood !!####****!! ATTENTION: dwood is already transformed to gC/m3 at constants.f90
+        real(r_8) :: height
+        real(r_8) :: leaf_req
+        real(r_8) :: leaf_inc_min
+        real(r_8) :: root_inc_min
+
+        !variables allocation (increase for each compartment) ~ daily growth in the old code
+        real(r_8) :: leaf_inc_alloc
+        real(r_8) :: root_inc_alloc
+        real(r_8) :: sap_inc_alloc
+        real(r_8) :: heart_inc_alloc
+        real(r_8) :: storage_inc_alloc
+
+        !C deficit (when NPP < 0)
+        real(r_8) :: c_deficit
+
+        !variable update that goes to turnover mortality (compartment_in_ind + compartiment_inc_alloc)
+        real(r_8) :: leaf_updt
+        real(r_8) :: root_updt
+        real(r_8) :: sap_updt
+        real(r_8) :: heart_updt
+        real(r_8) :: storage_updt
+
+        !amount of C lost with turnover processes
+        real(r_8) :: leaf_turn
+        real(r_8) :: root_turn
+        real(r_8) :: sap_turn
+        real(r_8) :: heart_turn
+        real(r_8) :: storage_turn
+        
         !initializing variables
         leaf_in_ind = 0.0D0
         root_in_ind = 0.0D0
@@ -89,14 +122,18 @@ module alloc2
         wood_in_ind = 0.0D0
         storage_in_ind = 0.0D0
 
-        leaf_out = 0.0D0
-        root_out = 0.0D0
-        sap_out  = 0.0D0
-        heart_out = 0.0D0
-        storage_out = 0.0D0
-        wood_out = 0.0D0
+        ! leaf_out = 0.0D0
+        ! root_out = 0.0D0
+        ! sap_out  = 0.0D0
+        ! heart_out = 0.0D0
+        ! storage_out = 0.0D0
+        ! wood_out = 0.0D0
+
+        !amount of carbon allocated to each compartment
 
         print*, 'calling module alloc2'
+
+        !call mortality (to be used out of the module)
 
     end subroutine allocation2
 
