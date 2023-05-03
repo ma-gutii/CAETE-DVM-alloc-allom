@@ -58,6 +58,15 @@ module global_par
    real(r_4),parameter,public :: ks = 0.25                       ! P Sorption
    integer(i_4),parameter,public :: npls = {s}                  ! Number of Plant Life Strategies-PLSs simulated (Defined at compile time)
    integer(i_4),parameter,public :: ntraits = 17                 ! Number of traits for each PLS
+   
+   !allometric parameters
+   real(r_8), parameter, public :: dwood = 0.74*1.D6 !provisory
+   real(r_8), parameter, public :: pi = 3.1415926536
+   real(r_8), parameter, public :: k_allom2 = 36!40.0
+   real(r_8), parameter, public :: k_allom3 = 0.22!0.50
+   real(r_8), parameter, public :: klatosa =  6000.0
+   real(r_8), parameter, public :: sla_allom = 0.023!15.36 !0.023!provisory
+   real(r_8), parameter, public :: ltor = 0.77302587552347657
 
 end module global_par
 

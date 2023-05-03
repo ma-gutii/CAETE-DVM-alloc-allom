@@ -67,6 +67,9 @@ global_par.mod: global.o global.f90
 photo_par.mod: global.o global.f90
 	$(FC) $(FLFLAGS) global.f90
 
+allom_par.mod: global.o global.f90
+	$(FC) $(FLFLAGS) global.f90
+
 funcs.o: funcs.f90
 	$(FC) $(FLFLAGS) funcs.f90
 

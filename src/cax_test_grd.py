@@ -88,6 +88,7 @@ def run_experiment(pls_table):
     
     cax_grd.pr[idx0:idx1 + 1] *= 0.01 
 
+    
     # Run the experiment!
     cax_grd.run_caete('20150101', '20151231', spinup=1, save=True)
     tm.close()
@@ -109,7 +110,7 @@ def get_spin(grd: mod.grd, spin) -> dict:
 
 if __name__ == "__main__":
     pass
-    pls_table = pls.table_gen(10, Path("./CAX_PLS_TABLE"))
+    pls_table = pls.table_gen(100, Path("./CAX_PLS_TABLE"))
     cax = run_experiment(pls_table)
 
 

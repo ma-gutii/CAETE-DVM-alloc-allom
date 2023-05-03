@@ -35,8 +35,8 @@ module alloc2
     public:: allocation2,& !calculates carbon pools output from NPP and carbon from preivous step
              height_calc,& !(f)calculates height
              leaf_req_calc,& !(f)leaf mass requeriment to satisfy allometry
-             leaf_inc_min_calc !(f) minimum leaf increment to satisfy allocation equations
-            !  root_inc_min_calc, & !(f) minimum root increment to satisfy allocation equations
+             leaf_inc_min_calc,& !(f) minimum leaf increment to satisfy allocation equations
+             root_inc_min_calc !(f) minimum root increment to satisfy allocation equations
             !  normal_alloc, & !(f)regular allocation process
             !  root_bisec_calc,& !solves bisection method for normal allocation
             !  positive_leaf_inc_min,&
@@ -131,9 +131,6 @@ module alloc2
         real(r_8) :: storage_turn
         
 
-        print*, 'calling module alloc2'
-
-
         !initializing variables
         leaf_in_ind = 0.0D0
         root_in_ind = 0.0D0
@@ -192,16 +189,23 @@ module alloc2
 
         ! call functions to logic
         height = height_calc(wood_in_ind)
+        print*, 'height', height
 
-        !leaf requirement
+        if (height.le.0.0D0) then
+            height = 10.
+        endif
+
+        ! !leaf requirement
         leaf_req = leaf_req_calc(sap_in_ind, height)
+        print*, 'leaf req', leaf_req
 
-        !minimum increment to leaf
+        ! !minimum increment to leaf
         leaf_inc_min = leaf_inc_min_calc(leaf_req, leaf_in_ind)
+        print*, 'leaf inc min', leaf_inc_min
 
-    !     !minimum increment to root
-    !     root_inc_min = root_inc_min_calc(leaf_req, root_in_ind)
-
+        !minimum increment to root
+        root_inc_min = root_inc_min_calc(leaf_req, root_in_ind)
+        print*, 'root inc min', root_inc_min
 
     ! !!conditions for allocation!!! see fluxogram in https://lucid.app/lucidchart/74db0739-29ee-4894-9ecc-42b2cf3d0ae5/edit?invitationId=inv_d3a94efe-b397-45df-9af2-9467d19bee97&page=0_0#
 
@@ -382,14 +386,6 @@ module alloc2
         !Trait
         !dwood - wood density
 
-        !provisory
-        real(r_8) :: dwood = 0.74*1.D6
-        real(r_8) :: pi = 3.1415926536
-        real(r_8) :: k_allom2 = 36!40.0
-        real(r_8) :: k_allom3 = 0.22!0.50
-    
-        !!
-
 
         real(r_8) :: height !m - output
 
@@ -420,15 +416,11 @@ module alloc2
         !dwood - wood density (gc/m3) - already transformed in constants.f90
         !sla - specific leaf area
 
-        !provisory
-        real(r_8) :: klatosa =  6000.0
-        real(r_8) :: sla = 0.023!15.36 !0.023
-        real(r_8) :: dwood = 0.74*1.D6!200.!0.74*1.D3!200. !0.74*1.D6
 
         !initializing variables
         leaf_req = 0.0D0
 
-        leaf_req = klatosa * sap_in_ind / (dwood * height * sla)
+        leaf_req = klatosa * sap_in_ind / (dwood * height * sla_allom)
 
     end function leaf_req_calc
 
@@ -446,20 +438,18 @@ module alloc2
 
     end function leaf_inc_min_calc
 
-    ! function root_inc_min_calc (leaf_req, root_in_ind) result (root_inc_min) !ROOT MASS MINIMO
+    function root_inc_min_calc (leaf_req, root_in_ind) result (root_inc_min) !ROOT MASS MINIMO
+  
+        !calculate minimum root production to support this leaf mass (i.e. lm_ind + lminc_ind_min)
+        !May be negative following a reduction in soil water limitation (increase in lm2rm) relative to last year
+        real(r_8), intent(in) :: root_in_ind !gC root input
+        real(r_8), intent(in) :: leaf_req  !gC leaf mass requeriment to satisfy allometry
+  
+        real(r_8) :: root_inc_min !gC -output- minimum root increment to satisfy allocation equation
         
-    !     !calculate minimum root production to support this leaf mass (i.e. lm_ind + lminc_ind_min)
-    !     !May be negative following a reduction in soil water limitation (increase in lm2rm) relative to last year.
+        root_inc_min = leaf_req / ltor - root_in_ind
 
-    !     real(r_8), intent(in) :: root_in_ind !gC root input
-    !     real(r_8), intent(in) :: leaf_req  !gC leaf mass requeriment to satisfy allometry
-        
-    !     real(r_8) :: root_inc_min !gC -output- minimum root increment to satisfy allocation equations
-
-    !     root_inc_min = leaf_req / ltor - root_in_ind
-       
-
-    ! end function root_inc_min_calc
+    end function root_inc_min_calc
 
     ! subroutine normal_alloc (leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,&
     !     sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
@@ -547,7 +537,7 @@ module alloc2
 
     !     fx1 = a3 * ((sap_in_ind + bminc_in_ind - x - ((leaf_in_ind + x)/ltor) + root_in_ind + heart_in_ind) / dwood)/ pi4 - &
     !                 ((sap_in_ind + bminc_in_ind - x - ((leaf_in_ind + x)/ ltor) + root_in_ind) / ((leaf_in_ind + x)&
-    !                 * sla * dwood / klatosa)) ** a2
+    !                 * sla_allom * dwood / klatosa)) ** a2
        
 
     ! end function root_bisec_calc
