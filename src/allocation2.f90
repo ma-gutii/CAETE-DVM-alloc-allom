@@ -49,7 +49,7 @@ module alloc2
     ! subroutine allocation2(bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in, storage_in, dens_in,&
     !     leaf_out, wood_out, root_out, sap_out, heart_out, storage_out)
     
-    subroutine allocation2(bminc_in, leaf_in, wood_in, root_in)
+    subroutine allocation2(bminc_in, leaf_in, wood_in, root_in, sap_in)
     
         
         !VARIABLE INPUTS
@@ -57,13 +57,13 @@ module alloc2
         !carbon inputs (kgC/m2)
         real(r_8), intent(in) :: leaf_in
         real(r_8), intent(in) :: root_in
-        ! real(r_8), intent(in) :: sap_in
+        real(r_8), intent(in) :: sap_in
         ! real(r_8), intent(in) :: heart_in
         ! real(r_8), intent(in) :: storage_in
         real(r_8), intent(in) :: wood_in
 
         !provisory
-        real(r_8) :: sap_in
+        !real(r_8) :: sap_in
         real(r_8) :: heart_in
         real(r_8) :: storage_in
         real(r_8) :: dens_in
@@ -175,7 +175,7 @@ module alloc2
         storage_turn = 0.0D0
 
         !provisory
-        sap_in = 0.1*wood_in
+        !sap_in = 0.1*wood_in
         heart_in = 0.9*wood_in
         storage_in = 0.3
         dens_in = 10.

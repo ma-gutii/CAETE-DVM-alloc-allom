@@ -118,7 +118,7 @@ contains
       real(r_4),parameter :: tsnow = -1.0
       real(r_4),parameter :: tice  = -2.5
 
-      real(r_8),dimension(npls) :: cl1_pft, cf1_pft, ca1_pft
+      real(r_8), dimension(npls) :: cl1_pft, cf1_pft, ca1_pft, cs1_pft
       real(r_4) :: soil_temp
       real(r_4) :: emax
       real(r_8) :: w                               !Daily soil moisture storage (mm)
@@ -180,9 +180,13 @@ contains
       do i = 1,npls
          awood_aux(i) = dt(7,i)
          pdia_aux(i) = dt(17,i)
+
          cl1_pft(i) = cl1_in(i)
          ca1_pft(i) = ca1_in(i)
          cf1_pft(i) = cf1_in(i)
+         !provisory (sapwood compartment)
+         cs1_pft(i) = 0.1*ca1_pft(i)
+
          dleaf(i) = dleaf_in(i)
          dwood(i) = dwood_in(i)
          droot(i) = droot_in(i)
@@ -336,7 +340,7 @@ contains
             &, lit_nut_content(:,p), limitation_status(:,p), npp2pay(p), uptk_strat(:, p), ar_aux)
 
          call allocation2(nppa(p), cl1_pft(ri), ca1_pft(ri)&
-            &, cf1_pft(ri))
+            &, cf1_pft(ri), cs1_pft(ri))
           
          ! Estimate growth of storage C pool
          ar_fix_hr(p) = ar_aux
