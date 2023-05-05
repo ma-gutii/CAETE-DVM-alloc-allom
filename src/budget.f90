@@ -340,7 +340,7 @@ contains
             &, lit_nut_content(:,p), limitation_status(:,p), npp2pay(p), uptk_strat(:, p), ar_aux)
          
          !testing variables entering in allocation2 subroutine
-         call allocation2(nppa(p), cl1_pft(ri), ca1_pft(ri)&
+         call allocation2(dt1, nppa(p), cl1_pft(ri), ca1_pft(ri)&
             &, cf1_pft(ri), cs1_pft(ri))
           
          ! Estimate growth of storage C pool

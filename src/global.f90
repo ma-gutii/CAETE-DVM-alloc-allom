@@ -60,6 +60,22 @@ module global_par
    real(r_8), parameter, public :: sla_allom = 0.023!15.36 !0.023!provisory
    real(r_8), parameter, public :: ltor = 0.77302587552347657
 
+   !allocation parameters
+   real(r_8), parameter, public :: tol = 0.0000001
+   real(r_8), parameter, public :: reinickerp = 1.6 !allometric constant (Table 3; Sitch et al., 2003)
+   real(r_8), parameter, public :: nseg = 20
+   real(r_8), parameter, public :: xacc =  0.1     !x-axis precision threshold for the allocation solution
+   real(r_8), parameter, public :: yacc =  1.e-10  !y-axis precision threshold for the allocation solution
+
+   !turnover parameters
+   !provisory
+   real(r_8), parameter, public :: l_turnover = 1./2 !Sitch et al 2003
+   real(r_8), parameter, public :: r_turnover = 1./2 !Sitch et al 2003
+   real(r_8), parameter, public :: s_turnover = 1./20 !0.05 !Sitch et al 2003
+   !ATTENTION TO HEARt TURNOVER
+   real(r_8), parameter, public :: h_turnover = 1./30.!1/50. !Sitch et al 2003
+
+
 end module global_par
 
 

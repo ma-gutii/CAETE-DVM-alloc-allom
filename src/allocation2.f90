@@ -36,23 +36,24 @@ module alloc2
              height_calc,& !(f)calculates height
              leaf_req_calc,& !(f)leaf mass requeriment to satisfy allometry
              leaf_inc_min_calc,& !(f) minimum leaf increment to satisfy allocation equations
-             root_inc_min_calc !(f) minimum root increment to satisfy allocation equations
-            !  normal_alloc, & !(f)regular allocation process
-            !  root_bisec_calc,& !solves bisection method for normal allocation
-            !  positive_leaf_inc_min,&
-            !  mortality_turnover,& !(s) accounts for mortality through turnover
-            !  storage_accumulation,& !allocation for storage compartment when normal allocation is not possible
-            !  reallocation !use of storage when normal allocation is not possible
+             root_inc_min_calc,& !(f) minimum root increment to satisfy allocation equations
+             normal_alloc, & !(f)regular allocation process
+             root_bisec_calc,& !solves bisection method for normal allocation
+             positive_leaf_inc_min,&
+             mortality_turnover,& !(s) accounts for mortality through turnover
+             storage_accumulation,& !allocation for storage compartment when normal allocation is not possible
+             reallocation !use of storage when normal allocation is not possible
 
     contains
 
     ! subroutine allocation2(bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in, storage_in, dens_in,&
     !     leaf_out, wood_out, root_out, sap_out, heart_out, storage_out)
     
-    subroutine allocation2(bminc_in, leaf_in, wood_in, root_in, sap_in)
+    subroutine allocation2(dt, bminc_in, leaf_in, wood_in, root_in, sap_in)
     
         
         !VARIABLE INPUTS
+        real(r_8), dimension(ntraits),intent(in) :: dt  ! PLS attributes
 
         !carbon inputs (kgC/m2)
         real(r_8), intent(in) :: leaf_in
@@ -61,6 +62,7 @@ module alloc2
         ! real(r_8), intent(in) :: heart_in
         ! real(r_8), intent(in) :: storage_in
         real(r_8), intent(in) :: wood_in
+
 
         !provisory
         !real(r_8) :: sap_in
@@ -129,7 +131,12 @@ module alloc2
         real(r_8) :: sap_turn
         real(r_8) :: heart_turn
         real(r_8) :: storage_turn
+
+        !used to identify wood/non wood strategies
+        real(r_8) :: awood
         
+        !take the allocation proportion to wood (to identify) the grasses
+        awood = dt(7)
 
         !initializing variables
         leaf_in_ind = 0.0D0
@@ -171,6 +178,16 @@ module alloc2
         heart_turn = 0.0D0
         storage_turn = 0.0D0
 
+        !wood/non wood strategies
+        if (awood .gt. 0.0D0) then
+            print*, 'WOOD STRATEGY'
+        else
+            print*, 'NON WOOD STRATEGY'
+            goto 148
+        endif
+
+148 print*, 'go to working'        
+
         !provisory
         !sap_in = 0.1*wood_in
         heart_in = 0.9*wood_in
@@ -207,6 +224,9 @@ module alloc2
         root_inc_min = root_inc_min_calc(leaf_req, root_in_ind)
         print*, 'root inc min', root_inc_min
 
+        call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,&
+            sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
+
     ! !!conditions for allocation!!! see fluxogram in https://lucid.app/lucidchart/74db0739-29ee-4894-9ecc-42b2cf3d0ae5/edit?invitationId=inv_d3a94efe-b397-45df-9af2-9467d19bee97&page=0_0#
 
 
@@ -224,8 +244,8 @@ module alloc2
                     
     !                 !if minimum nutrients then
 
-    !                 call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,&
-    !                 sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
+                    ! call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,&
+                    ! sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
                    
     !                 !else
                         
@@ -451,296 +471,296 @@ module alloc2
 
     end function root_inc_min_calc
 
-    ! subroutine normal_alloc (leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,&
-    !     sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
+    subroutine normal_alloc (leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,&
+        sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
 
-    !     real(r_8), intent(in) :: leaf_inc_min 
-    !     real(r_8), intent(in) :: leaf_in_ind  
-    !     real(r_8), intent(in) :: root_in_ind
-    !     real(r_8), intent(in) :: sap_in_ind  
-    !     real(r_8), intent(in) :: heart_in_ind
-    !     real(r_8), intent(in) :: bminc_in_ind
+        real(r_8), intent(in) :: leaf_inc_min 
+        real(r_8), intent(in) :: leaf_in_ind  
+        real(r_8), intent(in) :: root_in_ind
+        real(r_8), intent(in) :: sap_in_ind  
+        real(r_8), intent(in) :: heart_in_ind
+        real(r_8), intent(in) :: bminc_in_ind
 
-    !     real(r_8), intent(out) :: leaf_inc_alloc
-    !     real(r_8), intent(out) :: root_inc_alloc
-    !     real(r_8), intent(out) :: sap_inc_alloc
-
-
-    !     real(r_8) :: x1
-    !     real(r_8) :: x2
-    !     real(r_8) :: dx
-    !     real(r_8) :: fx1     
+        real(r_8), intent(out) :: leaf_inc_alloc
+        real(r_8), intent(out) :: root_inc_alloc
+        real(r_8), intent(out) :: sap_inc_alloc
 
 
-    !     !initializing variables
-    !     x1 = 0.0D0
-    !     x2 = 0.0D0
-    !     dx = 0.0D0
-    !     leaf_inc_alloc = 0.0D0
-    !     root_inc_alloc = 0.0D0
-    !     sap_inc_alloc = 0.0D0
-    !     fx1 = 0.0D0
+        real(r_8) :: x1
+        real(r_8) :: x2
+        real(r_8) :: dx
+        real(r_8) :: fx1     
 
 
-    !     x1 = leaf_inc_min
-
-    !     x2 = (bminc_in_ind - (leaf_in_ind/ ltor - root_in_ind))/ (1. + 1. / ltor )
-
-    !     dx = x2 - x1
-
-    !     if (dx < 0.01) then !0.01 é a precisão da bisection. 
-
-    !         !there seems to be rare cases where lminc_ind_min (x1) is almost equal to x2. In this case,
-    !         !assume that the leafmass increment is equal to the midpoint between the values and skip 
-    !         !the root finding procedure
-
-    !         leaf_inc_alloc = x1 + 0.5 * dx
+        !initializing variables
+        x1 = 0.0D0
+        x2 = 0.0D0
+        dx = 0.0D0
+        leaf_inc_alloc = 0.0D0
+        root_inc_alloc = 0.0D0
+        sap_inc_alloc = 0.0D0
+        fx1 = 0.0D0
 
 
-    !     else 
-    !         !Find a root for non-negative lminc_ind, rminc_ind and sminc_ind using Bisection Method (Press et al., 1986, p 346)
-    !         !There should be exactly one solution (no proof presented, but Steve has managed one).
+        x1 = leaf_inc_min
 
-    !         call positive_leaf_inc_min(leaf_in_ind, sap_in_ind, heart_in_ind,&
-    !         root_in_ind, bminc_in_ind, dx, x1, x2, leaf_inc_alloc)        
+        x2 = (bminc_in_ind - (leaf_in_ind/ ltor - root_in_ind))/ (1. + 1. / ltor )
+
+        dx = x2 - x1
+
+        if (dx < 0.01) then !0.01 é a precisão da bisection. 
+
+            !there seems to be rare cases where lminc_ind_min (x1) is almost equal to x2. In this case,
+            !assume that the leafmass increment is equal to the midpoint between the values and skip 
+            !the root finding procedure
+
+            leaf_inc_alloc = x1 + 0.5 * dx
+
+
+        else 
+            !Find a root for non-negative lminc_ind, rminc_ind and sminc_ind using Bisection Method (Press et al., 1986, p 346)
+            !There should be exactly one solution (no proof presented, but Steve has managed one).
+
+            call positive_leaf_inc_min(leaf_in_ind, sap_in_ind, heart_in_ind,&
+            root_in_ind, bminc_in_ind, dx, x1, x2, leaf_inc_alloc)        
             
-    !         root_inc_alloc = ((leaf_in_ind + leaf_inc_alloc) / ltor) - root_in_ind
+            root_inc_alloc = ((leaf_in_ind + leaf_inc_alloc) / ltor) - root_in_ind
 
-    !         sap_inc_alloc = bminc_in_ind - leaf_inc_alloc - root_inc_alloc
+            sap_inc_alloc = bminc_in_ind - leaf_inc_alloc - root_inc_alloc
 
-    !     endif
+        endif
 
 
-    ! end subroutine normal_alloc
+    end subroutine normal_alloc
 
-    ! function root_bisec_calc (leaf_in_ind, sap_in_ind, heart_in_ind, root_in_ind,&
-    !     bminc_in_ind, x) result (fx1)
+    function root_bisec_calc (leaf_in_ind, sap_in_ind, heart_in_ind, root_in_ind,&
+        bminc_in_ind, x) result (fx1)
 
-    !     real(r_8), intent(in) :: leaf_in_ind 
-    !     real(r_8), intent(in) :: sap_in_ind
-    !     real(r_8), intent(in) :: heart_in_ind 
-    !     real(r_8), intent(in) :: root_in_ind 
-    !     real(r_8), intent(in) :: bminc_in_ind 
-    !     real(r_8), intent(in) :: x
+        real(r_8), intent(in) :: leaf_in_ind 
+        real(r_8), intent(in) :: sap_in_ind
+        real(r_8), intent(in) :: heart_in_ind 
+        real(r_8), intent(in) :: root_in_ind 
+        real(r_8), intent(in) :: bminc_in_ind 
+        real(r_8), intent(in) :: x
         
-    !     real(r_8) :: fx1 !output
+        real(r_8) :: fx1 !output
         
-    !     !internal variables
-    !     real(r_8), parameter :: pi4 = pi/4
-    !     real(r_8), parameter :: a1 = 2./ k_allom3
-    !     real(r_8), parameter :: a2 = 1. + a1 !Essa é a forma correta !!CONFERIR ...ESTÁ DIFERENTE ENTRE NOSSO CÓDIGO E O lpjmlFIRE
-    !     real(r_8), parameter :: a3 = k_allom2**a1
+        !internal variables
+        real(r_8), parameter :: pi4 = pi/4
+        real(r_8), parameter :: a1 = 2./ k_allom3
+        real(r_8), parameter :: a2 = 1. + a1 !Essa é a forma correta !!CONFERIR ...ESTÁ DIFERENTE ENTRE NOSSO CÓDIGO E O lpjmlFIRE
+        real(r_8), parameter :: a3 = k_allom2**a1
 
         
-    !     !initializing variables
-    !     fx1 = 0.0D0
+        !initializing variables
+        fx1 = 0.0D0
 
-    !     fx1 = a3 * ((sap_in_ind + bminc_in_ind - x - ((leaf_in_ind + x)/ltor) + root_in_ind + heart_in_ind) / dwood)/ pi4 - &
-    !                 ((sap_in_ind + bminc_in_ind - x - ((leaf_in_ind + x)/ ltor) + root_in_ind) / ((leaf_in_ind + x)&
-    !                 * sla_allom * dwood / klatosa)) ** a2
+        fx1 = a3 * ((sap_in_ind + bminc_in_ind - x - ((leaf_in_ind + x)/ltor) + root_in_ind + heart_in_ind) / dwood)/ pi4 - &
+                    ((sap_in_ind + bminc_in_ind - x - ((leaf_in_ind + x)/ ltor) + root_in_ind) / ((leaf_in_ind + x)&
+                    * sla_allom * dwood / klatosa)) ** a2
        
 
-    ! end function root_bisec_calc
+    end function root_bisec_calc
 
-    ! subroutine positive_leaf_inc_min (leaf_in_ind, sap_in_ind, heart_in_ind,&
-    !     root_in_ind, bminc_in_ind, dx2, x1_aux, x2_aux, leaf_inc_alloc)
+    subroutine positive_leaf_inc_min (leaf_in_ind, sap_in_ind, heart_in_ind,&
+        root_in_ind, bminc_in_ind, dx2, x1_aux, x2_aux, leaf_inc_alloc)
 
-    !     real(r_8), intent(in) :: leaf_in_ind 
-    !     real(r_8), intent(in) :: sap_in_ind
-    !     real(r_8), intent(in) :: heart_in_ind 
-    !     real(r_8), intent(in) :: root_in_ind 
-    !     real(r_8), intent(in) :: bminc_in_ind 
-    !     real(r_8), intent(in) :: x1_aux, x2_aux 
-    !     real(r_8), intent(in) :: dx2
+        real(r_8), intent(in) :: leaf_in_ind 
+        real(r_8), intent(in) :: sap_in_ind
+        real(r_8), intent(in) :: heart_in_ind 
+        real(r_8), intent(in) :: root_in_ind 
+        real(r_8), intent(in) :: bminc_in_ind 
+        real(r_8), intent(in) :: x1_aux, x2_aux 
+        real(r_8), intent(in) :: dx2
 
-    !     real(r_8), intent(out) :: leaf_inc_alloc
+        real(r_8), intent(out) :: leaf_inc_alloc
 
-    !     !internal variable
-    !     real(r_8) :: dx
-    !     real(r_8) :: fx1
-    !     real(r_8) :: fmid
-    !     real(r_8) :: xmid
-    !     real(r_8) :: x1
-    !     real(r_8) :: x2
-    !     real(r_8) :: sign
-    !     real(r_8) :: rtbis
+        !internal variable
+        real(r_8) :: dx
+        real(r_8) :: fx1
+        real(r_8) :: fmid
+        real(r_8) :: xmid
+        real(r_8) :: x1
+        real(r_8) :: x2
+        real(r_8) :: sign
+        real(r_8) :: rtbis
 
 
-    !     integer(i_4) :: i
+        integer(i_4) :: i
 
-    !     x1 = x1_aux
-    !     x2 = x2_aux
+        x1 = x1_aux
+        x2 = x2_aux
 
-    !     ! print*,'bf', x1, x2
+        ! print*,'bf', x1, x2
 
-    !     dx = dx2 / real(nseg)
+        dx = dx2 / real(nseg)
             
-    !     fx1 = root_bisec_calc(leaf_in_ind, sap_in_ind, heart_in_ind,&
-    !         root_in_ind, bminc_in_ind, x1)
+        fx1 = root_bisec_calc(leaf_in_ind, sap_in_ind, heart_in_ind,&
+            root_in_ind, bminc_in_ind, x1)
 
-    !     !Find approximate location of leftmost root on the interval (x1,x2).
-    !     !Subdivide (x1,x2) into nseg equal segments seeking change in sign of f(xmid) relative to f(x1).
+        !Find approximate location of leftmost root on the interval (x1,x2).
+        !Subdivide (x1,x2) into nseg equal segments seeking change in sign of f(xmid) relative to f(x1).
 
-    !     fmid = fx1
-    !     xmid = x1
+        fmid = fx1
+        xmid = x1
 
-    !     i = 1
+        i = 1
             
-    !     do 
-    !         xmid = xmid + dx
+        do 
+            xmid = xmid + dx
             
-    !         fmid = root_bisec_calc(leaf_in_ind, sap_in_ind, heart_in_ind,&
-    !             root_in_ind, bminc_in_ind, xmid)
+            fmid = root_bisec_calc(leaf_in_ind, sap_in_ind, heart_in_ind,&
+                root_in_ind, bminc_in_ind, xmid)
 
-    !         i = i + 1
+            i = i + 1
             
-    !         if (fmid * fx1 .le. 0. .or. xmid .ge. x2) exit  !sign has changed or we are over the upper bound
+            if (fmid * fx1 .le. 0. .or. xmid .ge. x2) exit  !sign has changed or we are over the upper bound
 
-    !         if (i > 20) print*, 'first alloc loop flag'
-    !         if (i > 100) stop 'Too many iterations allocmod'
+            if (i > 20) print*, 'first alloc loop flag'
+            if (i > 100) stop 'Too many iterations allocmod'
       
 
-    !     end do
-    !     print*, i
-    !     !the interval that brackets zero in f(x) becomes the new bounds for the root search
+        end do
+        print*, i
+        !the interval that brackets zero in f(x) becomes the new bounds for the root search
 
-    !     x1 = xmid - dx
-    !     x2 = xmid
+        x1 = xmid - dx
+        x2 = xmid
 
-    !     !Apply bisection method to find root on the new interval (x1,x2)
-    !     fx1 = root_bisec_calc(leaf_in_ind, sap_in_ind, heart_in_ind,&
-    !     root_in_ind, bminc_in_ind, x1)
+        !Apply bisection method to find root on the new interval (x1,x2)
+        fx1 = root_bisec_calc(leaf_in_ind, sap_in_ind, heart_in_ind,&
+        root_in_ind, bminc_in_ind, x1)
 
-    !     if (fx1.ge.0.) then
-    !         sign = -1
-    !     else
-    !         sign = 1
-    !     endif
+        if (fx1.ge.0.) then
+            sign = -1
+        else
+            sign = 1
+        endif
 
-    !     rtbis = x1
+        rtbis = x1
 
-    !     dx = x2 - x1
+        dx = x2 - x1
 
-    !     !Bisection loop: search iterates on value of xmid until xmid lies within xacc of the root,
-    !     !i.e. until |xmid-x| < xacc where f(x) = 0. the final value of xmid with be the leafmass increment
+        !Bisection loop: search iterates on value of xmid until xmid lies within xacc of the root,
+        !i.e. until |xmid-x| < xacc where f(x) = 0. the final value of xmid with be the leafmass increment
 
-    !     i = 1
+        i = 1
 
-    !     do 
-    !         dx   = 0.5 * dx
-    !         xmid = rtbis + dx
+        do 
+            dx   = 0.5 * dx
+            xmid = rtbis + dx
 
-    !         !calculate fmid = f(xmid) [eqn (22)]
+            !calculate fmid = f(xmid) [eqn (22)]
 
-    !         fmid = root_bisec_calc(leaf_in_ind, sap_in_ind, heart_in_ind,&
-    !             root_in_ind, bminc_in_ind, xmid)
+            fmid = root_bisec_calc(leaf_in_ind, sap_in_ind, heart_in_ind,&
+                root_in_ind, bminc_in_ind, xmid)
 
-    !         if (fmid * sign .le. 0.) rtbis = xmid
+            if (fmid * sign .le. 0.) rtbis = xmid
 
-    !         if (dx .lt. xacc .or. abs(fmid) .le. yacc) exit
+            if (dx .lt. xacc .or. abs(fmid) .le. yacc) exit
 
-    !         if (i > 20) print*,'second alloc loop flag'
-    !         if (i > 50) stop 'Too many iterations allocmod'
+            if (i > 20) print*,'second alloc loop flag'
+            if (i > 50) stop 'Too many iterations allocmod'
   
 
-    !         i = i + 1
-    !     end do
+            i = i + 1
+        end do
         
-    !     !Now rtbis contains numerical solution for lminc_ind given eqn (22)
+        !Now rtbis contains numerical solution for lminc_ind given eqn (22)
 
-    !     leaf_inc_alloc = rtbis
+        leaf_inc_alloc = rtbis
 
     
-    ! end subroutine
+    end subroutine
 
 
-    ! subroutine mortality_turnover (leaf_in_ind, root_in_ind, sap_in_ind, heart_in_ind,storage_in_ind,&
-    !     leaf_turn, root_turn, sap_turn, heart_turn, storage_turn)
-    !     !ATENÇÃO: 1 ha
+    subroutine mortality_turnover (leaf_in_ind, root_in_ind, sap_in_ind, heart_in_ind,storage_in_ind,&
+        leaf_turn, root_turn, sap_turn, heart_turn, storage_turn)
+        !ATENÇÃO: 1 ha
         
-    !     !C in compartments previous the allocation
-    !     real(r_8), intent(in) :: leaf_in_ind
-    !     real(r_8), intent(in) :: sap_in_ind
-    !     real(r_8), intent(in) :: root_in_ind
-    !     real(r_8), intent(in) :: heart_in_ind
-    !     real(r_8), intent(in) :: storage_in_ind
+        !C in compartments previous the allocation
+        real(r_8), intent(in) :: leaf_in_ind
+        real(r_8), intent(in) :: sap_in_ind
+        real(r_8), intent(in) :: root_in_ind
+        real(r_8), intent(in) :: heart_in_ind
+        real(r_8), intent(in) :: storage_in_ind
 
-    !     !gC/m2
-    !     real(r_8), intent(out) :: leaf_turn !amount of C to be lost by turnover
-    !     real(r_8), intent(out) :: root_turn !amount of C to be lost by turnover
-    !     real(r_8), intent(out) :: sap_turn !amount of C to be lost by turnover
-    !     real(r_8), intent(out) :: heart_turn !amount of C to be lost by turnover
-    !     real(r_8), intent(out) :: storage_turn !amount of C to be lost by turnover
+        !gC/m2
+        real(r_8), intent(out) :: leaf_turn !amount of C to be lost by turnover
+        real(r_8), intent(out) :: root_turn !amount of C to be lost by turnover
+        real(r_8), intent(out) :: sap_turn !amount of C to be lost by turnover
+        real(r_8), intent(out) :: heart_turn !amount of C to be lost by turnover
+        real(r_8), intent(out) :: storage_turn !amount of C to be lost by turnover
 
 
 
-    !     leaf_turn = leaf_in_ind*leaf_turnover
+        leaf_turn = leaf_in_ind*l_turnover
 
-    !     root_turn = root_in_ind*root_turnover
+        root_turn = root_in_ind*r_turnover
 
-    !     sap_turn = sap_in_ind*sap_turnover
+        sap_turn = sap_in_ind*s_turnover
 
-    !     storage_turn = storage_in_ind*0.2 !provisory
+        storage_turn = storage_in_ind*0.2 !provisory
 
-    !     !heartwood incorporates the dead tissue from sapwood
-    !     heart_turn = (heart_in_ind*heart_turnover) + sap_turn
+        !heartwood incorporates the dead tissue from sapwood
+        heart_turn = (heart_in_ind*h_turnover) + sap_turn
         
 
 
-    ! end subroutine
+    end subroutine
 
-    ! subroutine storage_accumulation (bminc_in_ind, storage_inc_alloc)
-    !     !ATENÇÃO: 1 ha
+    subroutine storage_accumulation (bminc_in_ind, storage_inc_alloc)
+        !ATENÇÃO: 1 ha
         
-    !     !C in compartments previous the allocation
-    !     real(r_8), intent(in) :: bminc_in_ind !non allocated NPP
+        !C in compartments previous the allocation
+        real(r_8), intent(in) :: bminc_in_ind !non allocated NPP
 
-    !     !gC/m2
-    !     real(r_8), intent(out) :: storage_inc_alloc !carbon to storage
+        !gC/m2
+        real(r_8), intent(out) :: storage_inc_alloc !carbon to storage
 
 
-    !     storage_inc_alloc = bminc_in_ind
+        storage_inc_alloc = bminc_in_ind
         
-    ! end subroutine
+    end subroutine
 
-    ! subroutine reallocation (storage_in_ind,bminc_in_ind, leaf_inc_min, root_inc_min,&
-    !     leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc, storage_inc_alloc)
+    subroutine reallocation (storage_in_ind,bminc_in_ind, leaf_inc_min, root_inc_min,&
+        leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc, storage_inc_alloc)
         
-    !     !here for reallocation we sum the C available from NPP and storage to reallocate (only for leaves and fine roots)
+        !here for reallocation we sum the C available from NPP and storage to reallocate (only for leaves and fine roots)
 
 
-    !     !inputs
-    !     real(r_8), intent(in) :: storage_in_ind
-    !     real(r_8), intent(in) :: leaf_inc_min
-    !     real(r_8), intent(in) :: root_inc_min
-    !     real(r_8), intent(in) :: bminc_in_ind
+        !inputs
+        real(r_8), intent(in) :: storage_in_ind
+        real(r_8), intent(in) :: leaf_inc_min
+        real(r_8), intent(in) :: root_inc_min
+        real(r_8), intent(in) :: bminc_in_ind
 
-    !     !outputs
-    !     real(r_8), intent(out) :: leaf_inc_alloc
-    !     real(r_8), intent(out) :: root_inc_alloc
-    !     real(r_8), intent(out) :: sap_inc_alloc
-    !     real(r_8), intent(out) :: heart_inc_alloc
-    !     real(r_8), intent(out) :: storage_inc_alloc
+        !outputs
+        real(r_8), intent(out) :: leaf_inc_alloc
+        real(r_8), intent(out) :: root_inc_alloc
+        real(r_8), intent(out) :: sap_inc_alloc
+        real(r_8), intent(out) :: heart_inc_alloc
+        real(r_8), intent(out) :: storage_inc_alloc
 
         
-    !     !initialize variables
-    !     leaf_inc_alloc = 0.0D0
-    !     root_inc_alloc = 0.0D0
-    !     sap_inc_alloc = 0.0D0
-    !     heart_inc_alloc = 0.0D0
-    !     storage_inc_alloc = 0.0D0
+        !initialize variables
+        leaf_inc_alloc = 0.0D0
+        root_inc_alloc = 0.0D0
+        sap_inc_alloc = 0.0D0
+        heart_inc_alloc = 0.0D0
+        storage_inc_alloc = 0.0D0
 
-    !     leaf_inc_alloc = leaf_inc_min
+        leaf_inc_alloc = leaf_inc_min
 
-    !     root_inc_alloc = root_inc_min
+        root_inc_alloc = root_inc_min
 
-    !     storage_inc_alloc = bminc_in_ind - (leaf_inc_alloc + root_inc_alloc)
+        storage_inc_alloc = bminc_in_ind - (leaf_inc_alloc + root_inc_alloc)
 
-    !     print*, 'storage_inc_alloc', storage_inc_alloc
-    !     print*, 'bminc_in_ind', bminc_in_ind
-    !     print*, 'sum leaf root inc min', leaf_inc_alloc + root_inc_alloc
+        print*, 'storage_inc_alloc', storage_inc_alloc
+        print*, 'bminc_in_ind', bminc_in_ind
+        print*, 'sum leaf root inc min', leaf_inc_alloc + root_inc_alloc
         
-    ! end subroutine
+    end subroutine
     
 
 end module alloc2
