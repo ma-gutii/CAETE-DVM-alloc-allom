@@ -108,7 +108,7 @@ module alloc
       real(r_8),intent(out) :: ctonfix
 
       ! Auxiliary variables
-      real(r_8) :: nuptk ! N plant uptake g(N) m-2
+      real(r_8) :: nuptk ! N  plant uptake g(N) m-2
       real(r_8) :: puptk ! P plant uptake g(P) m-2
       real(r_8) :: scf2_tmp ! Store veg carbon pool in a 64bit fp
       real(r_8) :: sca2_tmp
