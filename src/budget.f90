@@ -208,7 +208,7 @@ contains
       &                  ocpavg, ocp_wood, run, ocp_mm)
 
       nlen = sum(run)    ! New length for the arrays in the main loop
-      print*, 'NLEN',  nlen
+      ! print*, 'NLEN',  nlen
       allocate(lp(nlen))
       allocate(ocp_coeffs(nlen))
       allocate(idx_grasses(nlen))
@@ -297,7 +297,7 @@ contains
       !$OMP DEFAULT(SHARED) &
       !$OMP PRIVATE(p, ri, carbon_in_storage, testcdef, sr, dt1, mr_sto, growth_stoc, ar_aux)
       do p = 1,nlen
-         print*, 'p', p
+         ! print*, 'p', p
 
          carbon_in_storage = 0.0D0
          testcdef = 0.0D0
