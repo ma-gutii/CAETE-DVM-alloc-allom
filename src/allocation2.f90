@@ -49,7 +49,7 @@ module alloc2
     ! subroutine allocation2(bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in, storage_in, dens_in,&
     !     leaf_out, wood_out, root_out, sap_out, heart_out, storage_out)
     
-    subroutine allocation2(dt, bminc_in, leaf_in, wood_in, root_in, sap_in)
+    subroutine allocation2(dt, bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in)
     
         
         !VARIABLE INPUTS
@@ -59,14 +59,14 @@ module alloc2
         real(r_8), intent(in) :: leaf_in
         real(r_8), intent(in) :: root_in
         real(r_8), intent(in) :: sap_in
-        ! real(r_8), intent(in) :: heart_in
+        real(r_8), intent(in) :: heart_in
         ! real(r_8), intent(in) :: storage_in
         real(r_8), intent(in) :: wood_in
 
 
         !provisory
         !real(r_8) :: sap_in
-        real(r_8) :: heart_in
+        !real(r_8) :: heart_in
         real(r_8) :: storage_in
         real(r_8) :: dens_in
 
@@ -178,19 +178,25 @@ module alloc2
         heart_turn = 0.0D0
         storage_turn = 0.0D0
 
-        !wood/non wood strategies
-        if (awood .gt. 0.0D0) then
-            print*, 'WOOD STRATEGY'
-        else
-            print*, 'NON WOOD STRATEGY'
+        !wood/non wood strategies !provisory
+        if (awood .le. 0.0D0) then
             goto 148
+        else 
+            continue
         endif
 
-148 print*, 'go to working'        
+        if (sap_in .le.0.0D0 .or. heart_in.le.0.0) then
+            goto 149
+        else 
+            continue
+        endif
+
+        
+     
 
         !provisory
         !sap_in = 0.1*wood_in
-        heart_in = 0.9*wood_in
+        !heart_in = 0.9*wood_in
         storage_in = 0.3
         dens_in = 10.
 
@@ -202,30 +208,31 @@ module alloc2
         storage_in_ind = (storage_in/dens_in)*1.D3
         wood_in_ind = sap_in_ind + heart_in_ind
 
-        bminc_in_ind = (bminc_in/dens_in)*1D3
+        bminc_in_ind = (bminc_in/dens_in)*1.D3
 
         ! call functions to logic
         height = height_calc(wood_in_ind)
         print*, 'height', height
 
-        if (height.le.0.0D0) then
-            height = 10.
-        endif
+        ! if (height.le.0.0D0) then
+        !     print*, 'HEIGHT LE 0', wood_in_ind
+        ! endif
 
         ! !leaf requirement
         leaf_req = leaf_req_calc(sap_in_ind, height)
         print*, 'leaf req', leaf_req
+        print*, ' '
 
         ! !minimum increment to leaf
         leaf_inc_min = leaf_inc_min_calc(leaf_req, leaf_in_ind)
         print*, 'leaf inc min', leaf_inc_min
+        print*, ' '
 
         !minimum increment to root
         root_inc_min = root_inc_min_calc(leaf_req, root_in_ind)
         print*, 'root inc min', root_inc_min
+        print*, ''
 
-        call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,&
-            sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
 
     ! !!conditions for allocation!!! see fluxogram in https://lucid.app/lucidchart/74db0739-29ee-4894-9ecc-42b2cf3d0ae5/edit?invitationId=inv_d3a94efe-b397-45df-9af2-9467d19bee97&page=0_0#
 
@@ -397,6 +404,9 @@ module alloc2
     !     ! print*, x
     !     ! !_________________
 
+
+149 continue
+148 continue
     end subroutine allocation2
 
     function height_calc (wood_in_ind) result (height)
@@ -440,8 +450,7 @@ module alloc2
         !initializing variables
         leaf_req = 0.0D0
 
-        leaf_req = klatosa * sap_in_ind / (dwood * height * sla_allom)
-
+ 
     end function leaf_req_calc
 
     function leaf_inc_min_calc (leaf_req, leaf_in_ind) result (leaf_inc_min)   
@@ -621,7 +630,7 @@ module alloc2
       
 
         end do
-        print*, i
+        ! print*, i
         !the interval that brackets zero in f(x) becomes the new bounds for the root search
 
         x1 = xmid - dx

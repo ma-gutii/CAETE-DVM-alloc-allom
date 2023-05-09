@@ -86,7 +86,7 @@ def run_experiment(pls_table):
     cax_grd.run_caete('19990101', '19991231', spinup=15,
                        fix_co2='1999', save=True)
     
-    cax_grd.pr[idx0:idx1 + 1] *= 0.01 
+    #cax_grd.pr[idx0:idx1 + 1] *= 0.01 acho que é experimento de chuva
 
     
     # Run the experiment!

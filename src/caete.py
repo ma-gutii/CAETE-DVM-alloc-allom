@@ -870,6 +870,7 @@ class grd:
                 self._allocate_output_nosave(steps.size)
                 self.save = False
             for step in range(steps.size):
+                print('STEP', step)
                 if fix_co2_p:
                     pass
                 else:
