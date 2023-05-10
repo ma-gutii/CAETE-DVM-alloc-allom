@@ -931,6 +931,7 @@ module alloc
       scf2 = scf2 * 1.0D-3
       if(awood .gt. 0.0D0) then
          sca2 = sca2 * 1.0D-3
+         print*, 'SCA2 caule em kgC/m2', sca2
       else
          sca2 = 0.0D0
       endif
