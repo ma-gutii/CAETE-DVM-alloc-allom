@@ -212,7 +212,7 @@ module alloc2
 
         ! call functions to logic
         height = height_calc(wood_in_ind)
-        print*, 'height', height
+        ! print*, 'height', height
 
         ! if (height.le.0.0D0) then
         !     print*, 'HEIGHT LE 0', wood_in_ind
@@ -220,18 +220,18 @@ module alloc2
 
         ! !leaf requirement
         leaf_req = leaf_req_calc(sap_in_ind, height)
-        print*, 'leaf req', leaf_req
-        print*, ' '
+        ! print*, 'leaf req', leaf_req
+        ! print*, ' '
 
         ! !minimum increment to leaf
         leaf_inc_min = leaf_inc_min_calc(leaf_req, leaf_in_ind)
-        print*, 'leaf inc min', leaf_inc_min
-        print*, ' '
+        ! print*, 'leaf inc min', leaf_inc_min
+        ! print*, ' '
 
         !minimum increment to root
         root_inc_min = root_inc_min_calc(leaf_req, root_in_ind)
-        print*, 'root inc min', root_inc_min
-        print*, ''
+        ! print*, 'root inc min', root_inc_min
+        ! print*, ''
 
 
     ! !!conditions for allocation!!! see fluxogram in https://lucid.app/lucidchart/74db0739-29ee-4894-9ecc-42b2cf3d0ae5/edit?invitationId=inv_d3a94efe-b397-45df-9af2-9467d19bee97&page=0_0#
