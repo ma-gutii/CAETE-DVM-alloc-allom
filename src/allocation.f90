@@ -925,7 +925,7 @@ module alloc
       scf2 = scf2 * 1.0D-3
       if(awood .gt. 0.0D0) then
          sca2 = sca2 * 1.0D-3
-         ! print*, 'sca2 em kg', sca2
+         print*, 'sca2 em kg', sca2
       else
          sca2 = 0.0D0
       endif
