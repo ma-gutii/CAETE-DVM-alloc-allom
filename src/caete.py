@@ -659,9 +659,9 @@ class grd:
         self.soil_texture = hsoil[2][self.y, self.x].copy()
 
         # Biomass
-        self.vp_cleaf = np.zeros(shape=(npls,), order='F') + 1.0
-        self.vp_croot = np.zeros(shape=(npls,), order='F') + 1.0
-        self.vp_cwood = np.zeros(shape=(npls,), order='F') + 0.1
+        self.vp_cleaf = np.zeros(shape=(npls,), order='F') + 0.1 #+ 1.0
+        self.vp_croot = np.zeros(shape=(npls,), order='F') + 0.1
+        self.vp_cwood = np.zeros(shape=(npls,), order='F') + 1.0
         self.vp_cwood[pls_table[6,:] == 0.0] = 0.0
         # self.vp_cleaf, self.vp_croot, self.vp_cwood = m.spinup2(
         #     1.0, self.pls_table)
@@ -870,7 +870,7 @@ class grd:
                 self._allocate_output_nosave(steps.size)
                 self.save = False
             for step in range(steps.size):
-                print('STEP', step)
+                # print('STEP', step)
                 if fix_co2_p:
                     pass
                 else:
@@ -1446,9 +1446,9 @@ class plot(grd):
         self.soil_texture = hsoil[2][self.y, self.x].copy()
 
         # Biomass
-        self.vp_cleaf = np.zeros(shape=(npls,), order='F') + 0.1
-        self.vp_croot = np.zeros(shape=(npls,), order='F') + 0.1
-        self.vp_cwood = np.zeros(shape=(npls,), order='F') + 1.0
+        self.vp_cleaf = np.zeros(shape=(npls,), order='F') + 1.0
+        self.vp_croot = np.zeros(shape=(npls,), order='F') + 1.0
+        self.vp_cwood = np.zeros(shape=(npls,), order='F') + 0.1
         self.vp_cwood[pls_table[6,:] == 0.0] = 0.0
 
         a, b, c, d = m.pft_area_frac(
