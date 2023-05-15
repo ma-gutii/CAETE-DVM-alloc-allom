@@ -243,125 +243,125 @@ module alloc2
         !minimum increment to root
         root_inc_min = root_inc_min_calc(leaf_req, root_in_ind)
         
-        if ( leaf_inc_min.gt.0.0.and.root_inc_min.gt.0.0) then          
+        ! if ( leaf_inc_min.gt.0.0.and.root_inc_min.gt.0.0) then          
         
-            print*, 'leaf inc min', leaf_inc_min
-            print*, ' '
-            print*, 'root inc min', root_inc_min
-            print*, ''
-        endif
+        !     print*, 'leaf inc min', leaf_inc_min
+        !     print*, ' '
+        !     print*, 'root inc min', root_inc_min
+        !     print*, ''
+        ! endif
 
 
-    ! !!conditions for allocation!!! see fluxogram in https://lucid.app/lucidchart/74db0739-29ee-4894-9ecc-42b2cf3d0ae5/edit?invitationId=inv_d3a94efe-b397-45df-9af2-9467d19bee97&page=0_0#
+    !!conditions for allocation!!! see fluxogram in https://lucid.app/lucidchart/74db0739-29ee-4894-9ecc-42b2cf3d0ae5/edit?invitationId=inv_d3a94efe-b397-45df-9af2-9467d19bee97&page=0_0#
 
 
-    !     if (leaf_inc_min.gt.0.0D0.and.root_inc_min.gt.0.0D0) then
+        if (leaf_inc_min.gt.0.0D0.and.root_inc_min.gt.0.0D0) then
 
-    !         print*, 'leaf and root inc minimum are > 0'
+            ! print*, 'leaf and root inc minimum are > 0'
 
-    !         if((bminc_in_ind.gt.0)) then
+            if((bminc_in_ind.gt.0)) then
 
-    !             print*, 'NPP > 0.'
+                ! print*, 'NPP > 0.'
                 
-    !             if (bminc_in_ind.ge.(root_inc_min + leaf_inc_min)) then
+                if (bminc_in_ind.ge.(root_inc_min + leaf_inc_min)) then
 
-    !                 print*, 'NPP > sum of root and leaf inc min'
+                    ! print*, 'NPP > sum of root and leaf inc min'
                     
-    !                 !if minimum nutrients then
+                    !if minimum nutrients then
 
-                    ! call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,&
-                    ! sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
+                    call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,&
+                    sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
                    
-    !                 !else
+                    !else
                         
-    !                     !storage = storage + bminc
+                        !storage = storage + bminc
 
-    !                 !endif
+                    !endif
 
-    !             else
+                else
 
-    !                 print*, 'NPP < sum of root and leaf inc min'
+                    ! print*, 'NPP < sum of root and leaf inc min'
 
-    !                 if ( (storage_in_ind + bminc_in_ind).ge.(root_inc_min + leaf_inc_min) ) then !!AND NUTRIENTS
+                    if ( (storage_in_ind + bminc_in_ind).ge.(root_inc_min + leaf_inc_min) ) then !!AND NUTRIENTS
                                 
-    !                     print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc'
+                        ! print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc'
 
-    !                     call reallocation(storage_in_ind, bminc_in_ind, leaf_inc_min, root_inc_min,&
-    !                     leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc, storage_inc_alloc)
+                        call reallocation(storage_in_ind, bminc_in_ind, leaf_inc_min, root_inc_min,&
+                        leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc, storage_inc_alloc)
 
-    !                     print*, 'use storage and discount leaf inc and root inc'
+                        ! print*, 'use storage and discount leaf inc and root inc'
 
-    !                 else
+                    else
 
-    !                     print*, 'storage + npp < inc min non used npp goes to storage'
+                        ! print*, 'storage + npp < inc min non used npp goes to storage'
                         
-    !                     storage_inc_alloc = bminc_in_ind 
+                        storage_inc_alloc = bminc_in_ind 
 
-    !                 end if
+                    end if
                    
-    !             end if
+                end if
 
-    !         else
+            else
                 
-    !             print*, 'NPP < 0 but storage + NPP > minimum requirement' 
+                ! print*, 'NPP < 0 but storage + NPP > minimum requirement' 
 
-    !             if ( (storage_in_ind + bminc_in_ind).ge.(root_inc_min + leaf_inc_min) ) then !!AND NUTRIENTS
+                if ( (storage_in_ind + bminc_in_ind).ge.(root_inc_min + leaf_inc_min) ) then !!AND NUTRIENTS
 
-    !                 print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc'
+                    ! print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc'
 
-    !                 call reallocation(storage_in_ind, bminc_in_ind, leaf_inc_min, root_inc_min,&
-    !                 leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc, storage_inc_alloc)
+                    call reallocation(storage_in_ind, bminc_in_ind, leaf_inc_min, root_inc_min,&
+                    leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc, storage_inc_alloc)
              
-    !             else
+                else
                     
-    !                 print*, 'C deficit (NPP < GPP - resp)'
+                    ! print*, 'C deficit (NPP < GPP - resp)'
 
-    !                 c_deficit = abs(bminc_in_ind)
+                    c_deficit = abs(bminc_in_ind)
 
-    !                 leaf_inc_alloc = - (c_deficit*0.33)
+                    leaf_inc_alloc = - (c_deficit*0.33)
 
-    !                 root_inc_alloc = - (c_deficit*0.33)
+                    root_inc_alloc = - (c_deficit*0.33)
 
-    !                 sap_inc_alloc = - (c_deficit*0.33)
+                    sap_inc_alloc = - (c_deficit*0.33)
 
-    !                 !when sap dies it turns into heartwood
-    !                 heart_inc_alloc = abs(sap_inc_alloc)
+                    !when sap dies it turns into heartwood
+                    heart_inc_alloc = abs(sap_inc_alloc)
 
-    !                 storage_inc_alloc = 0.0D0
+                    storage_inc_alloc = 0.0D0
                      
-    !             end if
+                end if
                     
-    !         endif
+            endif
 
-    !     else 
+        else 
 
-    !         print*, 'leaf and root inc minimum are < 0'
+            ! print*, 'leaf and root inc minimum are < 0'
 
-    !         if ( bminc_in_ind.gt.0.0D0 ) then
+            if ( bminc_in_ind.gt.0.0D0 ) then
 
-    !             print*, 'NPP > 0. -> non allocated goes to storage'
-    !             storage_inc_alloc = bminc_in_ind
+                ! print*, 'NPP > 0. -> non allocated goes to storage'
+                storage_inc_alloc = bminc_in_ind
                 
-    !         else 
+            else 
 
-    !             print*, 'NPP < 0 -> discount the deficit equally between alive tissues'
+                ! print*, 'NPP < 0 -> discount the deficit equally between alive tissues'
 
-    !             c_deficit = abs(bminc_in_ind)
+                c_deficit = abs(bminc_in_ind)
 
-    !             leaf_inc_alloc = - (c_deficit*0.25)
+                leaf_inc_alloc = - (c_deficit*0.25)
 
-    !             root_inc_alloc = - (c_deficit*0.25)
+                root_inc_alloc = - (c_deficit*0.25)
 
-    !             sap_inc_alloc = - (c_deficit*0.25)
+                sap_inc_alloc = - (c_deficit*0.25)
 
-    !             !when sap dies it turns into heartwood
-    !             heart_inc_alloc = abs(sap_inc_alloc)
+                !when sap dies it turns into heartwood
+                heart_inc_alloc = abs(sap_inc_alloc)
 
-    !             storage_inc_alloc = 0.0D0
+                storage_inc_alloc = 0.0D0
 
-    !         end if    
+            end if    
             
-    !     endif
+        endif
     
     ! !!!end of conditions for allocation!!!!
 
@@ -560,6 +560,9 @@ module alloc2
             sap_inc_alloc = bminc_in_ind - leaf_inc_alloc - root_inc_alloc
 
         endif
+            print*, 'l', leaf_inc_alloc
+            print*, 'r', root_inc_alloc
+            print*, 's', sap_inc_alloc
 
 
     end subroutine normal_alloc
@@ -787,9 +790,9 @@ module alloc2
 
         storage_inc_alloc = bminc_in_ind - (leaf_inc_alloc + root_inc_alloc)
 
-        print*, 'storage_inc_alloc', storage_inc_alloc
-        print*, 'bminc_in_ind', bminc_in_ind
-        print*, 'sum leaf root inc min', leaf_inc_alloc + root_inc_alloc
+        ! print*, 'storage_inc_alloc', storage_inc_alloc
+        ! print*, 'bminc_in_ind', bminc_in_ind
+        ! print*, 'sum leaf root inc min', leaf_inc_alloc + root_inc_alloc
         
     end subroutine
     
