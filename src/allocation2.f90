@@ -201,18 +201,30 @@ module alloc2
         dens_in = 10.
 
         !carbon (gC) in compartments considering the density (ind/m2)
-        leaf_in_ind = (leaf_in/dens_in)*1.D3
-        root_in_ind = (root_in/dens_in)*1.D3
-        sap_in_ind = (sap_in/dens_in)*1.D3 
-        heart_in_ind = (heart_in/dens_in)*1.D3
-        storage_in_ind = (storage_in/dens_in)*1.D3
-        wood_in_ind = sap_in_ind + heart_in_ind
+        ! leaf_in_ind = (leaf_in/dens_in)*1.D3
+        ! root_in_ind = (root_in/dens_in)*1.D3
+        ! sap_in_ind = (sap_in/dens_in)*1.D3 
+        ! heart_in_ind = (heart_in/dens_in)*1.D3
+        ! storage_in_ind = (storage_in/dens_in)*1.D3
+        ! wood_in_ind = sap_in_ind + heart_in_ind
 
-        bminc_in_ind = (bminc_in/dens_in)*1.D3
+        ! bminc_in_ind = (bminc_in/dens_in)*1.D3
+
+        !transforms to gC/m2
+        leaf_in_ind    = (leaf_in)*1.D3
+        root_in_ind    = (root_in)*1.D3
+        sap_in_ind     = (sap_in)*1.D3 
+        heart_in_ind   = (heart_in)*1.D3
+        storage_in_ind = (storage_in)*1.D3
+        wood_in_ind    = sap_in_ind + heart_in_ind
+
+        bminc_in_ind = (bminc_in)*1.D3
+
 
         ! call functions to logic
         height = height_calc(wood_in_ind)
         ! print*, 'height', height
+        ! print*, 'wood_in_ind', wood_in_ind
 
         ! if (height.le.0.0D0) then
         !     print*, 'HEIGHT LE 0', wood_in_ind
@@ -225,13 +237,18 @@ module alloc2
 
         ! !minimum increment to leaf
         leaf_inc_min = leaf_inc_min_calc(leaf_req, leaf_in_ind)
-        ! print*, 'leaf inc min', leaf_inc_min
-        ! print*, ' '
+        
 
         !minimum increment to root
         root_inc_min = root_inc_min_calc(leaf_req, root_in_ind)
-        ! print*, 'root inc min', root_inc_min
-        ! print*, ''
+        
+        if ( leaf_inc_min.gt.0.0.and.root_inc_min.gt.0.0) then          
+        
+            print*, 'leaf inc min', leaf_inc_min
+            print*, ' '
+            print*, 'root inc min', root_inc_min
+            print*, ''
+        endif
 
 
     ! !!conditions for allocation!!! see fluxogram in https://lucid.app/lucidchart/74db0739-29ee-4894-9ecc-42b2cf3d0ae5/edit?invitationId=inv_d3a94efe-b397-45df-9af2-9467d19bee97&page=0_0#
@@ -428,6 +445,7 @@ module alloc2
         
         !Calculo diameter (necessary to height)
         diameter = ((4*wood_in_ind)/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
+        print*, 'diameter', diameter
 
         !Height 
         height = k_allom2*(diameter**k_allom3)
@@ -449,6 +467,9 @@ module alloc2
 
         !initializing variables
         leaf_req = 0.0D0
+
+
+        leaf_req = klatosa * sap_in_ind / (dwood * height * sla_allom)
 
  
     end function leaf_req_calc
