@@ -140,10 +140,19 @@ def calc_ratios1(NPLS):
     # Global patterns of plant leaf N and P in relation to temperature and latitude. 
     # Proceedings of the National Academy of Sciences, 101(30), 11001–11006. 
     # https://doi.org/10.1073/pnas.0403588101
-    N0 = 0.001
-    NM = 0.05
-    P0 = 0.0002
-    PM = 0.0095
+    
+    #using when nutrients influence in allocation is on
+    # N0 = 0.001
+    # NM = 0.05
+    # P0 = 0.0002
+    # PM = 0.0095
+
+    #using when nutrients influence in allocation is off (mean value)
+    N0 = 0.0255
+    NM = 0.0255
+    P0 = 0.0048
+    PM = 0.0048
+
 
     if os.path.exists(Path("./NP1.npy")):
         x1 = np.load("./NP1.npy")
@@ -167,10 +176,18 @@ def calc_ratios2(NPLS):
     # Heineman, K. D., Turner, B. L., & Dalling, J. W. (2016). 
     # Variation in wood nutrients along a tropical soil fertility gradient. 
     # New Phytologist, 211(2), 440?454. https://doi.org/10.1111/nph.13904
-    N0 = 0.001
-    NM = 0.01
-    P0 = 3.12e-5
-    PM = 0.0035
+   
+    #using when nutrients influence in allocation is on
+    # N0 = 0.001
+    # NM = 0.01
+    # P0 = 3.12e-5
+    # PM = 0.0035
+
+    #using when nutrients influence in allocation is off (mean value)
+    N0 = 0.0055
+    NM = 0.0055
+    P0 = 0.0017656
+    PM = 0.0017656
 
     if os.path.exists(Path("./NP2.npy")):
         x1 = np.load("./NP2.npy")
@@ -199,10 +216,18 @@ def calc_ratios3(NPLS):
     # U.S. Department of Energy, Oak Ridge, Tennessee, U.S.A. 
     # https://doi.org/https://doi.org/10.25581/ornlsfa.014/1459186
     # AND some references therein
-    N0 = 0.001
-    NM = 0.06
-    P0 = 0.0003
-    PM = 0.005
+    
+    #using when nutrients influence in allocation is on
+    # N0 = 0.001
+    # NM = 0.06
+    # P0 = 0.0003
+    # PM = 0.005
+
+    #using when nutrients influence in allocation is off (mean value)
+    N0 = 0.0305
+    NM = 0.0305
+    P0 = 0.00265
+    PM = 0.00265
 
     if os.path.exists(Path("./NP3.npy")):
         x1 = np.load("./NP3.npy")
