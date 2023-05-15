@@ -237,6 +237,7 @@ module alloc2
 
         ! !minimum increment to leaf
         leaf_inc_min = leaf_inc_min_calc(leaf_req, leaf_in_ind)
+       
         
 
         !minimum increment to root
@@ -445,7 +446,7 @@ module alloc2
         
         !Calculo diameter (necessary to height)
         diameter = ((4*wood_in_ind)/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
-        print*, 'diameter', diameter
+        ! print*, 'diameter', diameter
 
         !Height 
         height = k_allom2*(diameter**k_allom3)
