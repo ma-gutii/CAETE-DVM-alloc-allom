@@ -847,11 +847,6 @@ module alloc
       ! ROOT LITTER
       root_litter = scf1 / troot  !/ tfroot! kg(C) m-2 year-1
 
-      !testing no nutrient limitations
-      daily_growth(leaf) = npp_leaf
-      daily_growth(wood) = npp_wood
-      daily_growth(root) = npp_root
-
       ! UPDATE C content of each compartment in g m-2
       scl2 = (1D3 * scl1) + daily_growth(leaf) - (leaf_litter * 2.73791075D0)
       scf2 = (1D3 * scf1) + daily_growth(root) - (root_litter * 2.73791075D0)

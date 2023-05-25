@@ -199,6 +199,7 @@ module alloc2
         !heart_in = 0.9*wood_in
         storage_in = 0.3
         dens_in = 10.
+        
 
         !carbon (gC) in compartments considering the density (ind/m2)
         ! leaf_in_ind = (leaf_in/dens_in)*1.D3
@@ -253,21 +254,24 @@ module alloc2
 
 
     !!conditions for allocation!!! see fluxogram in https://lucid.app/lucidchart/74db0739-29ee-4894-9ecc-42b2cf3d0ae5/edit?invitationId=inv_d3a94efe-b397-45df-9af2-9467d19bee97&page=0_0#
-
-
+        
+       
         if (leaf_inc_min.gt.0.0D0.and.root_inc_min.gt.0.0D0) then
 
-            ! print*, 'leaf and root inc minimum are > 0'
+            print*, 'leaf and root inc minimum are > 0' !ok
 
+           
             if((bminc_in_ind.gt.0)) then
 
-                ! print*, 'NPP > 0.'
+                print*, 'NPP > 0.' !ok
                 
                 if (bminc_in_ind.ge.(root_inc_min + leaf_inc_min)) then
 
-                    ! print*, 'NPP > sum of root and leaf inc min'
+                    print*, 'NPP > sum of root and leaf inc min' !ok
                     
                     !if minimum nutrients then
+
+                    print*, 'call normal alloc' !ok
 
                     call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,&
                     sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
@@ -280,20 +284,20 @@ module alloc2
 
                 else
 
-                    ! print*, 'NPP < sum of root and leaf inc min'
+                    print*, 'NPP < sum of root and leaf inc min' !ok
 
                     if ( (storage_in_ind + bminc_in_ind).ge.(root_inc_min + leaf_inc_min) ) then !!AND NUTRIENTS
                                 
-                        ! print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc'
+                        print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc' !ok
 
                         call reallocation(storage_in_ind, bminc_in_ind, leaf_inc_min, root_inc_min,&
                         leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc, storage_inc_alloc)
 
-                        ! print*, 'use storage and discount leaf inc and root inc'
+                        print*, 'use storage and discount leaf inc and root inc' !ok
 
                     else
 
-                        ! print*, 'storage + npp < inc min non used npp goes to storage'
+                        print*, 'storage + npp < inc min non used npp goes to storage'!ok
                         
                         storage_inc_alloc = bminc_in_ind 
 
@@ -303,18 +307,18 @@ module alloc2
 
             else
                 
-                ! print*, 'NPP < 0 but storage + NPP > minimum requirement' 
+                print*, 'NPP < 0 but storage + NPP > minimum requirement' !ok
 
                 if ( (storage_in_ind + bminc_in_ind).ge.(root_inc_min + leaf_inc_min) ) then !!AND NUTRIENTS
 
-                    ! print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc'
+                    print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc' !ok
 
                     call reallocation(storage_in_ind, bminc_in_ind, leaf_inc_min, root_inc_min,&
                     leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc, storage_inc_alloc)
              
                 else
                     
-                    ! print*, 'C deficit (NPP < GPP - resp)'
+                    print*, 'C deficit (NPP < GPP - resp)' !ok
 
                     c_deficit = abs(bminc_in_ind)
 
@@ -335,24 +339,25 @@ module alloc2
 
         else 
 
-            ! print*, 'leaf and root inc minimum are < 0'
+            print*, 'leaf and root inc minimum are < 0' !ok
+    
 
             if ( bminc_in_ind.gt.0.0D0 ) then
 
-                ! print*, 'NPP > 0. -> non allocated goes to storage'
+                print*, 'NPP > 0. -> non allocated goes to storage' !ok
                 storage_inc_alloc = bminc_in_ind
                 
             else 
 
-                ! print*, 'NPP < 0 -> discount the deficit equally between alive tissues'
+                print*, 'NPP < 0 -> discount the deficit equally between alive tissues', bminc_in_ind !ok
 
                 c_deficit = abs(bminc_in_ind)
 
-                leaf_inc_alloc = - (c_deficit*0.25)
+                leaf_inc_alloc = - (c_deficit*0.33)
 
-                root_inc_alloc = - (c_deficit*0.25)
+                root_inc_alloc = - (c_deficit*0.33)
 
-                sap_inc_alloc = - (c_deficit*0.25)
+                sap_inc_alloc = - (c_deficit*0.33)
 
                 !when sap dies it turns into heartwood
                 heart_inc_alloc = abs(sap_inc_alloc)
