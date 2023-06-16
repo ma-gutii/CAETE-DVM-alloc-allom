@@ -344,7 +344,7 @@ contains
             &, cf2(p),litter_l(p),cwd(p), litter_fr(p),nupt(:,p),pupt(:,p)&
             &, lit_nut_content(:,p), limitation_status(:,p), npp2pay(p), uptk_strat(:, p), ar_aux)
          
-         !testing variables entering in allocation2 subroutine
+         !testing variables entering in allocation2 subroutine - done
          call allocation2(dt1, nppa(p), cl1_pft(ri), ca1_pft(ri)&
             &, cf1_pft(ri), cs1_pft(ri), ch1_pft(ri))
           
