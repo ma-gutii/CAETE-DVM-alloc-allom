@@ -872,7 +872,7 @@ class grd:
             else:
                 self._allocate_output_nosave(steps.size)
                 self.save = False
-            for step in range(steps.size):
+            for step in range(steps.size): #make the loop for the size of array (number of years to be simulated)
                 # print('STEP', step)
                 if fix_co2_p:
                     pass
@@ -914,6 +914,7 @@ class grd:
                         self.sp_available_p += 5.0
 
                 # INFLATe VARS
+                    #Initialize with zero to be fullfilled with data when the running occurs
                 sto = np.zeros(shape=(3, npls), order='F')
                 cleaf = np.zeros(npls, order='F')
                 cwood = np.zeros(npls, order='F')
@@ -926,9 +927,12 @@ class grd:
                 sto[0, self.vp_lsid] = self.vp_sto[0, :]
                 sto[1, self.vp_lsid] = self.vp_sto[1, :]
                 sto[2, self.vp_lsid] = self.vp_sto[2, :]
+                
                 # Just Check the integrity of the data
                 assert self.vp_lsid.size == self.vp_cleaf.size, 'different array sizes'
-                c = 0
+
+                c = 0 #In each iteration of the loop, the value of c is incremented
+                        #allowing access to the elements of the other lists or arrays in the next iteration.
                 for n in self.vp_lsid:
                     cleaf[n] = self.vp_cleaf[c]
                     cwood[n] = self.vp_cwood[c]
