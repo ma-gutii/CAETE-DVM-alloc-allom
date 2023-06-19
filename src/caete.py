@@ -591,7 +591,7 @@ class grd:
             pls_table: np.ndarray with functional traits of a set of PLant life strategies
         """
 
-        assert self.filled == False, "already done"
+        assert self.filled == False, "already done" #assert verify if a condition is true
         self.input_fpath = Path(os.path.join(input_fpath, self.input_fname))
         assert self.input_fpath.exists()
 
@@ -601,6 +601,7 @@ class grd:
         os.makedirs(self.out_dir, exist_ok=True)
         self.flush_data = 0
 
+        #CLIMATIC DATA
         self.pr = self.data['pr']
         self.ps = self.data['ps']
         self.rsds = self.data['rsds']
@@ -609,7 +610,7 @@ class grd:
 
         # SOIL AND NUTRIENTS
         self.input_nut = []
-        self.nutlist = ['tn', 'tp', 'ap', 'ip', 'op']
+        self.nutlist = ['tn', 'tp', 'ap', 'ip', 'op'] #[total N, total P, available P, inorganic P, organic P]
         for nut in self.nutlist:
             self.input_nut.append(self.data[nut])
         self.soil_dict = dict(zip(self.nutlist, self.input_nut))
@@ -658,7 +659,8 @@ class grd:
         self.psi_sat = hsoil[1][self.y, self.x].copy()
         self.soil_texture = hsoil[2][self.y, self.x].copy()
 
-        # Biomass
+        # Biomass 
+            #Initial value for biomass
         self.vp_cleaf = np.zeros(shape=(npls,), order='F') + 1.0
         self.vp_croot = np.zeros(shape=(npls,), order='F') + 1.0
         self.vp_cwood = np.zeros(shape=(npls,), order='F') + 0.1
@@ -721,8 +723,8 @@ class grd:
         self.run_counter = 0
         self.experiments += 1
 
-    def change_clim_input(self, input_fpath, stime_i, co2):
-
+    def change_clim_input(self, input_fpath, stime_i, co2): 
+        #used in taske5_caete.py for climate experiments
         self.input_fpath = Path(os.path.join(input_fpath, self.input_fname))
         assert self.input_fpath.exists()
 
@@ -937,6 +939,11 @@ class grd:
                     c += 1
                 ton = self.sp_organic_n #+ self.sp_sorganic_n
                 top = self.sp_organic_p #+ self.sp_sorganic_p
+
+                # if nutri_cycle:
+                    # print('nutri cycle is on')
+
+                
                 out = model.daily_budget(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
                                          self.soil_temp, temp[step], p_atm[step],
                                          ipar[step], ru[step], self.sp_available_n, self.sp_available_p,
@@ -1322,6 +1329,7 @@ class grd:
 
             co2 += next_year
             self.soil_temp = st.soil_temp(self.soil_temp, temp[step])
+        
 
             out = model.daily_budget(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
                                      self.soil_temp, temp[step], p_atm[step],

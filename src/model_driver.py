@@ -284,6 +284,17 @@ else:
     pls_table = pls.table_gen(npls, dump_folder)
 
 
+#Choose if nutrient cycle will be used or not
+nutri_cycle_aux = input("Do you want to use the nutrient cycle? (y/n)")
+
+if nutri_cycle_aux == 'y':
+    nutri_cycle_aux = True
+else:
+    nutri_cycle_aux = False
+    
+
+
+
 
 
 
@@ -321,7 +332,7 @@ def chunks(lst, chunck_size):
 # # START GRIDCELLS
 print("Starting gridcells")
 print_progress(0, len(grid_mn), prefix='Progress:', suffix='Complete')
-for i, g in enumerate(grid_mn):
+for i, g in enumerate(grid_mn):  #enumerate creates the index (i) for each gridcell in grid_mn
     apply_init(g)
     print_progress(i + 1, len(grid_mn), prefix='Progress:', suffix='Complete')
 
@@ -355,7 +366,7 @@ def zip_gridtime(grd_pool, interval):
 
 
 def apply_funX(grid:grd, brk:list)->grd:
-    grid.run_caete(brk[0], brk[1])
+    grid.run_caete(brk[0], brk[1], nutri_cycle = nutri_cycle_aux)
     return grid
 
 # Garbage collection
