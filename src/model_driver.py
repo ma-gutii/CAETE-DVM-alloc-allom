@@ -145,6 +145,15 @@ if not sombrero:
         print("Running in the zone: c")
         zone = 'c'
 
+#Choose if nutrient cycle will be used or not
+nutri_cycle_aux = input("Do you want to use the nutrient cycle? (y/n)")
+
+if nutri_cycle_aux == 'y':
+    nutri_cycle_aux = True
+else:
+    nutri_cycle_aux = False
+    
+
 if zone == 'c':
     y0, y1 = 175, 176
     x0, x1 = 235, 236
@@ -282,20 +291,6 @@ else:
                        f"{rbrk_index}\n"])
     # FUNCTIONAL TRAITS DATA
     pls_table = pls.table_gen(npls, dump_folder)
-
-
-#Choose if nutrient cycle will be used or not
-nutri_cycle_aux = input("Do you want to use the nutrient cycle? (y/n)")
-
-if nutri_cycle_aux == 'y':
-    nutri_cycle_aux = True
-else:
-    nutri_cycle_aux = False
-    
-
-
-
-
 
 
 # # Create the gridcell objects

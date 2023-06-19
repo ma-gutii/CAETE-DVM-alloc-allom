@@ -37,6 +37,7 @@ from numpy import log as ln
 from hydro_caete import soil_water
 from caete_module import global_par as gp
 from caete_module import budget as model
+from caete_module import budget2 as model2
 from caete_module import water as st
 from caete_module import photo as m
 from caete_module import soil_dec
@@ -940,11 +941,15 @@ class grd:
                 ton = self.sp_organic_n #+ self.sp_sorganic_n
                 top = self.sp_organic_p #+ self.sp_sorganic_p
 
-                # if nutri_cycle:
-                    # print('nutri cycle is on')
-
-                
-                out = model.daily_budget(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
+                if nutri_cycle:
+                               
+                    out = model.daily_budget(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
+                                         self.soil_temp, temp[step], p_atm[step],
+                                         ipar[step], ru[step], self.sp_available_n, self.sp_available_p,
+                                         ton, top, self.sp_organic_p, co2, sto, cleaf, cwood, croot,
+                                         dcl, dca, dcf, uptk_costs, self.wmax_mm)
+                else:
+                    out = model2.daily_budget2(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
                                          self.soil_temp, temp[step], p_atm[step],
                                          ipar[step], ru[step], self.sp_available_n, self.sp_available_p,
                                          ton, top, self.sp_organic_p, co2, sto, cleaf, cwood, croot,
