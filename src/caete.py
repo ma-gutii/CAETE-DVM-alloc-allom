@@ -1365,7 +1365,7 @@ class grd:
                                      co2, sto, cleaf, cwood, croot,
                                      dcl, dca, dcf, uptk_costs, self.wmax_mm)
             else:
-                out = model.daily_budget2(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
+                out = model2.daily_budget2(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
                                      self.soil_temp, temp[step], p_atm[step],
                                      ipar[step], ru[step], self.sp_available_n, self.sp_available_p,
                                      self.sp_snc[:4].sum(
