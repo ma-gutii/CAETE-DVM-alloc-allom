@@ -336,7 +336,7 @@ for i, g in enumerate(grid_mn):  #enumerate creates the index (i) for each gridc
 def apply_spin(grid:grd)->grd:
     """pre-spinup use some outputs of daily budget (water, litter C, N and P) to start soil organic pools"""
     w, ll, cwd, rl, lnc = grid.bdg_spinup(
-        start_date="19790101", end_date="19830101")
+        start_date = "19790101", end_date = "19830101", nutri_cycle = nutri_cycle_aux)
     grid.sdc_spinup(w, ll, cwd, rl, lnc)
     return grid
 

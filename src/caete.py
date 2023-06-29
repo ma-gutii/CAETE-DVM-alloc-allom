@@ -1242,7 +1242,7 @@ class grd:
         gc.collect()
         return None
 
-    def bdg_spinup(self, start_date, end_date):
+    def bdg_spinup(self, start_date, end_date, nutri_cycle = True):
         """SPINUP SOIL POOLS - generate soil OM and Organic nutrients inputs for soil spinup
         - Side effect - Start soil water pools pools """
 
@@ -1339,14 +1339,23 @@ class grd:
             co2 += next_year
             self.soil_temp = st.soil_temp(self.soil_temp, temp[step])
         
-
-            out = model.daily_budget(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
+            if nutri_cycle:
+                out = model.daily_budget(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
                                      self.soil_temp, temp[step], p_atm[step],
                                      ipar[step], ru[step], self.sp_available_n, self.sp_available_p,
                                      self.sp_snc[:4].sum(
                                      ), self.sp_so_p, self.sp_snc[4:].sum(),
                                      co2, sto, cleaf, cwood, croot,
                                      dcl, dca, dcf, uptk_costs, self.wmax_mm)
+            else:
+                out = model.daily_budget2(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
+                                     self.soil_temp, temp[step], p_atm[step],
+                                     ipar[step], ru[step], self.sp_available_n, self.sp_available_p,
+                                     self.sp_snc[:4].sum(
+                                     ), self.sp_so_p, self.sp_snc[4:].sum(),
+                                     co2, sto, cleaf, cwood, croot,
+                                     dcl, dca, dcf, uptk_costs, self.wmax_mm)
+
 
             # Create a dict with the function output
             daily_output = catch_out_budget(out)
