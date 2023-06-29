@@ -66,7 +66,6 @@ contains
     real(r_8), intent(out) :: sla, e        !specific leaf area (m2/kg)
     real(r_8), intent(out) :: vm_out
 !     Internal
-!     --------
 
     real(r_8) :: tleaf,awood            !leaf/wood turnover time (yr)
     real(r_8) :: g1

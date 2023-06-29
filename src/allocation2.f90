@@ -49,7 +49,8 @@ module alloc2
     ! subroutine allocation2(bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in, storage_in, dens_in,&
     !     leaf_out, wood_out, root_out, sap_out, heart_out, storage_out)
     
-    subroutine allocation2(dt, bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in)
+    subroutine allocation2(dt, bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in,&
+        c_deficit)
     
         
         !VARIABLE INPUTS
@@ -77,7 +78,11 @@ module alloc2
         real(r_4), intent(in) :: bminc_in ! carbon (NPP) available to be allocated
                                           !basically NPPt - NPPt-1. NPP accumulated in the year/month/day
                                          
-        !VARIABLES OUTPUTS 
+        !VARIABLES OUTPUTS
+
+        !C deficit (when NPP < 0)
+        real(r_4), intent(out) :: c_deficit
+
         !carbon outputs (kgC/m2)
         ! real(r_8), intent(out) :: leaf_out
         ! real(r_8), intent(out) :: root_out
@@ -114,9 +119,6 @@ module alloc2
         real(r_8) :: sap_inc_alloc
         real(r_8) :: heart_inc_alloc
         real(r_8) :: storage_inc_alloc
-
-        !C deficit (when NPP < 0)
-        real(r_8) :: c_deficit
 
         !variable update that goes to turnover mortality (compartment_in_ind + compartiment_inc_alloc)
         real(r_8) :: leaf_updt
@@ -793,6 +795,7 @@ module alloc2
 
         root_inc_alloc = root_inc_min
 
+        !here if there is a c deficit, the bminc is lower than 0 (negative) -> discount this C from storage
         storage_inc_alloc = bminc_in_ind - (leaf_inc_alloc + root_inc_alloc)
 
         ! print*, 'storage_inc_alloc', storage_inc_alloc

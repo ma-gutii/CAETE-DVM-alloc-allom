@@ -1,4 +1,4 @@
-! Copyright 2017- LabTerra
+! Copyright 2023- LabTerra
 
 !     This program is free software: you can redistribute it and/or modify
 !     it under the terms of the GNU General Public License as published by
@@ -14,8 +14,11 @@
 !     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ! contacts :: David Montenegro Lapola <lapoladm ( at ) gmail.com>
-! Author: JP Darela
+! Author: Bianca Rius and JP Darela
 ! This program is based on the work of those that gave us the INPE-CPTEC-PVM2 model
+
+! This program is a modified version of budget1. It is being developed to desconsider
+! nutri cycle for allocation and to implement allocation following allometric restrictions
 
 module budget2
     implicit none
@@ -193,12 +196,12 @@ module budget2
           dwood(i) = dwood_in(i)
           droot(i) = droot_in(i)
           uptk_costs(i) = uptk_costs_in(i)
+
           do j = 1,3
              sto_budg(j,i) = sto_budg_in(j,i)
           enddo
        enddo
  
-       ! find the number of grasses
  
        w = w1 + w2      ! soil water mm
        soil_temp = ts   ! soil temp °C
@@ -208,7 +211,9 @@ module budget2
        &                  ocpavg, ocp_wood, run, ocp_mm)
  
        nlen = sum(run)    ! New length for the arrays in the main loop
-       ! print*, 'NLEN',  nlen
+                          ! get the total number of alives
+
+       
        allocate(lp(nlen))
        allocate(ocp_coeffs(nlen))
        allocate(idx_grasses(nlen))
@@ -231,7 +236,10 @@ module budget2
        ! Identify grasses
        do p = 1, nlen
           if (awood_aux(lp(p)) .le. 0.0D0) idx_grasses(p) = 0.0D0
+          !This variable multipies ocp_coeffs for the wood tissues. If it is
+          !a grass it turns the ocp_coeffs for wood_tissues = 0
        enddo
+
        ! Identify Nfixers
        do p = 1, nlen
           if (pdia_aux(lp(p)) .le. 0.0D0) idx_pdia(p) = 0.0D0
@@ -296,6 +304,8 @@ module budget2
        !$OMP SCHEDULE(AUTO) &
        !$OMP DEFAULT(SHARED) &
        !$OMP PRIVATE(p, ri, carbon_in_storage, testcdef, sr, dt1, mr_sto, growth_stoc, ar_aux)
+       
+       
        do p = 1,nlen
           ! print*, 'p', p
  
@@ -303,9 +313,11 @@ module budget2
           testcdef = 0.0D0
           sr = 0.0D0
           ar_aux = 0.0D0
-          ri = lp(p)
+          ri = lp(p) !get the correspondentt value of for that specific pls (don't lose the original PLS index)
           dt1 = dt(:,ri) ! Pick up the pls functional attributes list
- 
+         
+          !here ri is real index. The outputs use p to save memory, but at the end of the doc
+          !it is transformed in ri
           call prod(dt1, ocp_wood(ri),catm, temp, soil_temp, p0, w, ipar, rh, emax&
                 &, cl1_pft(ri), ca1_pft(ri), cf1_pft(ri), dleaf(ri), dwood(ri), droot(ri)&
                 &, soil_sat, ph(p), ar(p), nppa(p), laia(p), f5(p), vpd(p), rm(p), rg(p), rc2(p)&
@@ -317,16 +329,16 @@ module budget2
           ! Check if the carbon deficit can be compensated by stored carbon
           carbon_in_storage = sto_budg(1, ri)
           storage_out_bdgt(1, p) = carbon_in_storage
-          if (c_def(p) .gt. 0.0) then
-             testcdef = c_def(p) - carbon_in_storage
-             if(testcdef .lt. 0.0) then
-                storage_out_bdgt(1, p) = carbon_in_storage - c_def(p)
-                c_def(p) = 0.0D0
-             else
-                storage_out_bdgt(1, p) = 0.0D0
-                c_def(p) = real(testcdef, kind=r_4)       ! testcdef is zero or positive
-             endif
-          endif
+         !  if (c_def(p) .gt. 0.0) then
+         !     testcdef = c_def(p) - carbon_in_storage
+         !     if(testcdef .lt. 0.0) then
+         !        storage_out_bdgt(1, p) = carbon_in_storage - c_def(p)
+         !        c_def(p) = 0.0D0
+         !     else
+         !        storage_out_bdgt(1, p) = 0.0D0
+         !        c_def(p) = real(testcdef, kind=r_4)       ! testcdef is zero or positive
+         !     endif
+         !  endif
           carbon_in_storage = 0.0D0
           testcdef = 0.0D0
  
@@ -346,7 +358,8 @@ module budget2
           
           !testing variables entering in allocation2 subroutine - done
           call allocation2(dt1, nppa(p), cl1_pft(ri), ca1_pft(ri)&
-             &, cf1_pft(ri), cs1_pft(ri), ch1_pft(ri))
+             &, cf1_pft(ri), cs1_pft(ri), ch1_pft(ri)&
+             &, c_def(p))
            
           ! Estimate growth of storage C pool
           ar_fix_hr(p) = ar_aux
@@ -381,28 +394,30 @@ module budget2
           delta_cveg(3,p) = cf2(p) - cf1_pft(ri)
  
           ! Mass Balance
- 
-          if(c_def(p) .gt. 0.0) then
-             if(dt1(7) .gt. 0.0D0) then
-                cl1_int(p) = cl2(p) - ((c_def(p) * 1e-3) * 0.333333333)
-                ca1_int(p) = ca2(p) - ((c_def(p) * 1e-3) * 0.333333333)
-                cf1_int(p) = cf2(p) - ((c_def(p) * 1e-3) * 0.333333333)
-             else
-                cl1_int(p) = cl2(p) - ((c_def(p) * 1e-3) * 0.5)
-                ca1_int(p) = 0.0D0
-                cf1_int(p) = cf2(p) - ((c_def(p) * 1e-3) * 0.5)
-             endif
-          else
-             if(dt1(7) .gt. 0.0D0) then
-                cl1_int(p) = cl2(p)
-                ca1_int(p) = ca2(p)
-                cf1_int(p) = cf2(p)
-             else
-                cl1_int(p) = cl2(p)
-                ca1_int(p) = 0.0D0
-                cf1_int(p) = cf2(p)
-             endif
-          endif
+          
+         !it is already inside allocation 2
+         !  if(c_def(p) .gt. 0.0) then
+         !     if(dt1(7) .gt. 0.0D0) then
+         !        cl1_int(p) = cl2(p) - ((c_def(p) * 1e-3) * 0.333333333)
+         !        ca1_int(p) = ca2(p) - ((c_def(p) * 1e-3) * 0.333333333)
+         !        cf1_int(p) = cf2(p) - ((c_def(p) * 1e-3) * 0.333333333)
+         !     else
+         !        cl1_int(p) = cl2(p) - ((c_def(p) * 1e-3) * 0.5)
+         !        ca1_int(p) = 0.0D0
+         !        cf1_int(p) = cf2(p) - ((c_def(p) * 1e-3) * 0.5)
+         !     endif
+         !  else
+         !     if(dt1(7) .gt. 0.0D0) then
+         !        cl1_int(p) = cl2(p)
+         !        ca1_int(p) = ca2(p)
+         !        cf1_int(p) = cf2(p)
+         !     else
+         !        cl1_int(p) = cl2(p)
+         !        ca1_int(p) = 0.0D0
+         !        cf1_int(p) = cf2(p)
+         !     endif
+         !  endif
+
           if(cl1_int(p) .lt. 0.0D0) cl1_int(p) = 0.0D0
           if(ca1_int(p) .lt. 0.0D0) ca1_int(p) = 0.0D0
           if(cf1_int(p) .lt. 0.0D0) cf1_int(p) = 0.0D0
