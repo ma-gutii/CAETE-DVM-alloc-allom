@@ -329,16 +329,16 @@ module budget2
           ! Check if the carbon deficit can be compensated by stored carbon
           carbon_in_storage = sto_budg(1, ri)
           storage_out_bdgt(1, p) = carbon_in_storage
-         !  if (c_def(p) .gt. 0.0) then
-         !     testcdef = c_def(p) - carbon_in_storage
-         !     if(testcdef .lt. 0.0) then
-         !        storage_out_bdgt(1, p) = carbon_in_storage - c_def(p)
-         !        c_def(p) = 0.0D0
-         !     else
-         !        storage_out_bdgt(1, p) = 0.0D0
-         !        c_def(p) = real(testcdef, kind=r_4)       ! testcdef is zero or positive
-         !     endif
-         !  endif
+          if (c_def(p) .gt. 0.0) then
+             testcdef = c_def(p) - carbon_in_storage
+             if(testcdef .lt. 0.0) then
+                storage_out_bdgt(1, p) = carbon_in_storage - c_def(p)
+                c_def(p) = 0.0D0
+             else
+                storage_out_bdgt(1, p) = 0.0D0
+                c_def(p) = real(testcdef, kind=r_4)       ! testcdef is zero or positive
+             endif
+          endif
           carbon_in_storage = 0.0D0
           testcdef = 0.0D0
  
@@ -358,8 +358,7 @@ module budget2
           
           !testing variables entering in allocation2 subroutine - done
           call allocation2(dt1, nppa(p), cl1_pft(ri), ca1_pft(ri)&
-             &, cf1_pft(ri), cs1_pft(ri), ch1_pft(ri)&
-             &, c_def(p))
+             &, cf1_pft(ri), cs1_pft(ri), ch1_pft(ri))
            
           ! Estimate growth of storage C pool
           ar_fix_hr(p) = ar_aux
@@ -394,30 +393,28 @@ module budget2
           delta_cveg(3,p) = cf2(p) - cf1_pft(ri)
  
           ! Mass Balance
-          
-         !it is already inside allocation 2
-         !  if(c_def(p) .gt. 0.0) then
-         !     if(dt1(7) .gt. 0.0D0) then
-         !        cl1_int(p) = cl2(p) - ((c_def(p) * 1e-3) * 0.333333333)
-         !        ca1_int(p) = ca2(p) - ((c_def(p) * 1e-3) * 0.333333333)
-         !        cf1_int(p) = cf2(p) - ((c_def(p) * 1e-3) * 0.333333333)
-         !     else
-         !        cl1_int(p) = cl2(p) - ((c_def(p) * 1e-3) * 0.5)
-         !        ca1_int(p) = 0.0D0
-         !        cf1_int(p) = cf2(p) - ((c_def(p) * 1e-3) * 0.5)
-         !     endif
-         !  else
-         !     if(dt1(7) .gt. 0.0D0) then
-         !        cl1_int(p) = cl2(p)
-         !        ca1_int(p) = ca2(p)
-         !        cf1_int(p) = cf2(p)
-         !     else
-         !        cl1_int(p) = cl2(p)
-         !        ca1_int(p) = 0.0D0
-         !        cf1_int(p) = cf2(p)
-         !     endif
-         !  endif
-
+ 
+          if(c_def(p) .gt. 0.0) then
+             if(dt1(7) .gt. 0.0D0) then
+                cl1_int(p) = cl2(p) - ((c_def(p) * 1e-3) * 0.333333333)
+                ca1_int(p) = ca2(p) - ((c_def(p) * 1e-3) * 0.333333333)
+                cf1_int(p) = cf2(p) - ((c_def(p) * 1e-3) * 0.333333333)
+             else
+                cl1_int(p) = cl2(p) - ((c_def(p) * 1e-3) * 0.5)
+                ca1_int(p) = 0.0D0
+                cf1_int(p) = cf2(p) - ((c_def(p) * 1e-3) * 0.5)
+             endif
+          else
+             if(dt1(7) .gt. 0.0D0) then
+                cl1_int(p) = cl2(p)
+                ca1_int(p) = ca2(p)
+                cf1_int(p) = cf2(p)
+             else
+                cl1_int(p) = cl2(p)
+                ca1_int(p) = 0.0D0
+                cf1_int(p) = cf2(p)
+             endif
+          endif
           if(cl1_int(p) .lt. 0.0D0) cl1_int(p) = 0.0D0
           if(ca1_int(p) .lt. 0.0D0) ca1_int(p) = 0.0D0
           if(cf1_int(p) .lt. 0.0D0) cf1_int(p) = 0.0D0

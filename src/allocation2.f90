@@ -49,8 +49,7 @@ module alloc2
     ! subroutine allocation2(bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in, storage_in, dens_in,&
     !     leaf_out, wood_out, root_out, sap_out, heart_out, storage_out)
     
-    subroutine allocation2(dt, bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in,&
-        c_deficit)
+    subroutine allocation2(dt, bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in)
     
         
         !VARIABLE INPUTS
@@ -78,11 +77,7 @@ module alloc2
         real(r_4), intent(in) :: bminc_in ! carbon (NPP) available to be allocated
                                           !basically NPPt - NPPt-1. NPP accumulated in the year/month/day
                                          
-        !VARIABLES OUTPUTS
-
-        !C deficit (when NPP < 0)
-        real(r_4), intent(out) :: c_deficit
-
+        !VARIABLES OUTPUTS 
         !carbon outputs (kgC/m2)
         ! real(r_8), intent(out) :: leaf_out
         ! real(r_8), intent(out) :: root_out
@@ -119,6 +114,9 @@ module alloc2
         real(r_8) :: sap_inc_alloc
         real(r_8) :: heart_inc_alloc
         real(r_8) :: storage_inc_alloc
+
+        !C deficit (when NPP < 0)
+        real(r_8) :: c_deficit
 
         !variable update that goes to turnover mortality (compartment_in_ind + compartiment_inc_alloc)
         real(r_8) :: leaf_updt

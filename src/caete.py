@@ -969,6 +969,11 @@ class grd:
                                          ipar[step], ru[step], self.sp_available_n, self.sp_available_p,
                                          ton, top, self.sp_organic_p, co2, sto, cleaf, cwood, croot,
                                          dcl, dca, dcf, uptk_costs, self.wmax_mm)
+                    
+                    # del sto, cleaf, cwood, croot, dcl, dca, dcf, uptk_costs
+                    # Create a dict with the function output
+                    daily_output = catch_out_budget(out)
+
                 else:
                     out = model2.daily_budget2(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
                                          self.soil_temp, temp[step], p_atm[step],
@@ -976,9 +981,9 @@ class grd:
                                          ton, top, self.sp_organic_p, co2, sto, cleaf, cwood, croot,
                                          dcl, dca, dcf, uptk_costs, self.wmax_mm)
 
-                # del sto, cleaf, cwood, croot, dcl, dca, dcf, uptk_costs
-                # Create a dict with the function output
-                daily_output = catch_out_budget(out)
+                    # del sto, cleaf, cwood, croot, dcl, dca, dcf, uptk_costs
+                    # Create a dict with the function output
+                    daily_output = catch_out_budget2(out)
 
                 self.vp_lsid = np.where(daily_output['ocpavg'] > 0.0)[0]
                 self.vp_ocp = daily_output['ocpavg'][self.vp_lsid]
@@ -1364,6 +1369,10 @@ class grd:
                                      ), self.sp_so_p, self.sp_snc[4:].sum(),
                                      co2, sto, cleaf, cwood, croot,
                                      dcl, dca, dcf, uptk_costs, self.wmax_mm)
+                
+                # Create a dict with the function output
+                daily_output = catch_out_budget(out)
+
             else:
                 out = model2.daily_budget2(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
                                      self.soil_temp, temp[step], p_atm[step],
@@ -1372,10 +1381,11 @@ class grd:
                                      ), self.sp_so_p, self.sp_snc[4:].sum(),
                                      co2, sto, cleaf, cwood, croot,
                                      dcl, dca, dcf, uptk_costs, self.wmax_mm)
+            
+                # Create a dict with the function output
+                daily_output = catch_out_budget2(out)
 
 
-            # Create a dict with the function output
-            daily_output = catch_out_budget(out)
             runoff = self.swp._update_pool(prec[step], daily_output['evavg'])
 
             self.wp_water_upper_mm = self.swp.w1
