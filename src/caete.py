@@ -214,14 +214,14 @@ def catch_out_budget(out):
 def catch_out_budget2(out):
     
     """
-    Function to catch the output from budget without nitrogen cycle
+    Function to catch the output from budget without nitrogen cycle (budget 2)
     """
 
     lst = ["evavg", "epavg", "phavg", "aravg", "nppavg",
        "laiavg", "rcavg", "f5avg", "rmavg", "rgavg", "cleafavg_pft", "cawoodavg_pft",
        "cfrootavg_pft", "stodbg", "ocpavg", "wueavg", "cueavg", "c_defavg", "vcmax",
        "specific_la", "nupt", "pupt", "litter_l", "cwd", "litter_fr", "npp2pay", "lnc", "delta_cveg",
-       "limitation_status", "uptk_strat", 'cp', 'c_cost_cwm']
+       "limitation_status", "uptk_strat", 'cp']  #'c_cost_cwm']
         
     return dict(zip(lst, out))
 
@@ -1202,44 +1202,86 @@ class grd:
                 # END SOIL NUTRIENT DYNAMICS
 
                 # # #  store (np.array) outputs
+
                 if save:
                     assert self.save == True
-                    self.carbon_costs[step] = daily_output['c_cost_cwm']
-                    self.emaxm.append(daily_output['epavg'])
-                    self.tsoil.append(self.soil_temp)
-                    self.photo[step] = daily_output['phavg']
-                    self.aresp[step] = daily_output['aravg']
-                    self.npp[step] = daily_output['nppavg']
-                    self.lai[step] = daily_output['laiavg']
-                    self.rcm[step] = daily_output['rcavg']
-                    self.f5[step] = daily_output['f5avg']
-                    self.evapm[step] = daily_output['evavg']
-                    self.wsoil[step] = self.wp_water_upper_mm
-                    self.swsoil[step] = self.wp_water_lower_mm
-                    self.rm[step] = daily_output['rmavg']
-                    self.rg[step] = daily_output['rgavg']
-                    self.wue[step] = daily_output['wueavg']
-                    self.cue[step] = daily_output['cueavg']
-                    self.cdef[step] = daily_output['c_defavg']
-                    self.vcmax[step] = daily_output['vcmax']
-                    self.specific_la[step] = daily_output['specific_la']
-                    self.cleaf[step] = daily_output['cp'][0]
-                    self.cawood[step] = daily_output['cp'][1]
-                    self.cfroot[step] = daily_output['cp'][2]
-                    self.hresp[step] = soil_out['hr']
-                    self.csoil[:, step] = soil_out['cs']
-                    self.inorg_n[step] = self.sp_in_n
-                    self.inorg_p[step] = self.sp_in_p
-                    self.sorbed_n[step] = self.sp_so_n
-                    self.sorbed_p[step] = self.sp_so_p
-                    self.snc[:, step] = soil_out['snc']
-                    self.nmin[step] = self.sp_available_n
-                    self.pmin[step] = self.sp_available_p
-                    self.area[self.vp_lsid, step] = self.vp_ocp
-                    self.lim_status[:, self.vp_lsid,
-                                    step] = daily_output['limitation_status'][:, self.vp_lsid]
-                    self.uptake_strategy[:, self.vp_lsid,
+                    if nutri_cycle:                  
+                        self.carbon_costs[step] = daily_output['c_cost_cwm']
+                        self.emaxm.append(daily_output['epavg'])
+                        self.tsoil.append(self.soil_temp)
+                        self.photo[step] = daily_output['phavg']
+                        self.aresp[step] = daily_output['aravg']
+                        self.npp[step] = daily_output['nppavg']
+                        self.lai[step] = daily_output['laiavg']
+                        self.rcm[step] = daily_output['rcavg']
+                        self.f5[step] = daily_output['f5avg']
+                        self.evapm[step] = daily_output['evavg']
+                        self.wsoil[step] = self.wp_water_upper_mm
+                        self.swsoil[step] = self.wp_water_lower_mm
+                        self.rm[step] = daily_output['rmavg']
+                        self.rg[step] = daily_output['rgavg']
+                        self.wue[step] = daily_output['wueavg']
+                        self.cue[step] = daily_output['cueavg']
+                        self.cdef[step] = daily_output['c_defavg']
+                        self.vcmax[step] = daily_output['vcmax']
+                        self.specific_la[step] = daily_output['specific_la']
+                        self.cleaf[step] = daily_output['cp'][0]
+                        self.cawood[step] = daily_output['cp'][1]
+                        self.cfroot[step] = daily_output['cp'][2]
+                        self.hresp[step] = soil_out['hr']
+                        self.csoil[:, step] = soil_out['cs']
+                        self.inorg_n[step] = self.sp_in_n
+                        self.inorg_p[step] = self.sp_in_p
+                        self.sorbed_n[step] = self.sp_so_n
+                        self.sorbed_p[step] = self.sp_so_p
+                        self.snc[:, step] = soil_out['snc']
+                        self.nmin[step] = self.sp_available_n
+                        self.pmin[step] = self.sp_available_p
+                        self.area[self.vp_lsid, step] = self.vp_ocp
+                        self.lim_status[:, self.vp_lsid,
+                                        step] = daily_output['limitation_status'][:, self.vp_lsid]
+                        self.uptake_strategy[:, self.vp_lsid,
                                          step] = daily_output['uptk_strat'][:, self.vp_lsid]
+                
+                    else:
+                        #self.carbon_costs[step] = daily_output['c_cost_cwm']
+                        self.emaxm.append(daily_output['epavg'])
+                        self.tsoil.append(self.soil_temp)
+                        self.photo[step] = daily_output['phavg']
+                        self.aresp[step] = daily_output['aravg']
+                        self.npp[step] = daily_output['nppavg']
+                        self.lai[step] = daily_output['laiavg']
+                        self.rcm[step] = daily_output['rcavg']
+                        self.f5[step] = daily_output['f5avg']
+                        self.evapm[step] = daily_output['evavg']
+                        self.wsoil[step] = self.wp_water_upper_mm
+                        self.swsoil[step] = self.wp_water_lower_mm
+                        self.rm[step] = daily_output['rmavg']
+                        self.rg[step] = daily_output['rgavg']
+                        self.wue[step] = daily_output['wueavg']
+                        self.cue[step] = daily_output['cueavg']
+                        self.cdef[step] = daily_output['c_defavg']
+                        self.vcmax[step] = daily_output['vcmax']
+                        self.specific_la[step] = daily_output['specific_la']
+                        self.cleaf[step] = daily_output['cp'][0]
+                        self.cawood[step] = daily_output['cp'][1]
+                        self.cfroot[step] = daily_output['cp'][2]
+                        self.hresp[step] = soil_out['hr']
+                        self.csoil[:, step] = soil_out['cs']
+                        self.inorg_n[step] = self.sp_in_n
+                        self.inorg_p[step] = self.sp_in_p
+                        self.sorbed_n[step] = self.sp_so_n
+                        self.sorbed_p[step] = self.sp_so_p
+                        self.snc[:, step] = soil_out['snc']
+                        self.nmin[step] = self.sp_available_n
+                        self.pmin[step] = self.sp_available_p
+                        self.area[self.vp_lsid, step] = self.vp_ocp
+                        self.lim_status[:, self.vp_lsid,
+                                        step] = daily_output['limitation_status'][:, self.vp_lsid]
+                        self.uptake_strategy[:, self.vp_lsid,
+                                         step] = daily_output['uptk_strat'][:, self.vp_lsid]
+
+
                 if ABORT:
                     rwarn("NO LIVING PLS - ABORT")
             gc.collect()
