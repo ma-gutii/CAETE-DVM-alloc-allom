@@ -214,7 +214,7 @@ def catch_out_budget(out):
 def catch_out_budget2(out):
     
     """
-    Function to catch the output from budget without nitrogen cycle (budget 2)
+    Function to catch the output from budget without nitrogen cycle
     """
 
     lst = ["evavg", "epavg", "phavg", "aravg", "nppavg",
@@ -223,11 +223,8 @@ def catch_out_budget2(out):
        "specific_la", "nupt", "pupt", "litter_l", "cwd", "litter_fr", "npp2pay", "lnc", "delta_cveg",
        "limitation_status", "uptk_strat", 'cp']  #'c_cost_cwm']
         
+        
     return dict(zip(lst, out))
-
-
-
-
 
 def catch_out_carbon3(out):
     lst = ['cs', 'snc', 'hr', 'nmin', 'pmin']
@@ -353,11 +350,17 @@ class grd:
         self.evapm = None
         self.wsoil = None
         self.swsoil = None
+
+        #autothrophic respisration
         self.rm = None
         self.rg = None
+
+        #carbon stocks
         self.cleaf = None
         self.cawood = None
         self.cfroot = None
+       
+
         self.area = None
         self.wue = None
         self.cue = None
@@ -480,10 +483,10 @@ class grd:
             shape=(3, npls, n), dtype=np.dtype('int16'), order='F')
         self.uptake_strategy = np.zeros(
             shape=(2, npls, n), dtype=np.dtype('int32'), order='F')
-
+        
     def _flush_output(self, run_descr, index):
         """1 - Clean variables that receive outputs from the fortran subroutines
-           2 - Fill self.outputs dict with filepats of output data
+           2 - Fill self.outputs dict with filepaths of output data
            3 - Returns the output data to be writen
 
            runs_descr: str a name for the files
@@ -496,54 +499,57 @@ class grd:
             spiname = run_descr + str(self.run_counter) + out_ext
 
         self.outputs[spiname] = os.path.join(self.out_dir, spiname)
+
         to_pickle = {'emaxm': np.array(self.emaxm),
-                     "tsoil": np.array(self.tsoil),
-                     "photo": self.photo,
-                     "aresp": self.aresp,
-                     'npp': self.npp,
-                     'lai': self.lai,
-                     'csoil': self.csoil,
-                     'inorg_n': self.inorg_n,
-                     'inorg_p': self.inorg_p,
-                     'sorbed_n': self.sorbed_n,
-                     'sorbed_p': self.sorbed_p,
-                     'snc': self.snc,
-                     'hresp': self.hresp,
-                     'rcm': self.rcm,
-                     'f5': self.f5,
-                     'runom': self.runom,
-                     'evapm': self.evapm,
-                     'wsoil': self.wsoil,
-                     'swsoil': self.swsoil,
-                     'rm': self.rm,
-                     'rg': self.rg,
-                     'cleaf': self.cleaf,
-                     'cawood': self.cawood,
-                     'cfroot': self.cfroot,
-                     'area': self.area,
-                     'wue': self.wue,
-                     'cue': self.cue,
-                     'cdef': self.cdef,
-                     'nmin': self.nmin,
-                     'pmin': self.pmin,
-                     'vcmax': self.vcmax,
-                     'specific_la': self.specific_la,
-                     'nupt': self.nupt,
-                     'pupt': self.pupt,
-                     'litter_l': self.litter_l,
-                     'cwd': self.cwd,
-                     'litter_fr': self.litter_fr,
-                     'lnc': self.lnc,
-                     'ls': self.ls,
-                     'lim_status': self.lim_status,
-                     'c_cost': self.carbon_costs,
-                     'u_strat': self.uptake_strategy,
-                     'storage_pool': self.storage_pool,
-                     'calendar': self.calendar,    # Calendar name
-                     'time_unit': self.time_unit,   # Time unit
-                     'sind': index[0],
-                     'eind': index[1]}
-        # Flush attrs
+                    "tsoil": np.array(self.tsoil),
+                    "photo": self.photo,
+                    "aresp": self.aresp,
+                    'npp': self.npp,
+                    'lai': self.lai,
+                    'csoil': self.csoil,
+                    'inorg_n': self.inorg_n,
+                    'inorg_p': self.inorg_p,
+                    'sorbed_n': self.sorbed_n,
+                    'sorbed_p': self.sorbed_p,
+                    'snc': self.snc,
+                    'hresp': self.hresp,
+                    'rcm': self.rcm,
+                    'f5': self.f5,
+                    'runom': self.runom,
+                    'evapm': self.evapm,
+                    'wsoil': self.wsoil,
+                    'swsoil': self.swsoil,
+                    'rm': self.rm,
+                    'rg': self.rg,
+                    'cleaf': self.cleaf,
+                    'cawood': self.cawood,
+                    'cfroot': self.cfroot,
+                    'area': self.area,
+                    'wue': self.wue,
+                    'cue': self.cue,
+                    'cdef': self.cdef,
+                    'nmin': self.nmin,
+                    'pmin': self.pmin,
+                    'vcmax': self.vcmax,
+                    'specific_la': self.specific_la,
+                    'nupt': self.nupt,
+                    'pupt': self.pupt,
+                    'litter_l': self.litter_l,
+                    'cwd': self.cwd,
+                    'litter_fr': self.litter_fr,
+                    'lnc': self.lnc,
+                    'ls': self.ls,
+                    'lim_status': self.lim_status,
+                    'c_cost': self.carbon_costs,
+                    'u_strat': self.uptake_strategy,
+                    'storage_pool': self.storage_pool,
+                    'calendar': self.calendar,    # Calendar name
+                    'time_unit': self.time_unit,   # Time unit
+                    'sind': index[0],
+                    'eind': index[1]}
+            
+            
+        # Flush attrs (clear outputs)
         self.emaxm = []
         self.tsoil = []
         self.photo = None
@@ -804,7 +810,7 @@ class grd:
             This function run the fortran subroutines and manage data flux. It
             is the proper CAETÊ-DVM execution in the start_date - end_date period
         """
-
+    #both
         assert self.filled, "The gridcell has no input data"
         assert not fix_co2 or type(
             fix_co2) == str or fix_co2 > 0, "A fixed value for ATM[CO2] must be a positive number greater than zero or a proper string "
@@ -813,12 +819,12 @@ class grd:
             splitter = ","
         else:
             splitter = "\t"
-
+    #both
         def find_co2(year):
             for i in self.co2_data:
                 if int(i.split(splitter)[0]) == year:
                     return float(i.split(splitter)[1].strip())
-
+    #both
         def find_index(start, end):
             result = []
             num = np.arange(self.ssize)
@@ -830,7 +836,7 @@ class grd:
                 if i == end:
                     result.append(r)
             return result
-
+    #both
         # Define start and end dates (read actual arguments)
         start = cftime.real_datetime(int(start_date[:4]), int(
             start_date[4:6]), int(start_date[6:]))
@@ -840,17 +846,17 @@ class grd:
         assert start < end, "start > end"
         assert start >= self.start_date
         assert end <= self.end_date
-
+    #both
         # Define time index
         start_index = int(cftime.date2num(
             start, self.time_unit, self.calendar))
         end_index = int(cftime.date2num(end, self.time_unit, self.calendar))
-
+    #both
         lb, hb = find_index(start_index, end_index)
         steps = np.arange(lb, hb + 1)
         day_indexes = np.arange(start_index, end_index + 1)
         spin = 1 if spinup == 0 else spinup
-
+    #both
         # Catch climatic input and make conversions
         temp = self.tas[lb: hb + 1] - 273.15  # ! K to °C
         prec = self.pr[lb: hb + 1] * 86400  # kg m-2 s-1 to  mm/day
@@ -859,13 +865,13 @@ class grd:
         # W m-2 to mol m-2 s-1 ! 0.5 converts RSDS to PAR
         ipar = self.rsds[lb: hb + 1] * 0.5 / 2.18e5
         ru = self.rhs[lb: hb + 1] / 100.0
-
+    #both
         year0 = start.year
         co2 = find_co2(year0)
         count_days = start.dayofyr - 2
         loop = 0
         next_year = 0.0
-
+    #both
         fix_co2_p = False
         if fix_co2 is None:
             fix_co2_p = False
@@ -879,18 +885,22 @@ class grd:
             fix_co2_p = True
 
         for s in range(spin):
+            #both
             if ABORT:
                 pID = os.getpid()
                 print(f'Closed process PID = {pID}\nGRD = {self.plot_name}\nCOORD = {self.pos}')
                 break
+            #both
             if save:
-                self._allocate_output(steps.size)
+                self._allocate_output(steps.size) #uses self. once the function is defined as a class method
                 self.save = True
             else:
                 self._allocate_output_nosave(steps.size)
                 self.save = False
+            #both
             for step in range(steps.size): #make the loop for the size of array (number of years to be simulated)
                 # print('STEP', step)
+                #both
                 if fix_co2_p:
                     pass
                 else:
@@ -912,11 +922,13 @@ class grd:
 
                     co2 += next_year
 
-                # Update soil temperature
+                #both
+                # Update soil temperature (used in maintenance respiration)
                 self.soil_temp = st.soil_temp(self.soil_temp, temp[step])
 
                 # AFEX
-                if count_days == 364 and afex:
+                #only nutri cycle
+                if count_days == 364 and afex and nutri_cycle:
                     with open("afex.cfg", 'r') as afex_cfg:
                         afex_exp = afex_cfg.readlines()
                     afex_exp = afex_exp[0].strip()
@@ -989,6 +1001,10 @@ class grd:
                 self.vp_ocp = daily_output['ocpavg'][self.vp_lsid]
                 self.ls[step] = self.vp_lsid.size
 
+                
+                #no living PLS
+
+                #when there is no need to save (spinup)
                 if self.vp_lsid.size < 1 and not save:
                     self.vp_lsid = np.sort(
                         np.array(
@@ -1014,11 +1030,17 @@ class grd:
                     self.vp_ocp = np.zeros(shape=(self.vp_lsid.size,))
                     del awood
                     self.ls[step] = self.vp_lsid.size
+                
+                #when save is true
                 else:
+                    
+                    #when there is no living PLSs ABORT
                     if self.vp_lsid.size < 1:
                         ABORT = 1
                         rwarn(f"Gridcell {self.xyname} has"  + \
                                " no living Plant Life Strategies")
+                        
+                    #when THERE IS living PLSs
                     # UPDATE vegetation pools
                     self.vp_cleaf = daily_output['cleafavg_pft'][self.vp_lsid]
                     self.vp_cwood = daily_output['cawoodavg_pft'][self.vp_lsid]
