@@ -841,7 +841,7 @@ class grd:
             for i in self.co2_data:
                 if int(i.split(splitter)[0]) == year:
                     return float(i.split(splitter)[1].strip())
-    #both
+    
         def find_index(start, end):
             result = []
             num = np.arange(self.ssize)
@@ -853,7 +853,7 @@ class grd:
                 if i == end:
                     result.append(r)
             return result
-    #both
+ 
         # Define start and end dates (read actual arguments)
         start = cftime.real_datetime(int(start_date[:4]), int(
             start_date[4:6]), int(start_date[6:]))
@@ -863,17 +863,17 @@ class grd:
         assert start < end, "start > end"
         assert start >= self.start_date
         assert end <= self.end_date
-    #both
+  
         # Define time index
         start_index = int(cftime.date2num(
             start, self.time_unit, self.calendar))
         end_index = int(cftime.date2num(end, self.time_unit, self.calendar))
-    #both
+    
         lb, hb = find_index(start_index, end_index)
         steps = np.arange(lb, hb + 1)
         day_indexes = np.arange(start_index, end_index + 1)
         spin = 1 if spinup == 0 else spinup
-    #both
+   
         # Catch climatic input and make conversions
         temp = self.tas[lb: hb + 1] - 273.15  # ! K to °C
         prec = self.pr[lb: hb + 1] * 86400  # kg m-2 s-1 to  mm/day
@@ -882,13 +882,13 @@ class grd:
         # W m-2 to mol m-2 s-1 ! 0.5 converts RSDS to PAR
         ipar = self.rsds[lb: hb + 1] * 0.5 / 2.18e5
         ru = self.rhs[lb: hb + 1] / 100.0
-    #both
+   
         year0 = start.year
         co2 = find_co2(year0)
         count_days = start.dayofyr - 2
         loop = 0
         next_year = 0.0
-    #both
+    
         fix_co2_p = False
         if fix_co2 is None:
             fix_co2_p = False
@@ -1369,10 +1369,66 @@ class grd:
             This function is analogous to run_caete but this one considers allocation
             constrained by allometry relationships and do not consider nutri cycle
         """
+        #verify if the gridcell has input data
         assert self.filled, "The gridcell has no input data"
+
+        #verify fix_co2 (see docstring)
+        assert not fix_co2 or type(
+           fix_co2) == str or fix_co2 > 0, "A fixed value for ATM[CO2] must be a positive number greater than zero or a proper string "
+
+        ABORT = 0
+
+        if self.plot is True:
+            splitter = ","
+        else:
+            splitter = "\t"
+
+        def find_co2(year):
+            for i in self.co2_data:
+                if int(i.split(splitter)[0]) == year:
+                    return float(i.split(splitter)[1].strip())
+
+        def find_index(start, end):
+            result = []
+            num = np.arange(self.ssize)
+            ind = np.arange(self.sind, self.eind + 1)
+            for r, i in zip(num, ind):
+                if i == start:
+                    result.append(r)
+            for r, i in zip(num, ind):
+                if i == end:
+                    result.append(r)
+            return result
         
+        # Define start and end dates (read actual arguments)
+        start = cftime.real_datetime(int(start_date[:4]), int(
+            start_date[4:6]), int(start_date[6:]))
+        end = cftime.real_datetime(int(end_date[:4]), int(
+            end_date[4:6]), int(end_date[6:]))
+        # Check dates sanity
+        assert start < end, "start > end"
+        assert start >= self.start_date
+        assert end <= self.end_date
+
+        # Define time index
+        start_index = int(cftime.date2num(
+            start, self.time_unit, self.calendar))
+        end_index = int(cftime.date2num(end, self.time_unit, self.calendar))
+
+        lb, hb = find_index(start_index, end_index)
+        steps = np.arange(lb, hb + 1)
+        day_indexes = np.arange(start_index, end_index + 1)
+        spin = 1 if spinup == 0 else spinup
+
+        year0 = start.year
+        co2 = find_co2(year0)
+        count_days = start.dayofyr - 2
+        loop = 0
+        next_year = 0.0
+      
         self.vp_cleaf_allom = 2
         self.vp_cheart_allom = 1
+
 
         teste = self.vp_cleaf_allom * self.vp_cheart_allom
         return teste
