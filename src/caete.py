@@ -420,6 +420,23 @@ class grd:
         self.psi_sat = None
         self.soil_texture = None
 
+        #vegetation pools for alloc allom
+            #vars in PLS scale
+        self.vp_cleaf_allom  = None #leaf
+        self.vp_cwood_allom  = None #aboveground wood tissues (sap + heart)
+        self.vp_croot_allom  = None #fine roots
+        self.vp_cheart_allom = None #heartwood
+        self.vp_csap_allom   = None #sapwood
+
+        #vegetation pools for alloc allom
+            #vars in grid cell scale (CWM computed inside budget)
+        self.cleaf_allom  = None #leaf
+        self.cwood_allom  = None #aboveground wood tissues (sap + heart)
+        self.croot_allom  = None #fine roots
+        self.cheart_allom = None #heartwood
+        self.csap_allom   = None #sapwood
+
+
     def _allocate_output_nosave(self, n):
         """allocate space for some tracked variables during spinup
         n: int NUmber of days being simulated"""
@@ -810,7 +827,7 @@ class grd:
             This function run the fortran subroutines and manage data flux. It
             is the proper CAETÊ-DVM execution in the start_date - end_date period
         """
-    #both
+   
         assert self.filled, "The gridcell has no input data"
         assert not fix_co2 or type(
             fix_co2) == str or fix_co2 > 0, "A fixed value for ATM[CO2] must be a positive number greater than zero or a proper string "
@@ -1327,6 +1344,38 @@ class grd:
                     break
         gc.collect()
         return None
+
+    def run_caete_allom(self,
+                        start_date,
+                        end_date,
+                        spinup = 0,
+                        fix_co2 = None,
+                        save = True,
+                        nutri_cycle = True):
+            
+        """ start_date [str]   "yyyymmdd" Start model execution
+
+            end_date   [str]   "yyyymmdd" End model execution
+
+            spinup     [int]   Number of repetitions in spinup. 0 for no spinup
+
+            fix_co2    [Float] Fixed value for ATM [CO2]
+                       [int]   Fixed value for ATM [CO2]
+                       [str]   "yyyy" Corresponding year of an ATM [CO2]
+
+            This function run the fortran subroutines and manage data flux. It
+            is the proper CAETÊ-DVM execution in the start_date - end_date period
+
+            This function is analogous to run_caete but this one considers allocation
+            constrained by allometry relationships and do not consider nutri cycle
+        """
+        assert self.filled, "The gridcell has no input data"
+        
+        self.vp_cleaf_allom = 2
+        self.vp_cheart_allom = 1
+
+        teste = self.vp_cleaf_allom * self.vp_cheart_allom
+        return teste
 
     def bdg_spinup(self, start_date, end_date, nutri_cycle = True):
         """SPINUP SOIL POOLS - generate soil OM and Organic nutrients inputs for soil spinup

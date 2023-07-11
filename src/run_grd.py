@@ -100,5 +100,8 @@ grid = caete.grd(236, 175, outf)
 grid.init_caete_dyn(input_path, stime, co2_data,
                     pls_table, tsoil, ssoil, hsoil)
 
-grid.run_caete('19790101', '19891231', nutri_cycle = True)
+#grid.run_caete('19790101', '19891231', nutri_cycle = True)
 
+gr1 = grid.run_caete_allom('19790101', '19891231', nutri_cycle = True)
+
+print(gr1)
