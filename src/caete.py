@@ -706,6 +706,20 @@ class grd:
         self.vp_croot = np.zeros(shape=(npls,), order='F') + 1.0
         self.vp_cwood = np.zeros(shape=(npls,), order='F') + 0.1
         self.vp_cwood[pls_table[6,:] == 0.0] = 0.0
+       
+
+        #Initial value for biomass for alloc_allom
+        #for trees
+        self.vp_cleaf_allom = np.zeros(shape=(npls,), order='F') + 1.0
+        self.vp_croot_allom = np.zeros(shape=(npls,), order='F') + 1.0
+        self.vp_cwood_allom = np.zeros(shape=(npls,), order='F') + 0.1
+        self.vp_cheart_allom = 0.85*(self.vp_cwood_allom)
+        self.vp_csap_allom = 0.15*(self.vp_cwood_allom)
+        
+        #for grasses
+        self.vp_cwood_allom[self.pls_table[6, :] == 0.0] = 0.0
+        self.vp_cheart_allom[self.pls_table[6, :] == 0.0] = 0.0
+        self.vp_csap_allom[self.pls_table[6, :] == 0.0] = 0.0
 
         # self.vp_cleaf, self.vp_croot, self.vp_cwood = m.spinup2(
         #     1.0, self.pls_table)
@@ -714,7 +728,7 @@ class grd:
         ocp_coeffs, b, c, d = m.pft_area_frac(
             self.vp_cleaf, self.vp_croot, self.vp_cwood, self.pls_table[6, :])
         
-        print('printing a:', ocp_coeffs)
+        
         self.vp_lsid = np.where(ocp_coeffs > 0.0)[0]
         self.ls = self.vp_lsid.size
         self.vp_dcl = np.zeros(shape=(npls,), order='F')
@@ -1435,12 +1449,16 @@ class grd:
         loop = 0
         next_year = 0.0
       
-        self.vp_cleaf_allom = 2
-        self.vp_cheart_allom = 1
+        cleaf_allom = self.vp_cleaf_allom
+        croot_allom = self.vp_croot_allom
+        cwood_allom = self.vp_cwood_allom
+        cheart_allom = self.vp_cheart_allom
+        csap_allom = self.vp_csap_allom
 
+        
 
-        teste = self.vp_cleaf_allom * self.vp_cheart_allom
-        return teste
+        return None
+    
 
     def bdg_spinup(self, start_date, end_date, nutri_cycle = True):
         """SPINUP SOIL POOLS - generate soil OM and Organic nutrients inputs for soil spinup

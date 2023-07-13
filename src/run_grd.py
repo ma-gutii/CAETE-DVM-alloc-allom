@@ -104,4 +104,4 @@ grid.init_caete_dyn(input_path, stime, co2_data,
 
 gr1 = grid.run_caete_allom('19790101', '19891231', nutri_cycle = True)
 
-print(gr1)
+print(grid.cleaf_allom,grid.cwood_allom, grid.cheart_allom, grid.csap_allom)
