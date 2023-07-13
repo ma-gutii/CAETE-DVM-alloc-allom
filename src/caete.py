@@ -706,11 +706,16 @@ class grd:
         self.vp_croot = np.zeros(shape=(npls,), order='F') + 1.0
         self.vp_cwood = np.zeros(shape=(npls,), order='F') + 0.1
         self.vp_cwood[pls_table[6,:] == 0.0] = 0.0
+
         # self.vp_cleaf, self.vp_croot, self.vp_cwood = m.spinup2(
         #     1.0, self.pls_table)
-        a, b, c, d = m.pft_area_frac(
+
+        #a, b, c, d are the outputs from pft_area_frac function (ocp_coeffs, ocp_wood, run_pls, c_to_soil)
+        ocp_coeffs, b, c, d = m.pft_area_frac(
             self.vp_cleaf, self.vp_croot, self.vp_cwood, self.pls_table[6, :])
-        self.vp_lsid = np.where(a > 0.0)[0]
+        
+        print('printing a:', ocp_coeffs)
+        self.vp_lsid = np.where(ocp_coeffs > 0.0)[0]
         self.ls = self.vp_lsid.size
         self.vp_dcl = np.zeros(shape=(npls,), order='F')
         self.vp_dca = np.zeros(shape=(npls,), order='F')
@@ -836,7 +841,7 @@ class grd:
             splitter = ","
         else:
             splitter = "\t"
-    #both
+    
         def find_co2(year):
             for i in self.co2_data:
                 if int(i.split(splitter)[0]) == year:
@@ -902,19 +907,19 @@ class grd:
             fix_co2_p = True
 
         for s in range(spin):
-            #both
+            
             if ABORT:
                 pID = os.getpid()
                 print(f'Closed process PID = {pID}\nGRD = {self.plot_name}\nCOORD = {self.pos}')
                 break
-            #both
+            
             if save:
                 self._allocate_output(steps.size) #uses self. once the function is defined as a class method
                 self.save = True
             else:
                 self._allocate_output_nosave(steps.size)
                 self.save = False
-            #both
+            
             for step in range(steps.size): #make the loop for the size of array (number of years to be simulated)
                 # print('STEP', step)
                 #both
@@ -979,6 +984,10 @@ class grd:
 
                 c = 0 #In each iteration of the loop, the value of c is incremented
                         #allowing access to the elements of the other lists or arrays in the next iteration.
+                
+                #Only for alive PLSs:
+                    #in the following loop cleaf will retain the values of vp_cleaf in each
+                    #indicated index
                 for n in self.vp_lsid:
                     cleaf[n] = self.vp_cleaf[c]
                     cwood[n] = self.vp_cwood[c]
