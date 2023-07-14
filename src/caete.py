@@ -928,7 +928,7 @@ class grd:
                 break
             
             if save:
-                self._allocate_output(steps.size) #uses self. once the function is defined as a class method
+                self._allocate_output(steps.size) 
                 self.save = True
             else:
                 self._allocate_output_nosave(steps.size)
@@ -1443,17 +1443,109 @@ class grd:
         day_indexes = np.arange(start_index, end_index + 1)
         spin = 1 if spinup == 0 else spinup
 
+        # Catch climatic input and make conversions
+        temp = self.tas[lb: hb + 1] - 273.15  # ! K to °C
+        prec = self.pr[lb: hb + 1] * 86400  # kg m-2 s-1 to  mm/day
+        # transforamando de Pascal pra mbar (hPa)
+        p_atm = self.ps[lb: hb + 1] * 0.01
+        # W m-2 to mol m-2 s-1 ! 0.5 converts RSDS to PAR
+        ipar = self.rsds[lb: hb + 1] * 0.5 / 2.18e5
+        ru = self.rhs[lb: hb + 1] / 100.0
+
         year0 = start.year
         co2 = find_co2(year0)
         count_days = start.dayofyr - 2
         loop = 0
         next_year = 0.0
-      
-        cleaf_allom = self.vp_cleaf_allom
-        croot_allom = self.vp_croot_allom
-        cwood_allom = self.vp_cwood_allom
-        cheart_allom = self.vp_cheart_allom
-        csap_allom = self.vp_csap_allom
+
+        if fix_co2 is None:
+            fix_co2_p = False
+        elif type(fix_co2) == int or type(fix_co2) == float:
+            co2 = fix_co2
+            fix_co2_p = True
+        elif type(fix_co2) == str:
+            assert type(int(
+                fix_co2)) == int, "The string(\"yyyy\") for the fix_co2 argument must be an year between 1901-2016"
+            co2 = find_co2(int(fix_co2))
+            fix_co2_p = True
+
+        for s in range(spin):
+            
+            if ABORT:
+                pID = os.getpid()
+                print(f'Closed process PID = {pID}\nGRD = {self.plot_name}\nCOORD = {self.pos}')
+                break
+            
+            #************need to be seen for the allometry*************
+            # if save:
+            #     self._allocate_output(steps.size) 
+            #     self.save = True
+            # else:
+            #     self._allocate_output_nosave(steps.size)
+            #     self.save = False
+
+            for step in range(steps.size): #make the loop for the size of array (number of years to be simulated)
+                # print('STEP', step)
+                #both
+                if fix_co2_p:
+                    pass
+                else:
+                    loop += 1
+                    count_days += 1
+
+                    # CAST CO2 ATM CONCENTRATION
+                    days = 366 if m.leap(year0) == 1 else 365
+                    if count_days == days:
+                        count_days = 0
+                        year0 = cftime.num2date(day_indexes[step],
+                                                self.time_unit, self.calendar).year
+                        co2 = find_co2(year0)
+                        next_year = (find_co2(year0 + 1) - co2) / days
+
+                    elif loop == 1 and count_days < days:
+                        year0 = start.year
+                        next_year = (find_co2(year0 + 1) - co2) / \
+                            (days - count_days)
+
+                    co2 += next_year
+
+                
+                # Update soil temperature (used in maintenance respiration)
+                self.soil_temp = st.soil_temp(self.soil_temp, temp[step])
+
+                #Inflate Vars
+                    #Initialize with zero to be fullfilled with data when the running occurs
+
+                cleaf_allom  = np.zeros(npls, order='F')
+                croot_allom  = np.zeros(npls, order='F')
+                cwood_allom  = np.zeros(npls, order='F')
+                cheart_allom = np.zeros(npls, order='F')
+                csap_allom   = np.zeros(npls, order='F')
+
+                # Check the integrity of the data
+                assert self.vp_lsid.size == self.vp_cleaf_allom.size, 'different array sizes'
+
+                c = 0 #In each iteration of the loop, the value of c is incremented
+                        #allowing access to the elements of the other lists or arrays in the next iteration.
+
+                #Only for alive PLSs:
+                    #in the following loop cleaf will retain the values of vp_cleaf in each
+                    #indicated index
+                for n in self.vp_lsid:
+                    cleaf_allom[n]  = self.vp_cleaf_allom[c]
+                    cwood_allom[n]  = self.vp_cwood_allom[c]
+                    croot_allom[n]  = self.vp_croot_allom[c]
+                    cheart_allom[n] = self.vp_cheart_allom[c]
+                    csap_allom[n]   = self.vp_cheart_allom[c]
+
+                    c += 1
+
+                print(cleaf_allom, cwood_allom, croot_allom, cheart_allom, csap_allom)
+                # cleaf_allom = self.vp_cleaf_allom
+                # croot_allom = self.vp_croot_allom
+                # cwood_allom = self.vp_cwood_allom
+                # cheart_allom = self.vp_cheart_allom
+                # csap_allom = self.vp_csap_allom
 
         
 
