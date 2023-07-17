@@ -81,9 +81,12 @@ contains
 
       !index for the PLS loop
       integer(i_4) :: i
+      integer(i_4) ::
 
-      !number of alive PLSs
-      integer(i_4) :: nlen
+      !PLSs
+      integer(i_4) :: nlen !number of alive PLSs
+      integer(i_4), dimension(:), allocatable :: lp ! index of living PLSs/living grasses
+      real(r_8), dimension(:), allocatable :: idx_grasses !grass identifier
 
       !vegetation pools
       real(r_8),dimension(npls) :: cleaf_pls
@@ -104,6 +107,7 @@ contains
       logical(l_1), dimension(npls) :: ocp_wood  !wood occupation
       integer(i_4), dimension(npls) :: run       !verifies if the PLS is alive
       real(r_8),    dimension(npls) :: ocp_mm    ! TODO include cabon of dead plssss in the cicle? (not implemented)
+      real(r_8),dimension(:),allocatable :: ocp_coeffs !occupancy coefficients for each PLS
       !===========================================================================
 
       !Initializing
@@ -132,8 +136,31 @@ contains
       nlen = sum(run)    ! New length for the arrays in the main loop
                          ! get the total number of alives
 
-      print*, 'nlen', nlen
-   
+      allocate(lp(nlen))
+      allocate(ocp_coeffs(nlen))
+      allocate(idx_grasses(nlen))
+
+      ! Get only living PLSs
+      counter = 1
+      do p = 1,npls
+         if(run(p).eq. 1) then
+            lp(counter) = p
+            ocp_coeffs(counter) = ocpavg(p)
+            counter = counter + 1
+         endif
+      enddo
+      
+      ! Identify grasses
+      idx_grasses(:) = 1.0D0
+      
+      do p = 1, nlen
+         if (awood_aux(lp(p)) .le. 0.0D0) idx_grasses(p) = 0.0D0
+         !This variable multipies ocp_coeffs for the wood tissues. If it is
+         !a grass it turns the ocp_coeffs for wood_tissues = 0
+      enddo
+
+      
+      
    end subroutine daily_budget_allom
  
  end module budget_allom
