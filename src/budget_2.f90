@@ -20,15 +20,15 @@
 ! This program is a modified version of budget1. It is being developed to desconsider
 ! nutri cycle for allocation and to implement allocation following allometric restrictions
 
-module budget2
+module budget_allom
     implicit none
     private
  
-    public :: daily_budget2
+    public :: daily_budget_allom
  
  contains
  
-    subroutine daily_budget2(dt, w1, w2, ts, temp, p0, ipar, rh&
+    subroutine daily_budget_allom(dt, w1, w2, ts, temp, p0, ipar, rh&
          &, mineral_n, labile_p, on, sop, op, catm, sto_budg_in, cl1_in, ca1_in, cf1_in, dleaf_in, dwood_in&
          &, droot_in, uptk_costs_in, wmax_in, evavg, epavg, phavg, aravg, nppavg&
          &, laiavg, rcavg, f5avg, rmavg, rgavg, cleafavg_pft, cawoodavg_pft&
@@ -56,8 +56,8 @@ module budget2
        real(r_4),intent(in) :: temp                 ! Surface air temperature (oC)
        real(r_4),intent(in) :: p0                   ! Surface pressure (mb)
        real(r_4),intent(in) :: ipar                 ! Incident photosynthetic active radiation mol Photons m-2 s-1
-       real(r_4),intent(in) :: rh                   ! Relative humidity
-       real(r_4),intent(in) :: mineral_n            ! Solution N NOx/NaOH gm-2
+       real(r_4),intent(in) :: rh
+       real(r_4),intent(in) :: mineral_n            ! Solution N NOx/NaOH gm-2       ! Relative humidity
        real(r_4),intent(in) :: labile_p             ! solution P O4P  gm-2
        real(r_8),intent(in) :: on, sop, op          ! Organic N, isoluble inorganic P, Organic P g m-2
        real(r_8),intent(in) :: catm, wmax_in                 ! ATM CO2 concentration ppm
@@ -585,7 +585,7 @@ module budget2
        DEALLOCATE(ar_fix_hr)
  
        
-    end subroutine daily_budget2
+    end subroutine daily_budget_allom
  
- end module budget2
+ end module budget_allom
  

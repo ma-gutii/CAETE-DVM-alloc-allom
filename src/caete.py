@@ -37,7 +37,7 @@ from numpy import log as ln
 from hydro_caete import soil_water
 from caete_module import global_par as gp
 from caete_module import budget as model
-from caete_module import budget2 as model2
+from caete_module import budget_allom as model_allom
 from caete_module import water as st
 from caete_module import photo as m
 from caete_module import soil_dec
@@ -201,7 +201,7 @@ def neighbours_index(pos, matrix):
     return neighbours
 
 
-# WARNING keep the lists of budget/carbon3/budget2 outputs updated with fortran code
+# WARNING keep the lists of budget/carbon3 outputs updated with fortran code
 def catch_out_budget(out):
     lst = ["evavg", "epavg", "phavg", "aravg", "nppavg",
            "laiavg", "rcavg", "f5avg", "rmavg", "rgavg", "cleafavg_pft", "cawoodavg_pft",
@@ -211,20 +211,11 @@ def catch_out_budget(out):
 
     return dict(zip(lst, out))
 
-def catch_out_budget2(out):
-    
-    """
-    Function to catch the output from budget without nitrogen cycle
-    """
+def catch_out_budget_allom (out):
 
-    lst = ["evavg", "epavg", "phavg", "aravg", "nppavg",
-       "laiavg", "rcavg", "f5avg", "rmavg", "rgavg", "cleafavg_pft", "cawoodavg_pft",
-       "cfrootavg_pft", "stodbg", "ocpavg", "wueavg", "cueavg", "c_defavg", "vcmax",
-       "specific_la", "nupt", "pupt", "litter_l", "cwd", "litter_fr", "npp2pay", "lnc", "delta_cveg",
-       "limitation_status", "uptk_strat", 'cp']  #'c_cost_cwm']
-        
-        
+    lst = ["cleaf_avg_pft"]
     return dict(zip(lst, out))
+
 
 def catch_out_carbon3(out):
     lst = ['cs', 'snc', 'hr', 'nmin', 'pmin']
@@ -1014,28 +1005,18 @@ class grd:
                 ton = self.sp_organic_n #+ self.sp_sorganic_n
                 top = self.sp_organic_p #+ self.sp_sorganic_p
 
-                if nutri_cycle:
+                
                                
-                    out = model.daily_budget(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
-                                         self.soil_temp, temp[step], p_atm[step],
-                                         ipar[step], ru[step], self.sp_available_n, self.sp_available_p,
-                                         ton, top, self.sp_organic_p, co2, sto, cleaf, cwood, croot,
-                                         dcl, dca, dcf, uptk_costs, self.wmax_mm)
-                    
-                    # del sto, cleaf, cwood, croot, dcl, dca, dcf, uptk_costs
-                    # Create a dict with the function output
-                    daily_output = catch_out_budget(out)
-
-                else:
-                    out = model2.daily_budget2(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
-                                         self.soil_temp, temp[step], p_atm[step],
-                                         ipar[step], ru[step], self.sp_available_n, self.sp_available_p,
-                                         ton, top, self.sp_organic_p, co2, sto, cleaf, cwood, croot,
-                                         dcl, dca, dcf, uptk_costs, self.wmax_mm)
-
-                    # del sto, cleaf, cwood, croot, dcl, dca, dcf, uptk_costs
-                    # Create a dict with the function output
-                    daily_output = catch_out_budget2(out)
+                out = model.daily_budget(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
+                                     self.soil_temp, temp[step], p_atm[step],
+                                     ipar[step], ru[step], self.sp_available_n, self.sp_available_p,
+                                     ton, top, self.sp_organic_p, co2, sto, cleaf, cwood, croot,
+                                     dcl, dca, dcf, uptk_costs, self.wmax_mm)
+                
+                # del sto, cleaf, cwood, croot, dcl, dca, dcf, uptk_costs
+                # Create a dict with the function output
+                daily_output = catch_out_budget(out)
+                print('daily nutri',daily_output['cleafavg_pft'])
 
                 self.vp_lsid = np.where(daily_output['ocpavg'] > 0.0)[0]
                 self.vp_ocp = daily_output['ocpavg'][self.vp_lsid]
@@ -1267,81 +1248,44 @@ class grd:
 
                 if save:
                     assert self.save == True
-                    if nutri_cycle:                  
-                        self.carbon_costs[step] = daily_output['c_cost_cwm']
-                        self.emaxm.append(daily_output['epavg'])
-                        self.tsoil.append(self.soil_temp)
-                        self.photo[step] = daily_output['phavg']
-                        self.aresp[step] = daily_output['aravg']
-                        self.npp[step] = daily_output['nppavg']
-                        self.lai[step] = daily_output['laiavg']
-                        self.rcm[step] = daily_output['rcavg']
-                        self.f5[step] = daily_output['f5avg']
-                        self.evapm[step] = daily_output['evavg']
-                        self.wsoil[step] = self.wp_water_upper_mm
-                        self.swsoil[step] = self.wp_water_lower_mm
-                        self.rm[step] = daily_output['rmavg']
-                        self.rg[step] = daily_output['rgavg']
-                        self.wue[step] = daily_output['wueavg']
-                        self.cue[step] = daily_output['cueavg']
-                        self.cdef[step] = daily_output['c_defavg']
-                        self.vcmax[step] = daily_output['vcmax']
-                        self.specific_la[step] = daily_output['specific_la']
-                        self.cleaf[step] = daily_output['cp'][0]
-                        self.cawood[step] = daily_output['cp'][1]
-                        self.cfroot[step] = daily_output['cp'][2]
-                        self.hresp[step] = soil_out['hr']
-                        self.csoil[:, step] = soil_out['cs']
-                        self.inorg_n[step] = self.sp_in_n
-                        self.inorg_p[step] = self.sp_in_p
-                        self.sorbed_n[step] = self.sp_so_n
-                        self.sorbed_p[step] = self.sp_so_p
-                        self.snc[:, step] = soil_out['snc']
-                        self.nmin[step] = self.sp_available_n
-                        self.pmin[step] = self.sp_available_p
-                        self.area[self.vp_lsid, step] = self.vp_ocp
-                        self.lim_status[:, self.vp_lsid,
-                                        step] = daily_output['limitation_status'][:, self.vp_lsid]
-                        self.uptake_strategy[:, self.vp_lsid,
+                               
+                    self.carbon_costs[step] = daily_output['c_cost_cwm']
+                    self.emaxm.append(daily_output['epavg'])
+                    self.tsoil.append(self.soil_temp)
+                    self.photo[step] = daily_output['phavg']
+                    self.aresp[step] = daily_output['aravg']
+                    self.npp[step] = daily_output['nppavg']
+                    self.lai[step] = daily_output['laiavg']
+                    self.rcm[step] = daily_output['rcavg']
+                    self.f5[step] = daily_output['f5avg']
+                    self.evapm[step] = daily_output['evavg']
+                    self.wsoil[step] = self.wp_water_upper_mm
+                    self.swsoil[step] = self.wp_water_lower_mm
+                    self.rm[step] = daily_output['rmavg']
+                    self.rg[step] = daily_output['rgavg']
+                    self.wue[step] = daily_output['wueavg']
+                    self.cue[step] = daily_output['cueavg']
+                    self.cdef[step] = daily_output['c_defavg']
+                    self.vcmax[step] = daily_output['vcmax']
+                    self.specific_la[step] = daily_output['specific_la']
+                    self.cleaf[step] = daily_output['cp'][0]
+                    self.cawood[step] = daily_output['cp'][1]
+                    self.cfroot[step] = daily_output['cp'][2]
+                    self.hresp[step] = soil_out['hr']
+                    self.csoil[:, step] = soil_out['cs']
+                    self.inorg_n[step] = self.sp_in_n
+                    self.inorg_p[step] = self.sp_in_p
+                    self.sorbed_n[step] = self.sp_so_n
+                    self.sorbed_p[step] = self.sp_so_p
+                    self.snc[:, step] = soil_out['snc']
+                    self.nmin[step] = self.sp_available_n
+                    self.pmin[step] = self.sp_available_p
+                    self.area[self.vp_lsid, step] = self.vp_ocp
+                    self.lim_status[:, self.vp_lsid,
+                                    step] = daily_output['limitation_status'][:, self.vp_lsid]
+                    self.uptake_strategy[:, self.vp_lsid,
                                          step] = daily_output['uptk_strat'][:, self.vp_lsid]
                 
-                    else:
-                        #self.carbon_costs[step] = daily_output['c_cost_cwm']
-                        self.emaxm.append(daily_output['epavg'])
-                        self.tsoil.append(self.soil_temp)
-                        self.photo[step] = daily_output['phavg']
-                        self.aresp[step] = daily_output['aravg']
-                        self.npp[step] = daily_output['nppavg']
-                        self.lai[step] = daily_output['laiavg']
-                        self.rcm[step] = daily_output['rcavg']
-                        self.f5[step] = daily_output['f5avg']
-                        self.evapm[step] = daily_output['evavg']
-                        self.wsoil[step] = self.wp_water_upper_mm
-                        self.swsoil[step] = self.wp_water_lower_mm
-                        self.rm[step] = daily_output['rmavg']
-                        self.rg[step] = daily_output['rgavg']
-                        self.wue[step] = daily_output['wueavg']
-                        self.cue[step] = daily_output['cueavg']
-                        self.cdef[step] = daily_output['c_defavg']
-                        self.vcmax[step] = daily_output['vcmax']
-                        self.specific_la[step] = daily_output['specific_la']
-                        self.cleaf[step] = daily_output['cp'][0]
-                        self.cawood[step] = daily_output['cp'][1]
-                        self.cfroot[step] = daily_output['cp'][2]
-                        self.hresp[step] = soil_out['hr']
-                        self.csoil[:, step] = soil_out['cs']
-                        self.inorg_n[step] = self.sp_in_n
-                        self.inorg_p[step] = self.sp_in_p
-                        self.sorbed_n[step] = self.sp_so_n
-                        self.sorbed_p[step] = self.sp_so_p
-                        self.snc[:, step] = soil_out['snc']
-                        self.nmin[step] = self.sp_available_n
-                        self.pmin[step] = self.sp_available_p
-                        self.area[self.vp_lsid, step] = self.vp_ocp
-                        self.lim_status[:, self.vp_lsid,
-                                        step] = daily_output['limitation_status'][:, self.vp_lsid]
-                        self.uptake_strategy[:, self.vp_lsid,
-                                         step] = daily_output['uptk_strat'][:, self.vp_lsid]
 
 
                 if ABORT:
@@ -1536,17 +1480,17 @@ class grd:
                     cwood_allom[n]  = self.vp_cwood_allom[c]
                     croot_allom[n]  = self.vp_croot_allom[c]
                     cheart_allom[n] = self.vp_cheart_allom[c]
-                    csap_allom[n]   = self.vp_cheart_allom[c]
+                    csap_allom[n]   = self.vp_csap_allom[c]
 
                     c += 1
 
-                print(cleaf_allom, cwood_allom, croot_allom, cheart_allom, csap_allom)
-                # cleaf_allom = self.vp_cleaf_allom
-                # croot_allom = self.vp_croot_allom
-                # cwood_allom = self.vp_cwood_allom
-                # cheart_allom = self.vp_cheart_allom
-                # csap_allom = self.vp_csap_allom
 
+
+                out = model_allom.daily_budget_allom(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm, self.wmax_mm,
+                                                     self.soil_temp, cleaf_allom, cwood_allom, croot_allom,
+                                                     cheart_allom, csap_allom)
+
+                # daily_output = catch_out_budget_allom(out)
         
 
         return None
@@ -1649,31 +1593,19 @@ class grd:
             co2 += next_year
             self.soil_temp = st.soil_temp(self.soil_temp, temp[step])
         
-            if nutri_cycle:
-                out = model.daily_budget(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
-                                     self.soil_temp, temp[step], p_atm[step],
-                                     ipar[step], ru[step], self.sp_available_n, self.sp_available_p,
-                                     self.sp_snc[:4].sum(
-                                     ), self.sp_so_p, self.sp_snc[4:].sum(),
-                                     co2, sto, cleaf, cwood, croot,
-                                     dcl, dca, dcf, uptk_costs, self.wmax_mm)
-                
-                # Create a dict with the function output
-                daily_output = catch_out_budget(out)
-
-            else:
-                out = model2.daily_budget2(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
-                                     self.soil_temp, temp[step], p_atm[step],
-                                     ipar[step], ru[step], self.sp_available_n, self.sp_available_p,
-                                     self.sp_snc[:4].sum(
-                                     ), self.sp_so_p, self.sp_snc[4:].sum(),
-                                     co2, sto, cleaf, cwood, croot,
-                                     dcl, dca, dcf, uptk_costs, self.wmax_mm)
+           
+            out = model.daily_budget(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm,
+                                 self.soil_temp, temp[step], p_atm[step],
+                                 ipar[step], ru[step], self.sp_available_n, self.sp_available_p,
+                                 self.sp_snc[:4].sum(
+                                 ), self.sp_so_p, self.sp_snc[4:].sum(),
+                                 co2, sto, cleaf, cwood, croot,
+                                 dcl, dca, dcf, uptk_costs, self.wmax_mm)
             
-                # Create a dict with the function output
-                daily_output = catch_out_budget2(out)
+            # Create a dict with the function output
+            daily_output = catch_out_budget(out)
 
-
+            
             runoff = self.swp._update_pool(prec[step], daily_output['evavg'])
 
             self.wp_water_upper_mm = self.swp.w1
