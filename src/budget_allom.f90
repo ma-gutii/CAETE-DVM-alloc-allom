@@ -166,6 +166,8 @@ contains
 
       !Initializing
 
+      !ATENÇÃO, VERIFICAR QUESTÃO DO TOTAL WOOD
+      
       do i = 1, npls
          awood_aux(i) = dt(7,i)
 
@@ -270,17 +272,44 @@ contains
 
          !!!!!!INPUT OF CSAP ONCE IT IS IT THAT RESPIRE?
 
-         ! print*,'cleaf pls', cleaf_pls(ri)
-         ! cleaf_pls(ri) = 1.
+         
          call prod(dt1, ocp_wood(ri), catm, temp, soil_temp, p0, w, ipar&
             &, rh, emax, cleaf_pls(ri), cwood_pls(ri), croot_pls(ri), dleaf(ri), dwood(ri), droot(ri)&
             &, soil_sat, ph(p), ar(p), nppa(p), laia(p), f5(p), vpd(p)&
             &, rm(p), rg(p), rc2(p), wue(p), c_def(p), vcmax(p), specific_la(p), tra(p))
       
-         ! print*, 'npp', nppa(p)
          
+         evap(p) = penman(p0, temp, rh, available_energy(temp), rc2(p)) !actual evapotranspiration (evap, mm/day)
 
+         call allocation2(dt1, nppa(p), cleaf_pls(ri), cwood_pls(ri)&
+            &, croot_pls(ri), csap_pls(ri), cheart_pls(ri))
+         
+         !Carbon use efficiency & Delta C
+         if(ph(p) .eq. 0.0 .or. nppa(p) .eq. 0.0) then
+            cue(p) = 0.0
+         else
+            cue(p) = nppa(p)/ph(p)
+         endif
+
+         !estimate growth of storage pool (acho que isso vai ser dentro da alloc)
+         !calculate storage growth respi(onde isso?)
+
+         ! growth_stoc = 0.0D0
+         ! mr_sto = 0.0D0
+         ! sr = 0.0D0
+
+         !aqui teria que mudar para as suas variáveis
+         ! delta_cveg(1,p) = cl2(p) - cl1_pft(ri)  !kg m-2
+         ! if(dt1(4) .lt. 0.0D0) then
+         !    delta_cveg(2,p) = 0.0D0
+         ! else
+         !    delta_cveg(2,p) = ca2(p) - ca1_pft(ri)
+         ! endif
+         ! delta_cveg(3,p) = cf2(p) - cf1_pft(ri)
+
+         !mass balance (acho que vai direto na alloc)     
       enddo
+      !$OMP END PARALLEL DO
 
       deallocate(lp)
       deallocate(evap)

@@ -211,6 +211,7 @@ module alloc2
 
         ! bminc_in_ind = (bminc_in/dens_in)*1.D3
 
+        print*, 'npp in', bminc_in
         !transforms to gC/m2
         leaf_in_ind    = (leaf_in)*1.D3
         root_in_ind    = (root_in)*1.D3
