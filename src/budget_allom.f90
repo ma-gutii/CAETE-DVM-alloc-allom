@@ -28,8 +28,10 @@ module budget_allom
  
 contains
  
-   subroutine daily_budget_allom(dt, w1, w2, ts, wmax_in&
+   subroutine daily_budget_allom(dt, w1, w2, wmax_in, ts, temp, p0, ipar, rh&
+      &, catm&
       &, cleaf_in, cwood_in, croot_in, cheart_in, csap_in&
+      &, dleaf_in, dwood_in, droot_in, dsap_in, dheart_in&
       &, cleaf_out, ocpavg)
 
       use types
@@ -45,23 +47,38 @@ contains
       !==========================================================================
       !     ----------------------------INPUTS-------------------------------
 
-      !PLS TABLE (traits)
+      !PLS traits (traits)
       real(r_8),dimension(ntraits,npls),intent(in) :: dt
 
-      !VEGETATION POOLS
+      !Vegetation pools
       real(r_8),dimension(npls),intent(in) :: cleaf_in
       real(r_8),dimension(npls),intent(in) :: cwood_in
       real(r_8),dimension(npls),intent(in) :: croot_in
       real(r_8),dimension(npls),intent(in) :: cheart_in
       real(r_8),dimension(npls),intent(in) :: csap_in
 
-      !WATER
+      !Delta vegetation pools
+      real(r_8),dimension(npls),intent(in) :: dleaf_in
+      real(r_8),dimension(npls),intent(in) :: dwood_in
+      real(r_8),dimension(npls),intent(in) :: droot_in
+      real(r_8),dimension(npls),intent(in) :: dheart_in
+      real(r_8),dimension(npls),intent(in) :: dsap_in
+
+      !Water
       real(r_8),intent(in) :: w1  !Initial (previous month last day) soil moisture storage (mm) - upper layer
       real(r_8),intent(in) :: w2  !Initial (previous month last day) soil moisture storage (mm) - lower layer
 
-      !SOIL
+      !Soil
       real(r_4),intent(in) :: ts      ! Soil temperature (oC)
       real(r_8),intent(in) :: wmax_in ! Saturation point
+
+      !Climatic data
+      real(r_4),intent(in) :: temp    ! Surface air temperature (oC)
+      real(r_4),intent(in) :: p0      ! Surface pressure (mb)
+      real(r_4),intent(in) :: ipar    ! Incident photosynthetic active radiation mol Photons m-2 s-1
+      real(r_4),intent(in) :: rh      ! Relative humidity 
+      real(r_8),intent(in) :: catm    ! ATM CO2 concentration ppm
+
 
       !==========================================================================
 
@@ -79,25 +96,60 @@ contains
       !==========================================================================
       !     ---------------------INTERNAL VARIABLES-------------------------------
 
-      !index for the PLS loop
+      !index for PLS loops
       integer(i_4) :: i
-      integer(i_4) ::
+      integer(i_4) :: p
+      integer(i_4) :: counter
+      integer(i_4) :: ri
+
 
       !PLSs
+      real(r_8),dimension(ntraits) :: dt1 ! Store one PLS attributes array (1D)
       integer(i_4) :: nlen !number of alive PLSs
       integer(i_4), dimension(:), allocatable :: lp ! index of living PLSs/living grasses
       real(r_8), dimension(:), allocatable :: idx_grasses !grass identifier
 
-      !vegetation pools
+      !Carbon vegetation pools
       real(r_8),dimension(npls) :: cleaf_pls
       real(r_8),dimension(npls) :: cwood_pls
       real(r_8),dimension(npls) :: croot_pls
       real(r_8),dimension(npls) :: cheart_pls
       real(r_8),dimension(npls) :: csap_pls
 
+      !Delta veg pools
+      real(r_8),dimension(npls) :: dleaf
+      real(r_8),dimension(npls) :: dwood
+      real(r_8),dimension(npls) :: droot
+      real(r_8),dimension(npls) :: dheart
+      real(r_8),dimension(npls) :: dsap
+
+
+      !Carbon Cycle
+      real(r_4),dimension(:),allocatable :: ph           !Canopy gross photosynthesis (kgC/m2/yr)
+      real(r_4),dimension(:),allocatable :: ar           !Autotrophic respiration (kgC/m2/yr)
+      real(r_4),dimension(:),allocatable :: nppa         !Net primary productivity / auxiliar
+      real(r_8),dimension(:),allocatable :: laia         !Leaf area index (m2 leaf/m2 area)
+      real(r_8),dimension(:),allocatable :: f5           !Foliar Photosynthesis (mol/m2/s)
+      real(r_4),dimension(:),allocatable :: vpd          !Vapor Pressure deficit
+      real(r_4),dimension(:),allocatable :: rm           !Maintenance respiration (kgC/m2/yr)
+      real(r_4),dimension(:),allocatable :: rg           !Growth respiration (kgC/m2/yr)
+      real(r_4),dimension(:),allocatable :: cue          !Carbon use efficiency
+      real(r_4),dimension(:),allocatable :: c_def        !Carbon deficit due to negative NPP (kgC/m2/yr) - i.e. ph < ar
+      real(r_8),dimension(:),allocatable :: vcmax        !Rubisco maximum velocity of carboxilation (µmol/m2/s)
+      real(r_8),dimension(:),allocatable :: specific_la  !Specific leaf area (m2/kg)
+      real(r_8),dimension(:),allocatable :: litter_l     ! leaf litter
+      real(r_8),dimension(:),allocatable :: cwd          ! coarse wood debris (to litter)
+      real(r_8),dimension(:),allocatable :: litter_fr    ! fine roots litter
+
       !water pools
       real(r_8) :: w  !Daily soil moisture storage (mm)
-      
+      !Water cycle
+      real(r_4),dimension(:),allocatable :: evap   !Actual evapotranspiration (mm/day)
+      real(r_4),dimension(:),allocatable :: wue    !Water use efficiency
+      real(r_4),dimension(:),allocatable :: rc2    !Canopy resistence (s/m)
+      real(r_8),dimension(:),allocatable :: tra    !Transpiration (mm/s)
+      real(r_4) :: emax                            !Maximum evapotranspiration (mm/day)
+
       !soil
       real(r_4) :: soil_temp !soil temperature
       real(r_8) :: soil_sat  !soil water saturation point
@@ -108,6 +160,8 @@ contains
       integer(i_4), dimension(npls) :: run       !verifies if the PLS is alive
       real(r_8),    dimension(npls) :: ocp_mm    ! TODO include cabon of dead plssss in the cicle? (not implemented)
       real(r_8),dimension(:),allocatable :: ocp_coeffs !occupancy coefficients for each PLS
+
+
       !===========================================================================
 
       !Initializing
@@ -121,6 +175,11 @@ contains
          cheart_pls(i) = cheart_in(i)
          csap_pls(i)   = csap_in(i)
 
+         dleaf(i)  = dleaf_in(i)
+         dwood(i)  = dwood_in(i)
+         droot(i)  = droot_in(i)
+         dsap(i)   = dsap_in(i)
+         dheart(i) = dheart_in(i)
          
          cleaf_out(i) = cleaf_pls(i) + 1.
       
@@ -159,8 +218,93 @@ contains
          !a grass it turns the ocp_coeffs for wood_tissues = 0
       enddo
 
+      !dimensioning according to alive PLSs
+      allocate(evap(nlen))
+      allocate(nppa(nlen))
+      allocate(ph(nlen))
+      allocate(ar(nlen))
+      allocate(laia(nlen))
+      allocate(f5(nlen))
+      allocate(vpd(nlen))
+      allocate(rc2(nlen))
+      allocate(rm(nlen))
+      allocate(rg(nlen))
+      allocate(wue(nlen))
+      allocate(cue(nlen))
+      allocate(c_def(nlen))
+      allocate(vcmax(nlen))
+      allocate(specific_la(nlen))
+      allocate(litter_l(nlen))
+      allocate(cwd(nlen))
+      allocate(litter_fr(nlen))
+      allocate(tra(nlen))
+
+      !     Maximum evapotranspiration (emax)
+      !     =================================
+      emax = evpot2(p0,temp,rh,available_energy(temp))
+
+
+      ! FAZER NUmthreads função de nlen pra otimizar a criação de trheads
+      if (nlen .le. 20) then
+         call OMP_SET_NUM_THREADS(1)
+      else if (nlen .le. 100) then
+         call OMP_SET_NUM_THREADS(1)
+      else if (nlen .le. 300) then
+         call OMP_SET_NUM_THREADS(2)
+      else if (nlen .le. 600) then
+         call OMP_SET_NUM_THREADS(3)
+      else
+         call OMP_SET_NUM_THREADS(3)
+      endif
+      !$OMP PARALLEL DO &
+      !$OMP SCHEDULE(AUTO) &
+      !$OMP DEFAULT(SHARED)
+
+      do p = 1,nlen
+         
+         ri = lp(p) !get the correspondentt value of for that specific pls (don't lose the original PLS index)
+         dt1 = dt(:,ri) ! Pick up the pls functional attributes list
+        
+         !here ri is real index. The outputs use p to save memory, but at the end of the doc
+         !it is transformed in p
+
+         !!!!!!INPUT OF CSAP ONCE IT IS IT THAT RESPIRE?
+
+         ! print*,'cleaf pls', cleaf_pls(ri)
+         ! cleaf_pls(ri) = 1.
+         call prod(dt1, ocp_wood(ri), catm, temp, soil_temp, p0, w, ipar&
+            &, rh, emax, cleaf_pls(ri), cwood_pls(ri), croot_pls(ri), dleaf(ri), dwood(ri), droot(ri)&
+            &, soil_sat, ph(p), ar(p), nppa(p), laia(p), f5(p), vpd(p)&
+            &, rm(p), rg(p), rc2(p), wue(p), c_def(p), vcmax(p), specific_la(p), tra(p))
       
-      
+         ! print*, 'npp', nppa(p)
+         
+
+      enddo
+
+      deallocate(lp)
+      deallocate(evap)
+      deallocate(nppa)
+      deallocate(ph)
+      deallocate(ar)
+      deallocate(laia)
+      deallocate(f5)
+      deallocate(vpd)
+      deallocate(rc2)
+      deallocate(rm)
+      deallocate(rg)
+      deallocate(wue)
+      deallocate(cue)
+      deallocate(c_def)
+      deallocate(vcmax)
+      deallocate(specific_la)
+      deallocate(litter_l)
+      deallocate(cwd)
+      deallocate(litter_fr)
+      deallocate(tra)
+      deallocate(idx_grasses)
+
+
    end subroutine daily_budget_allom
  
  end module budget_allom

@@ -319,7 +319,7 @@ module budget_allom
           dt1 = dt(:,ri) ! Pick up the pls functional attributes list
          
           !here ri is real index. The outputs use p to save memory, but at the end of the doc
-          !it is transformed in ri
+          !it is transformed in p
           call prod(dt1, ocp_wood(ri),catm, temp, soil_temp, p0, w, ipar, rh, emax&
                 &, cl1_pft(ri), ca1_pft(ri), cf1_pft(ri), dleaf(ri), dwood(ri), droot(ri)&
                 &, soil_sat, ph(p), ar(p), nppa(p), laia(p), f5(p), vpd(p), rm(p), rg(p), rc2(p)&
@@ -516,7 +516,7 @@ module budget_allom
              if (lit_nut_content(p, i) .gt. 1.0D2) lit_nut_content(p, i) = 0.0D0
              if (lit_nut_content(p, i) .lt. 0.0D0) lit_nut_content(p, i) = 0.0D0
           enddo
-       enddo
+      enddo
  
        do p = 1,3
           do i = 1, nlen

@@ -427,6 +427,12 @@ class grd:
         self.cheart_allom = None #heartwood
         self.csap_allom   = None #sapwood
 
+        #deltas for each veg pools (used to growth respiration)
+        self.vp_dcl_allom = None #leaf
+        self.vp_dca_allom = None #aboveground wood tissues (sap + heart)
+        self.vp_dcf_allom = None #fine roots
+        self.vp_dcs_allom = None #heartwood
+        self.vp_dch_allom = None #sapwood
 
     def _allocate_output_nosave(self, n):
         """allocate space for some tracked variables during spinup
@@ -742,6 +748,14 @@ class grd:
         self.sp_sorganic_n = 0.1 * self.soil_dict['tn']
         self.sp_organic_p = 0.5 * self.soil_dict['op']
         self.sp_sorganic_p = self.soil_dict['op'] - self.sp_organic_p
+
+        #delta veg for alloc_allom
+        self.vp_dcl_allom = np.zeros(shape=(npls,), order='F')
+        self.vp_dca_allom = np.zeros(shape=(npls,), order='F')
+        self.vp_dcf_allom = np.zeros(shape=(npls,), order='F')
+        self.vp_dcs_allom = np.zeros(shape=(npls,), order='F')
+        self.vp_dch_allom = np.zeros(shape=(npls,), order='F')
+
 
         self.outputs = dict()
         self.filled = True
@@ -1465,6 +1479,11 @@ class grd:
                 cwood_allom  = np.zeros(npls, order='F')
                 cheart_allom = np.zeros(npls, order='F')
                 csap_allom   = np.zeros(npls, order='F')
+                dcl_allom    = np.zeros(npls, order='F')
+                dca_allom    = np.zeros(npls, order='F')
+                dcf_allom    = np.zeros(npls, order='F')
+                dcs_allom    = np.zeros(npls, order='F')
+                dch_allom    = np.zeros(npls, order='F')
 
                 # Check the integrity of the data
                 assert self.vp_lsid.size == self.vp_cleaf_allom.size, 'different array sizes'
@@ -1481,14 +1500,21 @@ class grd:
                     croot_allom[n]  = self.vp_croot_allom[c]
                     cheart_allom[n] = self.vp_cheart_allom[c]
                     csap_allom[n]   = self.vp_csap_allom[c]
+                    dcl_allom[n]  = self.vp_dcl_allom[c]
+                    dca_allom[n]  = self.vp_dca_allom[c]
+                    dcf_allom[n]  = self.vp_dcf_allom[c]
+                    dcs_allom[n] = self.vp_dcs_allom[c]
+                    dch_allom[n]   = self.vp_dch_allom[c]
+
 
                     c += 1
 
 
 
                 out = model_allom.daily_budget_allom(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm, self.wmax_mm,
-                                                     self.soil_temp, cleaf_allom, cwood_allom, croot_allom,
-                                                     cheart_allom, csap_allom)
+                                                     self.soil_temp, temp[step], p_atm[step], ipar[step], ru[step],co2,
+                                                     cleaf_allom, cwood_allom, croot_allom,
+                                                     cheart_allom, csap_allom, dcl_allom, dca_allom, dcf_allom, dcs_allom, dch_allom)
 
                 # daily_output = catch_out_budget_allom(out)
         
