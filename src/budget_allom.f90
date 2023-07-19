@@ -28,11 +28,12 @@ module budget_allom
  
 contains
  
-   subroutine daily_budget_allom(dt, w1, w2, wmax_in, ts, temp, p0, ipar, rh&
-      &, catm&
+   subroutine daily_budget_allom(dt, w1, w2, wmax_in, ts, temp, p0, ipar, rh, catm&
       &, cleaf_in, cwood_in, croot_in, cheart_in, csap_in&
       &, dleaf_in, dwood_in, droot_in, dsap_in, dheart_in&
-      &, cleaf_out, ocpavg)
+      &, evavg, epavg, phavg, aravg, nppavg, laiavg, rcavg&
+      &, f5avg, rmavg, rgavg, wueavg, cueavg, vcmax_1&
+      &, specific_la_1, c_defavg, ocpavg)
 
       use types
       use global_par, only: ntraits, npls
@@ -86,10 +87,26 @@ contains
       !     ----------------------------OUTPUTS-------------------------------
 
       !DAILY OUTPUTS
-      real(r_8),dimension(npls),intent(out) :: cleaf_out
+      ! real(r_8),dimension(npls),intent(out) :: cleaf_out
       real(r_8),dimension(npls),intent(out) :: ocpavg    ! [0-1] Gridcell occupation
 
       !CWM OUTPUTS
+      real(r_4),intent(out) :: epavg          !Maximum evapotranspiration (mm/day)
+      real(r_8),intent(out) :: evavg          !Actual evapotranspiration Daily average (mm/day)
+      real(r_8),intent(out) :: phavg          !Daily photosynthesis (Kg m-2 y-1)
+      real(r_8),intent(out) :: aravg          !Daily autotrophic respiration (Kg m-2 y-1)
+      real(r_8),intent(out) :: nppavg         !Daily NPP (average between PFTs)(Kg m-2 y-1)
+      real(r_8),intent(out) :: laiavg         !Daily leaf19010101', '19551231 area Index m2m-2
+      real(r_8),intent(out) :: rcavg          !Daily canopy resistence s/m
+
+      real(r_8),intent(out) :: f5avg          !Daily canopy resistence s/m
+      real(r_8),intent(out) :: rmavg          !maintenance/growth respiration (Kg m-2 y-1)
+      real(r_8),intent(out) :: rgavg          !maintenance/growth respiration (Kg m-2 y-1)
+      real(r_8),intent(out) :: wueavg         ! Water use efficiency
+      real(r_8),intent(out) :: cueavg         ! [0-1]
+      real(r_8),intent(out) :: vcmax_1          ! µmol m-2 s-1
+      real(r_8),intent(out) :: specific_la_1    ! m2 g(C)-1
+      real(r_8),intent(out) :: c_defavg       ! kg(C) m-2 Carbon deficit due to negative NPP - i.e. ph < ar
 
       !==========================================================================
 
@@ -183,7 +200,7 @@ contains
          dsap(i)   = dsap_in(i)
          dheart(i) = dheart_in(i)
          
-         cleaf_out(i) = cleaf_pls(i) + 1.
+         ! cleaf_out(i) = cleaf_pls(i) + 1.
       
       enddo
 
@@ -310,6 +327,47 @@ contains
          !mass balance (acho que vai direto na alloc)     
       enddo
       !$OMP END PARALLEL DO
+
+      epavg = emax
+
+      !Fill output data
+      evavg  = 0.0D0
+      phavg  = 0.0D0
+      aravg  = 0.0D0
+      nppavg = 0.0D0
+      laiavg = 0.0D0        
+      rcavg  = 0.0D0        
+      f5avg  = 0.0D0        
+      rmavg  = 0.0D0       
+      rgavg  = 0.0D0       
+      wueavg = 0.0D0       
+      cueavg = 0.0D0       
+      vcmax_1 = 0.0D0       
+      specific_la_1 = 0.0D0  
+      c_defavg = 0.0D0      
+
+
+      ! Calculate CWM for ecosystem processes
+ 
+      ! Filter NaN in ocupation (abundance) coefficients
+      do p = 1, nlen
+         if(isnan(ocp_coeffs(p))) ocp_coeffs(p) = 0.0D0
+      enddo
+
+      evavg  = sum(real(evap, kind=r_8) * ocp_coeffs, mask= .not. isnan(evap))
+      phavg  = sum(real(ph, kind=r_8) * ocp_coeffs, mask= .not. isnan(ph))
+      aravg  = sum(real(ar, kind=r_8) * ocp_coeffs, mask= .not. isnan(ar))
+      nppavg = sum(real(nppa, kind=r_8) * ocp_coeffs, mask= .not. isnan(nppa))
+      laiavg = sum(laia * ocp_coeffs, mask= .not. isnan(laia))
+      rcavg = sum(real(rc2, kind=r_8) * ocp_coeffs, mask= .not. isnan(rc2))
+      f5avg = sum(f5 * ocp_coeffs, mask= .not. isnan(f5))
+      rmavg = sum(real(rm, kind=r_8) * ocp_coeffs, mask= .not. isnan(rm))
+      rgavg = sum(real(rg, kind=r_8) * ocp_coeffs, mask= .not. isnan(rg))
+      wueavg = sum(real(wue, kind=r_8) * ocp_coeffs, mask= .not. isnan(wue))
+      cueavg = sum(real(cue, kind=r_8) * ocp_coeffs, mask= .not. isnan(cue))
+      c_defavg = sum(real(c_def, kind=r_8) * ocp_coeffs, mask= .not. isnan(c_def)) / 2.73791
+      vcmax_1 = sum(vcmax * ocp_coeffs, mask= .not. isnan(vcmax))
+      specific_la_1 = sum(specific_la * ocp_coeffs, mask= .not. isnan(specific_la))
 
       deallocate(lp)
       deallocate(evap)
