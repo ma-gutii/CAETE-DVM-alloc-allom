@@ -158,7 +158,10 @@ def calc_ratios1(NPLS):
         x1 = np.load("./NP1.npy")
     else:
         print('NP1...')
-#ATTENTION: here it follows 2 codes, one for constant value for n2c and p2c and the other varies these variables    
+    #ATTENTION: here it follows 2 codes, one for constant value for n2c and p2c and the other varies these variables    
+    
+    #CONSTANT
+    #================================================================================    
         
         #code for constant value of n2c and p2c
         pool_n2c = np.full(5000, N0)
@@ -173,10 +176,10 @@ def calc_ratios1(NPLS):
 
         # Save the array x1 in one file
         np.save("./NP1.npy", x1)
+    #================================================================================    
 
-    idx = np.random.randint(0, x1.shape[0], size=NPLS)
-    sampleNP = x1[idx, :]
-
+    #VARIANT
+    #================================================================================    
         #original code for variant n2c and p2c
     #     pool_n2c = np.linspace(N0, NM, 5000)
     #     pool_p2c = np.linspace(P0, PM, 5000)
@@ -187,11 +190,10 @@ def calc_ratios1(NPLS):
     #     x1 = np.array(x)
         
     #     np.save("./NP1.npy", x1)
-    # idx = np.random.randint(0, x1.shape[0], size=NPLS)
-    # sampleNP = x1[idx, :]
+    #================================================================================    
 
-    print('x1 size', x1.size, x1.shape)
-    print('sampleNP', sampleNP.size, sampleNP.shape)
+    idx = np.random.randint(0, x1.shape[0], size=NPLS)
+    sampleNP = x1[idx, :]
     return sampleNP
 
 

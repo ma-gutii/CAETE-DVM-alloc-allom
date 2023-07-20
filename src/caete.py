@@ -1033,7 +1033,7 @@ class grd:
                 # del sto, cleaf, cwood, croot, dcl, dca, dcf, uptk_costs
                 # Create a dict with the function output
                 daily_output = catch_out_budget(out)
-                print('daily nutri',daily_output['cleafavg_pft'])
+                # print('daily nutri',daily_output['cleafavg_pft'])
 
                 self.vp_lsid = np.where(daily_output['ocpavg'] > 0.0)[0]
                 self.vp_ocp = daily_output['ocpavg'][self.vp_lsid]
@@ -1514,12 +1514,12 @@ class grd:
 
 
 
-                out = model_allom.daily_budget_allom(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm, self.wmax_mm,
+                out_allom = model_allom.daily_budget_allom(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm, self.wmax_mm,
                                                      self.soil_temp, temp[step], p_atm[step], ipar[step], ru[step],co2,
                                                      cleaf_allom, cwood_allom, croot_allom,
                                                      cheart_allom, csap_allom, dcl_allom, dca_allom, dcf_allom, dcs_allom, dch_allom)
 
-                daily_output = catch_out_budget_allom(out)
+                # daily_output = catch_out_budget_allom(out)
 
         return None
     
