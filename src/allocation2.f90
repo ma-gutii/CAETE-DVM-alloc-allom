@@ -248,7 +248,7 @@ module alloc2
         
         !     print*, 'leaf inc min', leaf_inc_min
         !     print*, ' '
-        !     print*, 'root inc min', root_inc_min
+        ! print*, 'root inc min', root_inc_min, root_in_ind
         !     print*, ''
         ! endif
 

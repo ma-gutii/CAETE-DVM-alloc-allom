@@ -213,7 +213,10 @@ def catch_out_budget(out):
 
 def catch_out_budget_allom (out):
 
-    lst = ["cleaf_avg_pft"]
+    lst = ["evavg","epavg","phavg","aravg","nppavg",
+           "laiavg","rcavg","f5avg","rmavg","rgavg",
+           "wueavg", "cueavg","vcmax","specific_la", "ocpavg"]
+    
     return dict(zip(lst, out))
 
 
@@ -1516,8 +1519,7 @@ class grd:
                                                      cleaf_allom, cwood_allom, croot_allom,
                                                      cheart_allom, csap_allom, dcl_allom, dca_allom, dcf_allom, dcs_allom, dch_allom)
 
-                # daily_output = catch_out_budget_allom(out)
-        
+                daily_output = catch_out_budget_allom(out)
 
         return None
     

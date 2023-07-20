@@ -33,7 +33,7 @@ contains
       &, dleaf_in, dwood_in, droot_in, dsap_in, dheart_in&
       &, evavg, epavg, phavg, aravg, nppavg, laiavg, rcavg&
       &, f5avg, rmavg, rgavg, wueavg, cueavg, vcmax_1&
-      &, specific_la_1, c_defavg, ocpavg)
+      &, specific_la_1, ocpavg)
 
       use types
       use global_par, only: ntraits, npls
@@ -106,7 +106,6 @@ contains
       real(r_8),intent(out) :: cueavg         ! [0-1]
       real(r_8),intent(out) :: vcmax_1          ! µmol m-2 s-1
       real(r_8),intent(out) :: specific_la_1    ! m2 g(C)-1
-      real(r_8),intent(out) :: c_defavg       ! kg(C) m-2 Carbon deficit due to negative NPP - i.e. ph < ar
 
       !==========================================================================
 
@@ -344,7 +343,6 @@ contains
       cueavg = 0.0D0       
       vcmax_1 = 0.0D0       
       specific_la_1 = 0.0D0  
-      c_defavg = 0.0D0      
 
 
       ! Calculate CWM for ecosystem processes
@@ -365,7 +363,6 @@ contains
       rgavg = sum(real(rg, kind=r_8) * ocp_coeffs, mask= .not. isnan(rg))
       wueavg = sum(real(wue, kind=r_8) * ocp_coeffs, mask= .not. isnan(wue))
       cueavg = sum(real(cue, kind=r_8) * ocp_coeffs, mask= .not. isnan(cue))
-      c_defavg = sum(real(c_def, kind=r_8) * ocp_coeffs, mask= .not. isnan(c_def)) / 2.73791
       vcmax_1 = sum(vcmax * ocp_coeffs, mask= .not. isnan(vcmax))
       specific_la_1 = sum(specific_la * ocp_coeffs, mask= .not. isnan(specific_la))
 

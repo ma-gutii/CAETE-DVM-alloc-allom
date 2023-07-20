@@ -158,16 +158,40 @@ def calc_ratios1(NPLS):
         x1 = np.load("./NP1.npy")
     else:
         print('NP1...')
-        pool_n2c = np.linspace(N0, NM, 5000)
-        pool_p2c = np.linspace(P0, PM, 5000)
+#ATTENTION: here it follows 2 codes, one for constant value for n2c and p2c and the other varies these variables    
+        
+        #code for constant value of n2c and p2c
+        pool_n2c = np.full(5000, N0)
+        pool_p2c = np.full(5000, P0)
 
-        x = [[a, b] for a in pool_n2c for b in pool_p2c if (
-            (a / b) >= 1.5) and ((a / b) <= 70.0)]
-        assert len(x) > 0, "zero len"
-        x1 = np.array(x)
+        # Creates the x1 array with the arrays of pool_n2c and pool_p2c
+        x1 = np.array([pool_n2c, pool_p2c])
+
+        #Transpose the array x1 so that each array is in a separate column
+        x1 = x1.T
+        print(x1)
+
+        # Save the array x1 in one file
         np.save("./NP1.npy", x1)
+
     idx = np.random.randint(0, x1.shape[0], size=NPLS)
     sampleNP = x1[idx, :]
+
+        #original code for variant n2c and p2c
+    #     pool_n2c = np.linspace(N0, NM, 5000)
+    #     pool_p2c = np.linspace(P0, PM, 5000)
+
+    #     x = [[a, b] for a in pool_n2c for b in pool_p2c if (
+    #         (a / b) >= 1.5) and ((a / b) <= 70.0)]
+    #     assert len(x) > 0, "zero len"
+    #     x1 = np.array(x)
+        
+    #     np.save("./NP1.npy", x1)
+    # idx = np.random.randint(0, x1.shape[0], size=NPLS)
+    # sampleNP = x1[idx, :]
+
+    print('x1 size', x1.size, x1.shape)
+    print('sampleNP', sampleNP.size, sampleNP.shape)
     return sampleNP
 
 
@@ -193,14 +217,39 @@ def calc_ratios2(NPLS):
         x1 = np.load("./NP2.npy")
     else:
         print('NP2...')
-        pool_n2c = np.linspace(N0, NM, 5000)
-        pool_p2c = np.linspace(P0, PM, 5000)
+    
+    #ATTENTION: here it follows 2 codes, one for constant value for n2c and p2c and the other varies these variables    
+    
+    #CONSTANT
+    #================================================================================    
+        #code for constant value of n2c and p2c
+        pool_n2c = np.full(5000, N0)
+        pool_p2c = np.full(5000, P0)
 
-        x = [[a, b] for a in pool_n2c for b in pool_p2c if (
-            (a / b) >= 4) and ((a / b) <= 180.0)]
-        assert len(x) > 0, "zero len"
-        x1 = np.array(x)
+        # Creates the x1 array with the arrays of pool_n2c and pool_p2c
+        x1 = np.array([pool_n2c, pool_p2c])
+
+        #Transpose the array x1 so that each array is in a separate column
+        x1 = x1.T
+    
+        # Save the array x1 in one file
         np.save("./NP2.npy", x1)
+    #================================================================================    
+
+    #VARIANT
+    #================================================================================    
+
+        # pool_n2c = np.linspace(N0, NM, 5000)
+        # pool_p2c = np.linspace(P0, PM, 5000)
+
+        # x = [[a, b] for a in pool_n2c for b in pool_p2c if (
+        #     (a / b) >= 4) and ((a / b) <= 180.0)]
+        # assert len(x) > 0, "zero len"
+        # x1 = np.array(x)
+        # np.save("./NP2.npy", x1)
+
+    #================================================================================    
+
     idx = np.random.randint(0, x1.shape[0], size=NPLS)
     sampleNP = x1[idx, :]
     return sampleNP
@@ -233,14 +282,37 @@ def calc_ratios3(NPLS):
         x1 = np.load("./NP3.npy")
     else:
         print('NP3...')
-        pool_n2c = np.linspace(N0, NM, 5000)
-        pool_p2c = np.linspace(P0, PM, 5000)
+    #ATTENTION: here it follows 2 codes, one for constant value for n2c and p2c and the other varies these variables    
+    
+    #CONSTANT
+    #================================================================================    
+        #code for constant value of n2c and p2c
+        pool_n2c = np.full(5000, N0)
+        pool_p2c = np.full(5000, P0)
 
-        x = [[a, b] for a in pool_n2c for b in pool_p2c if (
-            (a / b) >= 2) and ((a / b) <= 80)]
-        assert len(x) > 0, "zero len"
-        x1 = np.array(x)
+        # Creates the x1 array with the arrays of pool_n2c and pool_p2c
+        x1 = np.array([pool_n2c, pool_p2c])
+
+        #Transpose the array x1 so that each array is in a separate column
+        x1 = x1.T
+    
+        # Save the array x1 in one file
         np.save("./NP3.npy", x1)
+    #================================================================================    
+
+    #VARIANT
+    #================================================================================    
+
+        # pool_n2c = np.linspace(N0, NM, 5000)
+        # pool_p2c = np.linspace(P0, PM, 5000)
+
+        # x = [[a, b] for a in pool_n2c for b in pool_p2c if (
+        #     (a / b) >= 2) and ((a / b) <= 80)]
+        # assert len(x) > 0, "zero len"
+        # x1 = np.array(x)
+        # np.save("./NP3.npy", x1)
+    #================================================================================    
+
     idx = np.random.randint(0, x1.shape[0], size=NPLS)
     sampleNP = x1[idx, :]
     return sampleNP
