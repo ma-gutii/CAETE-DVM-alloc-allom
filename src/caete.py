@@ -212,8 +212,12 @@ def catch_out_budget(out):
     return dict(zip(lst, out))
 
 def catch_out_budget_allom (out):
+    #dly abbreviation for daily
+    #dly_c{compartment}: this is the carbon that will be the carbon's next day for each PLS
+    #dly_d{compartment}: delta carbon (Ct - Ct-1)
 
-    lst = ["evavg","epavg","phavg","aravg","nppavg",
+    lst = ["dly_cleaf", "dly_cwood", "dly_croot","dly_csap","dly_cheart",
+           "dly_dleaf", "dly_dwood", "dly_droot","dly_dsap","dly_dheart",
            "laiavg","rcavg","f5avg","rmavg","rgavg",
            "wueavg", "cueavg","vcmax","specific_la", "ocpavg"]
     
@@ -1033,7 +1037,6 @@ class grd:
                 # del sto, cleaf, cwood, croot, dcl, dca, dcf, uptk_costs
                 # Create a dict with the function output
                 daily_output = catch_out_budget(out)
-                # print('daily nutri',daily_output['cleafavg_pft'])
 
                 self.vp_lsid = np.where(daily_output['ocpavg'] > 0.0)[0]
                 self.vp_ocp = daily_output['ocpavg'][self.vp_lsid]
@@ -1519,7 +1522,17 @@ class grd:
                                                      cleaf_allom, cwood_allom, croot_allom,
                                                      cheart_allom, csap_allom, dcl_allom, dca_allom, dcf_allom, dcs_allom, dch_allom)
 
-                # daily_output = catch_out_budget_allom(out)
+                daily_output_allom = catch_out_budget_allom(out_allom)
+                
+                #Update vegetation pools
+                self.vp_cleaf_allom  = daily_output_allom['dly_cleaf'][self.vp_lsid]
+                print(self.vp_cleaf_allom)
+                self.vp_cwood_allom  = daily_output_allom['dly_cwood'][self.vp_lsid]
+                self.vp_croot_allom  = daily_output_allom['dly_croot'][self.vp_lsid]
+                self.vp_csap_allom   = daily_output_allom['dly_csap'][self.vp_lsid]
+                self.vp_cheart_allom = daily_output_allom['dly_cheart'][self.vp_lsid]
+
+
 
         return None
     

@@ -101,7 +101,7 @@ grid.init_caete_dyn(input_path, stime, co2_data,
                     pls_table, tsoil, ssoil, hsoil)
 
 #grid.run_caete('19790101', '19891231', nutri_cycle = True)
-
 gr1 = grid.run_caete_allom('19790101', '19891231', nutri_cycle = True)
 
-print(grid.cleaf_allom,grid.cwood_allom, grid.cheart_allom, grid.csap_allom)
+    # print('cleaf:',grid.cleaf_allom,'cwood: ', grid.cwood_allom, 
+    #   'cheart',grid.cheart_allom, 'csap', grid.csap_allom)

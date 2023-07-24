@@ -217,6 +217,7 @@ contains
          dheart(i) = dheart_in(i)
          
          ! cleaf_out(i) = cleaf_pls(i) + 1.
+         print*,'cleaf_in',cleaf_in(i), i
       
       enddo
 
@@ -393,11 +394,19 @@ contains
          ri = lp(p)
 
          !provisory general valeus
-         cleaf_out(ri)  =  1.0 !ATTENTION this value comes from allocation
-         cwood_out(ri)  =  1.0
-         croot_out(ri)  =  20.0
+         cleaf_out(ri)  =  cleaf_pls(p) + 0.010D0 !ATTENTION this value comes from allocation
+         croot_out(ri)  =  1.0
          cheart_out(ri) =  15.0
          csap_out(ri)   =  5.0
+         cwood_out(ri)  =  cheart_out(ri) + csap_out(ri)
+
+         !deltas
+         dleaf_out(ri)  =  0.3 !ATTENTION this value comes from allocation
+         droot_out(ri)  =  0.2
+         dheart_out(ri) =  1.0
+         dsap_out(ri)   =  0.1
+         dwood_out(ri)  =  dheart_out(ri) + dsap_out(ri)
+
 
          
       enddo
