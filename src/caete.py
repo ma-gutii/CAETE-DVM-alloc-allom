@@ -1526,7 +1526,6 @@ class grd:
                 
                 #Update vegetation pools
                 self.vp_cleaf_allom  = daily_output_allom['dly_cleaf'][self.vp_lsid]
-                print(self.vp_cleaf_allom)
                 self.vp_cwood_allom  = daily_output_allom['dly_cwood'][self.vp_lsid]
                 self.vp_croot_allom  = daily_output_allom['dly_croot'][self.vp_lsid]
                 self.vp_csap_allom   = daily_output_allom['dly_csap'][self.vp_lsid]

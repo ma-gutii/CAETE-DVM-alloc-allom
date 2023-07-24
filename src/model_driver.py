@@ -342,13 +342,13 @@ def apply_spin(grid:grd)->grd:
 
 
 def apply_fun(grid:grd)->grd:
-    grid.run_caete('19790101', '19891231', spinup=5, 
+    grid.run_caete_allom('19790101', '19891231', spinup=5, 
                    fix_co2='1980', save=False, nutri_cycle=False)
     return grid
 
  
 def apply_fun0(grid:grd)->grd:
-    grid.run_caete('19790101', '19891231', spinup=35,
+    grid.run_caete_allom('19790101', '19891231', spinup=35,
                    fix_co2='1980', save=False)
     return grid
 
@@ -361,7 +361,7 @@ def zip_gridtime(grd_pool, interval):
 
 
 def apply_funX(grid:grd, brk:list)->grd:
-    grid.run_caete(brk[0], brk[1], nutri_cycle = nutri_cycle_aux)
+    grid.run_caete_allom(brk[0], brk[1], nutri_cycle = nutri_cycle_aux)
     return grid
 
 # Garbage collection
