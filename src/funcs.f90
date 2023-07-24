@@ -640,6 +640,8 @@ contains
       ! real(r_8) :: nmgg, pmgg
       ! real(r_8) :: coeffa, coeffb
 
+
+
       nbio2 = nbio !nrubisco(leaf_turnover, nbio)
       pbio2 = pbio !nrubisco(leaf_turnover, pbio)
 
@@ -664,7 +666,11 @@ contains
 
       ! vm_nutri = coeffa + (coeffb * dlog10(nbio2))
 
-      vm = vcmax_a(nbio2, pbio2, spec_leaf_area(leaf_turnover)) ! 10**vm_nutri * 1D-6  ! 
+      !Vm considering nutrients role:
+      !vm = vcmax_a(nbio2, pbio2, spec_leaf_area(leaf_turnover)) ! 10**vm_nutri * 1D-6  ! 
+      
+      !Vm using the value adopted in CPTECPVM2
+      vm = vcmax
       if(vm + 1 .eq. vm) vm = 1.0D-5 ! If Vc max is inf give it a low value
       if(vm .gt. p25) vm = p25
 

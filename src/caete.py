@@ -1,6 +1,6 @@
 # -*-coding:utf-8-*-
 # "CAETÊ"
-# Author:  João Paulo Darela Filho
+# Author:  João Paulo Darela Filho & Bianca Rius
 """
 Copyright 2017- LabTerra
 

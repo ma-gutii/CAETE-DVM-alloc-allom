@@ -64,7 +64,7 @@ contains
     real(r_4), intent(out) :: wue
     real(r_4), intent(out) :: c_defcit     ! Carbon deficit gm-2 if it is positive, aresp was greater than npp + sto2(1)
     real(r_8), intent(out) :: sla, e        !specific leaf area (m2/kg)
-    real(r_8), intent(out) :: vm_out
+    real(r_8), intent(out) :: vm_out        ! PLS Vcmax mol m-2 s-1
 !     Internal
 
     real(r_8) :: tleaf,awood            !leaf/wood turnover time (yr)
