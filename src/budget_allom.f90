@@ -31,6 +31,8 @@ contains
    subroutine daily_budget_allom(dt, w1, w2, wmax_in, ts, temp, p0, ipar, rh, catm&
       &, cleaf_in, cwood_in, croot_in, cheart_in, csap_in&
       &, dleaf_in, dwood_in, droot_in, dsap_in, dheart_in&
+      &, cleaf_out, cwood_out, croot_out, csap_out, cheart_out&
+      &, dleaf_out, dwood_out, droot_out, dsap_out, dheart_out&
       &, evavg, epavg, phavg, aravg, nppavg, laiavg, rcavg&
       &, f5avg, rmavg, rgavg, wueavg, cueavg, vcmax_1&
       &, specific_la_1, ocpavg)
@@ -87,7 +89,22 @@ contains
       !     ----------------------------OUTPUTS-------------------------------
 
       !DAILY OUTPUTS
-      ! real(r_8),dimension(npls),intent(out) :: cleaf_out
+      !Vegetation pools
+      real(r_8),dimension(npls),intent(out) :: cleaf_out
+      real(r_8),dimension(npls),intent(out) :: cwood_out
+      real(r_8),dimension(npls),intent(out) :: croot_out
+      real(r_8),dimension(npls),intent(out) :: cheart_out
+      real(r_8),dimension(npls),intent(out) :: csap_out
+
+      !Delta vegetation pools
+      real(r_8),dimension(npls),intent(out) :: dleaf_out
+      real(r_8),dimension(npls),intent(out) :: dwood_out
+      real(r_8),dimension(npls),intent(out) :: droot_out
+      real(r_8),dimension(npls),intent(out) :: dheart_out
+      real(r_8),dimension(npls),intent(out) :: dsap_out
+
+
+
       real(r_8),dimension(npls),intent(out) :: ocpavg    ! [0-1] Gridcell occupation
 
       !CWM OUTPUTS
@@ -342,8 +359,13 @@ contains
       wueavg = 0.0D0       
       cueavg = 0.0D0       
       vcmax_1 = 0.0D0       
-      specific_la_1 = 0.0D0  
-
+      specific_la_1 = 0.0D0
+      
+      cleaf_out(:)  = 0.0D0
+      cwood_out(:)  = 0.0D0
+      croot_out(:)  = 0.0D0
+      cheart_out(:) = 0.0D0
+      csap_out(:)   = 0.0D0
 
       ! Calculate CWM for ecosystem processes
  
@@ -365,6 +387,21 @@ contains
       cueavg = sum(real(cue, kind=r_8) * ocp_coeffs, mask= .not. isnan(cue))
       vcmax_1 = sum(vcmax * ocp_coeffs, mask= .not. isnan(vcmax))
       specific_la_1 = sum(specific_la * ocp_coeffs, mask= .not. isnan(specific_la))
+
+      !daily output to carbon pools (not CWM)
+      do p = 1, nlen
+         ri = lp(p)
+
+         !provisory general valeus
+         cleaf_out(ri)  =  1.0 !ATTENTION this value comes from allocation
+         cwood_out(ri)  =  1.0
+         croot_out(ri)  =  20.0
+         cheart_out(ri) =  15.0
+         csap_out(ri)   =  5.0
+
+         
+      enddo
+
 
       deallocate(lp)
       deallocate(evap)
