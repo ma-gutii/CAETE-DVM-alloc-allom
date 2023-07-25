@@ -426,6 +426,7 @@ class grd:
         self.vp_croot_allom  = None #fine roots
         self.vp_cheart_allom = None #heartwood
         self.vp_csap_allom   = None #sapwood
+        self.vp_csto_alom     = None #storage
 
         #vegetation pools for alloc allom
             #vars in grid cell scale (CWM computed inside budget)
@@ -434,6 +435,7 @@ class grd:
         self.croot_allom  = None #fine roots
         self.cheart_allom = None #heartwood
         self.csap_allom   = None #sapwood
+        self.csto_allom   = None #storage
 
         #deltas for each veg pools (used to growth respiration)
         self.vp_dcl_allom = None #leaf
@@ -441,6 +443,8 @@ class grd:
         self.vp_dcf_allom = None #fine roots
         self.vp_dcs_allom = None #heartwood
         self.vp_dch_allom = None #sapwood
+        self.vp_dcst_allom = None #storage
+
 
     def _allocate_output_nosave(self, n):
         """allocate space for some tracked variables during spinup
@@ -755,6 +759,7 @@ class grd:
         self.vp_cwood_allom = np.zeros(shape=(npls,), order='F') + 0.1
         self.vp_cheart_allom = 0.85*(self.vp_cwood_allom)
         self.vp_csap_allom = 0.15*(self.vp_cwood_allom)
+        self.vp_csto_allom = np.zeros(shape=(npls,), order='F') + 0.1
         
         #for grasses
         self.vp_cwood_allom[self.pls_table[6, :] == 0.0] = 0.0
@@ -798,6 +803,8 @@ class grd:
         self.vp_dcf_allom = np.zeros(shape=(npls,), order='F')
         self.vp_dcs_allom = np.zeros(shape=(npls,), order='F')
         self.vp_dch_allom = np.zeros(shape=(npls,), order='F')
+        self.vp_dcst_allom = np.zeros(shape=(npls,), order='F')
+
 
 
         self.outputs = dict()
@@ -1374,7 +1381,7 @@ class grd:
                         spinup = 0,
                         fix_co2 = None,
                         save = True,
-                        nutri_cycle = True):
+                        nutri_cycle = False):
             
         """ start_date [str]   "yyyymmdd" Start model execution
 
@@ -1528,11 +1535,14 @@ class grd:
                 cwood_allom  = np.zeros(npls, order='F')
                 cheart_allom = np.zeros(npls, order='F')
                 csap_allom   = np.zeros(npls, order='F')
+                csto_allom   = np.zeros(npls, order='F')
                 dcl_allom    = np.zeros(npls, order='F')
                 dca_allom    = np.zeros(npls, order='F')
                 dcf_allom    = np.zeros(npls, order='F')
                 dcs_allom    = np.zeros(npls, order='F')
                 dch_allom    = np.zeros(npls, order='F')
+                dcst_allom   = np.zeros(npls, order='F')
+
 
                 # Check the integrity of the data
                 assert self.vp_lsid.size == self.vp_cleaf_allom.size, 'different array sizes'
@@ -1549,11 +1559,13 @@ class grd:
                     croot_allom[n]  = self.vp_croot_allom[c]
                     cheart_allom[n] = self.vp_cheart_allom[c]
                     csap_allom[n]   = self.vp_csap_allom[c]
+                    csto_allom[n]   = self.vp_csto_allom[c]
                     dcl_allom[n]  = self.vp_dcl_allom[c]
                     dca_allom[n]  = self.vp_dca_allom[c]
                     dcf_allom[n]  = self.vp_dcf_allom[c]
-                    dcs_allom[n] = self.vp_dcs_allom[c]
+                    dcs_allom[n]  = self.vp_dcs_allom[c]
                     dch_allom[n]   = self.vp_dch_allom[c]
+                    dcst_allom[n]  = self.vp_dcst_allom[c]
 
 
                     c += 1
@@ -1603,7 +1615,7 @@ class grd:
         return None
     
 
-    def bdg_spinup(self, start_date, end_date, nutri_cycle = True):
+    def bdg_spinup(self, start_date, end_date):
         """SPINUP SOIL POOLS - generate soil OM and Organic nutrients inputs for soil spinup
         - Side effect - Start soil water pools pools """
 

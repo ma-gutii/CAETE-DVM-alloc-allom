@@ -105,3 +105,4 @@ gr1 = grid.run_caete_allom('19790101', '19891231', nutri_cycle = True)
 
     # print('cleaf:',grid.cleaf_allom,'cwood: ', grid.cwood_allom, 
     #   'cheart',grid.cheart_allom, 'csap', grid.csap_allom)
+print(grid.cleaf_allom,grid.cwood_allom, grid.cheart_allom, grid.csap_allom)

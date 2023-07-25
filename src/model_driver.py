@@ -79,6 +79,23 @@ __descr__ = """RUN CAETÊ"""
 
 FUNCALLS = 0
 
+#check which version will be runned (allom or nutri_cycle)
+while True:
+    version_allom = input('Which version? (1: allom/2: nutri_cycle) ')
+
+    if version_allom == '1':
+        allom = True
+        print('')
+        print('You are using the version considering allometry constraints without nutrient cycle')
+        print('')
+        break
+    if version_allom == '2':
+        allom = False
+        print('')
+        print('You are using the version with fix proportion to allocation and considering nutrient cycle')
+        print('')
+        break
+
 
 def check_start():
     while True:
@@ -144,14 +161,6 @@ if not sombrero:
     else:
         print("Running in the zone: c")
         zone = 'c'
-
-#Choose if nutrient cycle will be used or not
-nutri_cycle_aux = input("Do you want to use the nutrient cycle? (y/n)")
-
-if nutri_cycle_aux == 'y':
-    nutri_cycle_aux = True
-else:
-    nutri_cycle_aux = False
     
 
 if zone == 'c':
@@ -336,19 +345,27 @@ for i, g in enumerate(grid_mn):  #enumerate creates the index (i) for each gridc
 def apply_spin(grid:grd)->grd:
     """pre-spinup use some outputs of daily budget (water, litter C, N and P) to start soil organic pools"""
     w, ll, cwd, rl, lnc = grid.bdg_spinup(
-        start_date = "19790101", end_date = "19830101", nutri_cycle = nutri_cycle_aux)
+        start_date = "19790101", end_date = "19830101")
     grid.sdc_spinup(w, ll, cwd, rl, lnc)
     return grid
 
 
-def apply_fun(grid:grd)->grd:
-    grid.run_caete('19790101', '19891231', spinup=5, 
+def apply_fun(grid:grd, allometry = allom)->grd:
+    if allom:
+        grid.run_caete_allom('19790101','19891231', spinup=5, 
+                   fix_co2='1980', save=False, nutri_cycle=False)
+    else:
+        grid.run_caete('19790101', '19891231', spinup=5, 
                    fix_co2='1980', save=False, nutri_cycle=False)
     return grid
 
  
-def apply_fun0(grid:grd)->grd:
-    grid.run_caete('19790101', '19891231', spinup=35,
+def apply_fun0(grid:grd, allometry = allom)->grd:
+    if allom:
+        grid.run_caete_allom('19790101', '19891231', spinup=35,
+                   fix_co2='1980', save=False)
+    else:
+        grid.run_caete('19790101', '19891231', spinup=35,
                    fix_co2='1980', save=False)
     return grid
 
@@ -360,8 +377,11 @@ def zip_gridtime(grd_pool, interval):
     return res
 
 
-def apply_funX(grid:grd, brk:list)->grd:
-    grid.run_caete(brk[0], brk[1], nutri_cycle = nutri_cycle_aux)
+def apply_funX(grid:grd, brk:list, allometry = allom)->grd:
+    if allom:
+        grid.run_caete_allom(brk[0], brk[1])
+    else:
+        grid.run_caete(brk[0], brk[1])
     return grid
 
 # Garbage collection
