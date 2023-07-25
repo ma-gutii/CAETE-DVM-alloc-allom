@@ -31,8 +31,9 @@ contains
    subroutine daily_budget_allom(dt, w1, w2, wmax_in, ts, temp, p0, ipar, rh, catm&
       &, cleaf_in, cwood_in, croot_in, cheart_in, csap_in&
       &, dleaf_in, dwood_in, droot_in, dsap_in, dheart_in&
-      &, cleaf_out, cwood_out, croot_out, csap_out, cheart_out&
+      &, cleaf_out, cwood_out, croot_out, csap_out, cheart_out& !outputs
       &, dleaf_out, dwood_out, droot_out, dsap_out, dheart_out&
+      &, cleaf_grd&
       &, evavg, epavg, phavg, aravg, nppavg, laiavg, rcavg&
       &, f5avg, rmavg, rgavg, wueavg, cueavg, vcmax_1&
       &, specific_la_1, ocpavg)
@@ -115,7 +116,6 @@ contains
       real(r_8),intent(out) :: nppavg         !Daily NPP (average between PFTs)(Kg m-2 y-1)
       real(r_8),intent(out) :: laiavg         !Daily leaf19010101', '19551231 area Index m2m-2
       real(r_8),intent(out) :: rcavg          !Daily canopy resistence s/m
-
       real(r_8),intent(out) :: f5avg          !Daily canopy resistence s/m
       real(r_8),intent(out) :: rmavg          !maintenance/growth respiration (Kg m-2 y-1)
       real(r_8),intent(out) :: rgavg          !maintenance/growth respiration (Kg m-2 y-1)
@@ -123,6 +123,11 @@ contains
       real(r_8),intent(out) :: cueavg         ! [0-1]
       real(r_8),intent(out) :: vcmax_1          ! µmol m-2 s-1
       real(r_8),intent(out) :: specific_la_1    ! m2 g(C)-1
+
+      !carbon veg. pools for the gridcell (grd)
+      !Values considering all the PLSs weighted by their relative C contribution
+      real(r_8), intent(out) :: cleaf_grd
+
 
       !==========================================================================
 
@@ -148,6 +153,20 @@ contains
       real(r_8),dimension(npls) :: croot_pls
       real(r_8),dimension(npls) :: cheart_pls
       real(r_8),dimension(npls) :: csap_pls
+
+      !Carbon vegetation pools after allocation routine
+      real(r_8),dimension(:), allocatable :: cleaf_pls2
+      real(r_8),dimension(:), allocatable :: cwood_pls2
+      real(r_8),dimension(:), allocatable :: croot_pls2
+      real(r_8),dimension(:), allocatable :: cheart_pls2
+      real(r_8),dimension(:), allocatable :: csap_pls2
+
+      !Carbon vegetation pools (auxiliar for internal convertions)
+      real(r_8),dimension(:), allocatable :: cleaf_pls_aux
+      real(r_8),dimension(:), allocatable :: cwood_pls_aux
+      real(r_8),dimension(:), allocatable :: croot_pls_aux
+      real(r_8),dimension(:), allocatable :: cheart_pls_aux
+      real(r_8),dimension(:), allocatable :: csap_pls_aux
 
       !Delta veg pools
       real(r_8),dimension(npls) :: dleaf
@@ -274,6 +293,8 @@ contains
       allocate(cwd(nlen))
       allocate(litter_fr(nlen))
       allocate(tra(nlen))
+      allocate(cleaf_pls2(nlen))
+      allocate(cleaf_pls_aux(nlen))
 
       !     Maximum evapotranspiration (emax)
       !     =================================
@@ -316,7 +337,9 @@ contains
          evap(p) = penman(p0, temp, rh, available_energy(temp), rc2(p)) !actual evapotranspiration (evap, mm/day)
 
          call allocation2(dt1, nppa(p), cleaf_pls(ri), cwood_pls(ri)&
-            &, croot_pls(ri), csap_pls(ri), cheart_pls(ri))
+            &, croot_pls(ri), csap_pls(ri), cheart_pls(ri)&
+            &, cleaf_pls2(p))
+            !!!ATENÇÃO cleaf_pls2 is output from allocation
          
          !Carbon use efficiency & Delta C
          if(ph(p) .eq. 0.0 .or. nppa(p) .eq. 0.0) then
@@ -341,7 +364,8 @@ contains
          ! endif
          ! delta_cveg(3,p) = cf2(p) - cf1_pft(ri)
 
-         !mass balance (acho que vai direto na alloc)     
+         !mass balance (acho que vai direto na alloc)ATTENTION
+         cleaf_pls_aux(p) = cleaf_pls2(p)
       enddo
       !$OMP END PARALLEL DO
 
@@ -368,6 +392,8 @@ contains
       cheart_out(:) = 0.0D0
       csap_out(:)   = 0.0D0
 
+      cleaf_grd = 0.0D0
+
       ! Calculate CWM for ecosystem processes
  
       ! Filter NaN in ocupation (abundance) coefficients
@@ -389,12 +415,14 @@ contains
       vcmax_1 = sum(vcmax * ocp_coeffs, mask= .not. isnan(vcmax))
       specific_la_1 = sum(specific_la * ocp_coeffs, mask= .not. isnan(specific_la))
 
+      cleaf_grd = sum(cleaf_pls_aux * ocp_coeffs, mask = .not. isnan(cleaf_pls_aux))
+
       !daily output to carbon pools (not CWM)
       do p = 1, nlen
          ri = lp(p)
 
          !provisory general valeus
-         cleaf_out(ri)  =  cleaf_pls(p) + 0.0010D0 !ATTENTION this value comes from allocation
+         cleaf_out(ri)  =  cleaf_pls2(p) + 0.0010D0 !ATTENTION this value comes from allocation
          croot_out(ri)  =  1.0
          cheart_out(ri) =  15.0
          csap_out(ri)   =  5.0

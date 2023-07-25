@@ -218,6 +218,7 @@ def catch_out_budget_allom (out):
 
     lst = ["dly_cleaf", "dly_cwood", "dly_croot","dly_csap","dly_cheart",
            "dly_dleaf", "dly_dwood", "dly_droot","dly_dsap","dly_dheart",
+           "cleaf_grd","evavg", "epavg", "phavg", "aravg", "nppavg", 
            "laiavg","rcavg","f5avg","rmavg","rgavg",
            "wueavg", "cueavg","vcmax","specific_la", "ocpavg"]
     
@@ -505,6 +506,14 @@ class grd:
         self.uptake_strategy = np.zeros(
             shape=(2, npls, n), dtype=np.dtype('int32'), order='F')
         
+    def _allocate_output_allom(self, n, npls = npls):
+        """
+            allocate space for the outputs using allometric constraints
+            n: int number of days being simulated
+        """
+        self.cleaf_allom = np.zeros(shape=(n,), order='F')
+
+
     def _flush_output(self, run_descr, index):
         """1 - Clean variables that receive outputs from the fortran subroutines
            2 - Fill self.outputs dict with filepaths of output data
@@ -616,6 +625,33 @@ class grd:
         self.carbon_costs = None,
         self.uptake_strategy = None
 
+        return to_pickle
+
+    def _flush_output_allom(self, run_descr, index):
+        """1 - Clean variables that receive outputs from the fortran subroutines
+           2 - Fill self.outputs dict with filepaths of output data
+           3 - Returns the output data to be writen
+
+           runs_descr: str a name for the files
+           index = tuple or list with the first and last values of the index time variable"""
+        to_pickle = {}
+        self.run_counter += 1
+        if self.run_counter < 10:
+            spiname = run_descr + "0" + str(self.run_counter) + out_ext
+        else:
+            spiname = run_descr + str(self.run_counter) + out_ext
+
+        self.outputs[spiname] = os.path.join(self.out_dir, spiname)
+
+        to_pickle = {'cleaf': self.cleaf_allom,                  
+                    'time_unit': self.time_unit,   # Time unit
+                    'sind': index[0],
+                    'eind': index[1]}
+            
+            
+        # Flush attrs (clear outputs)
+        self.cleaf = None
+       
         return to_pickle
 
     def _save_output(self, data_obj):
@@ -1439,6 +1475,13 @@ class grd:
                 pID = os.getpid()
                 print(f'Closed process PID = {pID}\nGRD = {self.plot_name}\nCOORD = {self.pos}')
                 break
+
+            if save:
+                self._allocate_output_allom(steps.size)
+                self.save = True
+            else:
+                self._allocate_output_nosave(steps.size)
+                self.save = False
             
             #************need to be seen for the allometry*************
             # if save:
@@ -1531,8 +1574,32 @@ class grd:
                 self.vp_csap_allom   = daily_output_allom['dly_csap'][self.vp_lsid]
                 self.vp_cheart_allom = daily_output_allom['dly_cheart'][self.vp_lsid]
 
+                if save:
+                    assert self.save == True
 
-
+                    self.cleaf_allom = daily_output_allom['cleaf_grd']
+                
+                if ABORT:
+                    rwarn("No living PLS - ABORT")
+            gc.collect()
+            if save:
+                if s > 0:
+                    while True:
+                        if sv.is_alive():
+                            sleep(0.5)
+                        else:
+                            break
+                self.flush_data = self._flush_output_allom(
+                    'spin', (start_index, end_index))
+                sv = Thread(target = self._save_output, args=(self.flush_data,))
+                sv.start()
+        if save:
+            while True:
+                if sv.is_alive():
+                    sleep(0.5)
+                else:
+                    break
+        gc.collect()
         return None
     
 
