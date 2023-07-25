@@ -71,7 +71,7 @@ from netCDF4 import Dataset
 import numpy as np
 
 import caete
-from caete import grd, mask, npls, print_progress, rbrk
+from caete import grd, mask, npls, print_progress, rbrk, allom
 import plsgen as pls
 
 __author__ = "João Paulo Darela Filho"
@@ -80,22 +80,6 @@ __descr__ = """RUN CAETÊ"""
 FUNCALLS = 0
 
 #check which version will be runned (allom or nutri_cycle)
-while True:
-    version_allom = input('Which version? (1: allom/2: nutri_cycle) ')
-
-    if version_allom == '1':
-        allom = True
-        print('')
-        print('You are using the version considering allometry constraints without nutrient cycle')
-        print('')
-        break
-    if version_allom == '2':
-        allom = False
-        print('')
-        print('You are using the version with fix proportion to allocation and considering nutrient cycle')
-        print('')
-        break
-
 
 def check_start():
     while True:

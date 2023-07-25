@@ -29,10 +29,10 @@ module budget_allom
 contains
  
    subroutine daily_budget_allom(dt, w1, w2, wmax_in, ts, temp, p0, ipar, rh, catm&
-      &, cleaf_in, cwood_in, croot_in, cheart_in, csap_in&
-      &, dleaf_in, dwood_in, droot_in, dsap_in, dheart_in&
-      &, cleaf_out, cwood_out, croot_out, csap_out, cheart_out& !outputs
-      &, dleaf_out, dwood_out, droot_out, dsap_out, dheart_out&
+      &, cleaf_in, cwood_in, croot_in, csap_in, cheart_in, csto_in&
+      &, dleaf_in, dwood_in, droot_in, dsap_in, dheart_in, dsto_in&
+      &, cleaf_out, cwood_out, croot_out, csap_out, cheart_out, csto_out& !outputs
+      &, dleaf_out, dwood_out, droot_out, dsap_out, dheart_out, dsto_out&
       &, cleaf_grd&
       &, evavg, epavg, phavg, aravg, nppavg, laiavg, rcavg&
       &, f5avg, rmavg, rgavg, wueavg, cueavg, vcmax_1&
@@ -58,15 +58,19 @@ contains
       real(r_8),dimension(npls),intent(in) :: cleaf_in
       real(r_8),dimension(npls),intent(in) :: cwood_in
       real(r_8),dimension(npls),intent(in) :: croot_in
-      real(r_8),dimension(npls),intent(in) :: cheart_in
       real(r_8),dimension(npls),intent(in) :: csap_in
+      real(r_8),dimension(npls),intent(in) :: cheart_in
+      real(r_8),dimension(npls),intent(in) :: csto_in
+
 
       !Delta vegetation pools
       real(r_8),dimension(npls),intent(in) :: dleaf_in
       real(r_8),dimension(npls),intent(in) :: dwood_in
       real(r_8),dimension(npls),intent(in) :: droot_in
-      real(r_8),dimension(npls),intent(in) :: dheart_in
       real(r_8),dimension(npls),intent(in) :: dsap_in
+      real(r_8),dimension(npls),intent(in) :: dheart_in
+      real(r_8),dimension(npls),intent(in) :: dsto_in
+
 
       !Water
       real(r_8),intent(in) :: w1  !Initial (previous month last day) soil moisture storage (mm) - upper layer
@@ -94,15 +98,19 @@ contains
       real(r_8),dimension(npls),intent(out) :: cleaf_out
       real(r_8),dimension(npls),intent(out) :: cwood_out
       real(r_8),dimension(npls),intent(out) :: croot_out
-      real(r_8),dimension(npls),intent(out) :: cheart_out
       real(r_8),dimension(npls),intent(out) :: csap_out
+      real(r_8),dimension(npls),intent(out) :: cheart_out
+      real(r_8),dimension(npls),intent(out) :: csto_out
+
 
       !Delta vegetation pools
       real(r_8),dimension(npls),intent(out) :: dleaf_out
       real(r_8),dimension(npls),intent(out) :: dwood_out
       real(r_8),dimension(npls),intent(out) :: droot_out
-      real(r_8),dimension(npls),intent(out) :: dheart_out
       real(r_8),dimension(npls),intent(out) :: dsap_out
+      real(r_8),dimension(npls),intent(out) :: dheart_out
+      real(r_8),dimension(npls),intent(out) :: dsto_out
+
 
 
 
@@ -151,29 +159,37 @@ contains
       real(r_8),dimension(npls) :: cleaf_pls
       real(r_8),dimension(npls) :: cwood_pls
       real(r_8),dimension(npls) :: croot_pls
-      real(r_8),dimension(npls) :: cheart_pls
       real(r_8),dimension(npls) :: csap_pls
+      real(r_8),dimension(npls) :: cheart_pls
+      real(r_8),dimension(npls) :: csto_pls
+
 
       !Carbon vegetation pools after allocation routine
       real(r_8),dimension(:), allocatable :: cleaf_pls2
       real(r_8),dimension(:), allocatable :: cwood_pls2
       real(r_8),dimension(:), allocatable :: croot_pls2
-      real(r_8),dimension(:), allocatable :: cheart_pls2
       real(r_8),dimension(:), allocatable :: csap_pls2
+      real(r_8),dimension(:), allocatable :: cheart_pls2
+      real(r_8),dimension(:), allocatable :: csto_pls2
+
 
       !Carbon vegetation pools (auxiliar for internal convertions)
       real(r_8),dimension(:), allocatable :: cleaf_pls_aux
       real(r_8),dimension(:), allocatable :: cwood_pls_aux
       real(r_8),dimension(:), allocatable :: croot_pls_aux
-      real(r_8),dimension(:), allocatable :: cheart_pls_aux
       real(r_8),dimension(:), allocatable :: csap_pls_aux
+      real(r_8),dimension(:), allocatable :: cheart_pls_aux
+      real(r_8),dimension(:), allocatable :: csto_pls_aux
+
 
       !Delta veg pools
       real(r_8),dimension(npls) :: dleaf
       real(r_8),dimension(npls) :: dwood
       real(r_8),dimension(npls) :: droot
-      real(r_8),dimension(npls) :: dheart
       real(r_8),dimension(npls) :: dsap
+      real(r_8),dimension(npls) :: dheart
+      real(r_8),dimension(npls) :: dsto
+
 
 
       !Carbon Cycle
@@ -226,14 +242,18 @@ contains
          cleaf_pls(i)  = cleaf_in(i)
          cwood_pls(i)  = cwood_in(i)
          croot_pls(i)  = croot_in(i)
-         cheart_pls(i) = cheart_in(i)
          csap_pls(i)   = csap_in(i)
+         cheart_pls(i) = cheart_in(i)
+         csto_pls(i)   = csto_in(i)
+
 
          dleaf(i)  = dleaf_in(i)
          dwood(i)  = dwood_in(i)
          droot(i)  = droot_in(i)
          dsap(i)   = dsap_in(i)
          dheart(i) = dheart_in(i)
+         dsto(i)   = dsto_in(i)
+
          
          ! cleaf_out(i) = cleaf_pls(i) + 1.
          ! print*,'cleaf_in',cleaf_in(i), i
@@ -391,6 +411,15 @@ contains
       croot_out(:)  = 0.0D0
       cheart_out(:) = 0.0D0
       csap_out(:)   = 0.0D0
+      csto_out(:)   = 0.0D0
+
+      dleaf_out(:)  = 0.0D0
+      dwood_out(:)  = 0.0D0
+      droot_out(:)  = 0.0D0
+      dheart_out(:) = 0.0D0
+      dsap_out(:)   = 0.0D0
+      dsto_out(:)   = 0.0D0
+
 
       cleaf_grd = 0.0D0
 
@@ -461,6 +490,10 @@ contains
       deallocate(litter_fr)
       deallocate(tra)
       deallocate(idx_grasses)
+      deallocate(cleaf_pls2)
+      deallocate(cleaf_pls_aux)
+
+
 
 
    end subroutine daily_budget_allom

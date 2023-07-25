@@ -63,6 +63,23 @@ while True:
         runplotp = True
         break
 
+while True:
+    version_allom = input('Which version? (1: allom/2: nutri_cycle) ')
+
+    if version_allom == '1':
+        allom = True
+        print('')
+        print('You are using the version considering allometry constraints without nutrient cycle')
+        print('')
+        break
+    if version_allom == '2':
+        allom = False
+        print('')
+        print('You are using the version with fix proportion to allocation and considering nutrient cycle')
+        print('')
+        break
+
+
 Pan_Amazon_RECTANGLE = "y = 160:221 x = 201:272"
 
 Pan_Amazon_CORNERS = {'ulc': (201, 160),
@@ -216,8 +233,8 @@ def catch_out_budget_allom (out):
     #dly_c{compartment}: this is the carbon that will be the carbon's next day for each PLS
     #dly_d{compartment}: delta carbon (Ct - Ct-1)
 
-    lst = ["dly_cleaf", "dly_cwood", "dly_croot","dly_csap","dly_cheart",
-           "dly_dleaf", "dly_dwood", "dly_droot","dly_dsap","dly_dheart",
+    lst = ["dly_cleaf", "dly_cwood", "dly_croot","dly_csap","dly_cheart","dly_csto",
+           "dly_dleaf", "dly_dwood", "dly_droot","dly_dsap","dly_dheart","dly_dsto",
            "cleaf_grd","evavg", "epavg", "phavg", "aravg", "nppavg", 
            "laiavg","rcavg","f5avg","rmavg","rgavg",
            "wueavg", "cueavg","vcmax","specific_la", "ocpavg"]
@@ -1574,8 +1591,8 @@ class grd:
 
                 out_allom = model_allom.daily_budget_allom(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm, self.wmax_mm,
                                                      self.soil_temp, temp[step], p_atm[step], ipar[step], ru[step],co2,
-                                                     cleaf_allom, cwood_allom, croot_allom,
-                                                     cheart_allom, csap_allom, dcl_allom, dca_allom, dcf_allom, dcs_allom, dch_allom)
+                                                     cleaf_allom, cwood_allom, croot_allom,  csap_allom, cheart_allom, csto_allom, 
+                                                     dcl_allom, dca_allom, dcf_allom, dcs_allom, dch_allom, dcst_allom)
 
                 daily_output_allom = catch_out_budget_allom(out_allom)
                 
@@ -1585,6 +1602,8 @@ class grd:
                 self.vp_croot_allom  = daily_output_allom['dly_croot'][self.vp_lsid]
                 self.vp_csap_allom   = daily_output_allom['dly_csap'][self.vp_lsid]
                 self.vp_cheart_allom = daily_output_allom['dly_cheart'][self.vp_lsid]
+                self.vp_csto_allom   = daily_output_allom['dly_csto'][self.vp_lsid]
+
 
                 if save:
                     assert self.save == True
