@@ -264,7 +264,7 @@ contains
 
          
          ! cleaf_out(i) = cleaf_pls(i) + 1.
-         ! print*,'cleaf_in',cleaf_in(i), i
+         print*,'cleaf_in',cleaf_in(i), i
       
       enddo
 
@@ -377,7 +377,7 @@ contains
          evap(p) = penman(p0, temp, rh, available_energy(temp), rc2(p)) !actual evapotranspiration (evap, mm/day)
 
          call allocation2(dt1, nppa(p)&
-            &,cleaf_pls(ri), cwood_pls(ri), croot_pls(ri), csap_pls(ri), cheart_pls(ri)&
+            &,cleaf_pls(ri), cwood_pls(ri), croot_pls(ri), csap_pls(ri), cheart_pls(ri), csto_pls(ri)&
             &,cleaf_pls2(p), cwood_pls2(p), croot_pls2(p), csap_pls2(p), cheart_pls2(p), csto_pls2(p))
             !!!ATENÇÃO cleaf_pls2 is output from allocation
          
@@ -488,7 +488,7 @@ contains
          ri = lp(p)
 
          !provisory general valeus
-         cleaf_out(ri)  =  cleaf_pls2(p) + 0.0010D0 !ATTENTION this value comes from allocation
+         cleaf_out(ri)  =  cleaf_pls2(p) !ATTENTION this value comes from allocation
          croot_out(ri)  =  1.0
          cheart_out(ri) =  15.0
          csap_out(ri)   =  5.0

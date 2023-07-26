@@ -444,7 +444,7 @@ class grd:
         self.vp_croot_allom  = None #fine roots
         self.vp_cheart_allom = None #heartwood
         self.vp_csap_allom   = None #sapwood
-        self.vp_csto_alom     = None #storage
+        self.vp_csto_alom    = None #storage
 
         #vegetation pools for alloc allom
             #vars in grid cell scale (CWM computed inside budget)
@@ -456,11 +456,11 @@ class grd:
         self.csto_allom   = None #storage
 
         #deltas for each veg pools (used to growth respiration)
-        self.vp_dcl_allom = None #leaf
-        self.vp_dca_allom = None #aboveground wood tissues (sap + heart)
-        self.vp_dcf_allom = None #fine roots
-        self.vp_dcs_allom = None #heartwood
-        self.vp_dch_allom = None #sapwood
+        self.vp_dcl_allom  = None #leaf
+        self.vp_dca_allom  = None #aboveground wood tissues (sap + heart)
+        self.vp_dcf_allom  = None #fine roots
+        self.vp_dcs_allom  = None #heartwood
+        self.vp_dch_allom  = None #sapwood
         self.vp_dcst_allom = None #storage
 
 
@@ -796,9 +796,9 @@ class grd:
         self.vp_csto_allom = np.zeros(shape=(npls,), order='F') + 0.1
         
         #for grasses
-        self.vp_cwood_allom[self.pls_table[6, :] == 0.0] = 0.0
+        self.vp_cwood_allom[self.pls_table[6, :] == 0.0]  = 0.0
         self.vp_cheart_allom[self.pls_table[6, :] == 0.0] = 0.0
-        self.vp_csap_allom[self.pls_table[6, :] == 0.0] = 0.0
+        self.vp_csap_allom[self.pls_table[6, :] == 0.0]   = 0.0
 
         # self.vp_cleaf, self.vp_croot, self.vp_cwood = m.spinup2(
         #     1.0, self.pls_table)
@@ -1069,13 +1069,13 @@ class grd:
 
                 # INFLATe VARS
                     #Initialize with zero to be fullfilled with data when the running occurs
-                sto = np.zeros(shape=(3, npls), order='F')
+                sto   = np.zeros(shape=(3, npls), order='F')
                 cleaf = np.zeros(npls, order='F')
                 cwood = np.zeros(npls, order='F')
                 croot = np.zeros(npls, order='F')
-                dcl = np.zeros(npls, order='F')
-                dca = np.zeros(npls, order='F')
-                dcf = np.zeros(npls, order='F')
+                dcl   = np.zeros(npls, order='F')
+                dca   = np.zeros(npls, order='F')
+                dcf   = np.zeros(npls, order='F')
                 uptk_costs = np.zeros(npls, order='F')
 
                 sto[0, self.vp_lsid] = self.vp_sto[0, :]
@@ -1095,9 +1095,9 @@ class grd:
                     cleaf[n] = self.vp_cleaf[c]
                     cwood[n] = self.vp_cwood[c]
                     croot[n] = self.vp_croot[c]
-                    dcl[n] = self.vp_dcl[c]
-                    dca[n] = self.vp_dca[c]
-                    dcf[n] = self.vp_dcf[c]
+                    dcl[n]   = self.vp_dcl[c]
+                    dca[n]   = self.vp_dca[c]
+                    dcf[n]   = self.vp_dcf[c]
                     uptk_costs[n] = self.sp_uptk_costs[c]
                     c += 1
                 ton = self.sp_organic_n #+ self.sp_sorganic_n
@@ -1163,10 +1163,10 @@ class grd:
                     self.vp_cleaf = daily_output['cleafavg_pft'][self.vp_lsid]
                     self.vp_cwood = daily_output['cawoodavg_pft'][self.vp_lsid]
                     self.vp_croot = daily_output['cfrootavg_pft'][self.vp_lsid]
-                    self.vp_dcl = daily_output['delta_cveg'][0][self.vp_lsid]
-                    self.vp_dca = daily_output['delta_cveg'][1][self.vp_lsid]
-                    self.vp_dcf = daily_output['delta_cveg'][2][self.vp_lsid]
-                    self.vp_sto = daily_output['stodbg'][:, self.vp_lsid]
+                    self.vp_dcl   = daily_output['delta_cveg'][0][self.vp_lsid]
+                    self.vp_dca   = daily_output['delta_cveg'][1][self.vp_lsid]
+                    self.vp_dcf   = daily_output['delta_cveg'][2][self.vp_lsid]
+                    self.vp_sto   = daily_output['stodbg'][:, self.vp_lsid]
                     self.sp_uptk_costs = daily_output['npp2pay'][self.vp_lsid]
 
                 # UPDATE STATE VARIABLES
@@ -1523,14 +1523,6 @@ class grd:
             else:
                 self._allocate_output_nosave(steps.size)
                 self.save = False
-            
-            #************need to be seen for the allometry*************
-            # if save:
-            #     self._allocate_output(steps.size) 
-            #     self.save = True
-            # else:
-            #     self._allocate_output_nosave(steps.size)
-            #     self.save = False
 
             for step in range(steps.size): #make the loop for the size of array (number of years to be simulated)
                 # print('STEP', step)
