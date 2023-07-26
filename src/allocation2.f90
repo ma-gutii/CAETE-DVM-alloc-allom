@@ -50,7 +50,7 @@ module alloc2
     !     leaf_out, wood_out, root_out, sap_out, heart_out, storage_out)
     
     subroutine allocation2(dt, bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in&
-        &, leaf_out)
+        &, leaf_out, wood_out, root_out, sap_out, heart_out, sto_out)
     
         
         !VARIABLE INPUTS
@@ -66,8 +66,6 @@ module alloc2
 
 
         !provisory
-        !real(r_8) :: sap_in
-        !real(r_8) :: heart_in
         real(r_8) :: storage_in
         real(r_8) :: dens_in
 
@@ -81,11 +79,11 @@ module alloc2
         !VARIABLES OUTPUTS 
         !carbon outputs (kgC/m2)
         real(r_8), intent(out) :: leaf_out
-        ! real(r_8), intent(out) :: root_out
-        ! real(r_8), intent(out) :: sap_out
-        ! real(r_8), intent(out) :: heart_out
-        ! real(r_8), intent(out) :: storage_out
-        ! real(r_8), intent(out) :: wood_out
+        real(r_8), intent(out) :: wood_out
+        real(r_8), intent(out) :: root_out
+        real(r_8), intent(out) :: sap_out
+        real(r_8), intent(out) :: heart_out
+        real(r_8), intent(out) :: sto_out
 
 
         !INTERNAL VARIABLES
@@ -150,11 +148,12 @@ module alloc2
         leaf_inc_min = 0.0D0
         root_inc_min = 0.0D0
 
-        leaf_out = 0.0D0
-        ! root_out = 0.0D0
-        ! sap_out  = 0.0D0
-        ! heart_out = 0.0D0
-        ! storage_out = 0.0D0
+        leaf_out  = 0.0D0
+        wood_out  = 0.0D0
+        root_out  = 0.0D0
+        sap_out   = 0.0D0
+        heart_out = 0.0D0
+        sto_out   = 0.0D0
  
         height = 0.0D0
         leaf_req = 0.0D0
@@ -370,7 +369,12 @@ module alloc2
         endif
 
     !ATTENTION: PROVISORY OUTPUTS
-        leaf_out = 0.40D0
+        leaf_out  = 0.40D0
+        root_out  = 0.40D0
+        sap_out   = 0.20D0
+        heart_out = 10.0D0
+        sto_out   = 1.0D0
+        wood_out  = sap_out + heart_out
     
     ! !!!end of conditions for allocation!!!!
 

@@ -33,7 +33,7 @@ contains
       &, dleaf_in, dwood_in, droot_in, dsap_in, dheart_in, dsto_in&
       &, cleaf_out, cwood_out, croot_out, csap_out, cheart_out, csto_out& !outputs
       &, dleaf_out, dwood_out, droot_out, dsap_out, dheart_out, dsto_out&
-      &, cleaf_grd&
+      &, cleaf_grd, cwood_grd, croot_grd, csap_grd, cheart_grd, csto_grd&
       &, evavg, epavg, phavg, aravg, nppavg, laiavg, rcavg&
       &, f5avg, rmavg, rgavg, wueavg, cueavg, vcmax_1&
       &, specific_la_1, ocpavg)
@@ -135,6 +135,14 @@ contains
       !carbon veg. pools for the gridcell (grd)
       !Values considering all the PLSs weighted by their relative C contribution
       real(r_8), intent(out) :: cleaf_grd
+      real(r_8), intent(out) :: cwood_grd
+      real(r_8), intent(out) :: croot_grd
+      real(r_8), intent(out) :: csap_grd
+      real(r_8), intent(out) :: cheart_grd
+      real(r_8), intent(out) :: csto_grd
+
+
+
 
 
       !==========================================================================
@@ -313,8 +321,20 @@ contains
       allocate(cwd(nlen))
       allocate(litter_fr(nlen))
       allocate(tra(nlen))
+
       allocate(cleaf_pls2(nlen))
+      allocate(cwood_pls2(nlen))
+      allocate(croot_pls2(nlen))
+      allocate(csap_pls2(nlen))
+      allocate(cheart_pls2(nlen))
+      allocate(csto_pls2(nlen))
+
       allocate(cleaf_pls_aux(nlen))
+      allocate(cwood_pls_aux(nlen))
+      allocate(croot_pls_aux(nlen))
+      allocate(csap_pls_aux(nlen))
+      allocate(cheart_pls_aux(nlen))
+      allocate(csto_pls_aux(nlen))
 
       !     Maximum evapotranspiration (emax)
       !     =================================
@@ -356,9 +376,9 @@ contains
          
          evap(p) = penman(p0, temp, rh, available_energy(temp), rc2(p)) !actual evapotranspiration (evap, mm/day)
 
-         call allocation2(dt1, nppa(p), cleaf_pls(ri), cwood_pls(ri)&
-            &, croot_pls(ri), csap_pls(ri), cheart_pls(ri)&
-            &, cleaf_pls2(p))
+         call allocation2(dt1, nppa(p)&
+            &,cleaf_pls(ri), cwood_pls(ri), croot_pls(ri), csap_pls(ri), cheart_pls(ri)&
+            &,cleaf_pls2(p), cwood_pls2(p), croot_pls2(p), csap_pls2(p), cheart_pls2(p), csto_pls2(p))
             !!!ATENÇÃO cleaf_pls2 is output from allocation
          
          !Carbon use efficiency & Delta C
@@ -385,7 +405,13 @@ contains
          ! delta_cveg(3,p) = cf2(p) - cf1_pft(ri)
 
          !mass balance (acho que vai direto na alloc)ATTENTION
-         cleaf_pls_aux(p) = cleaf_pls2(p)
+         cleaf_pls_aux(p)  = cleaf_pls2(p)
+         cwood_pls_aux(p)  = cwood_pls2(p)
+         croot_pls_aux(p)  = croot_pls2(p)
+         csap_pls_aux(p)   = csap_pls2(p)
+         cheart_pls_aux(p) = cheart_pls2(p)
+         csto_pls_aux(p)   = csto_pls2(p)
+
       enddo
       !$OMP END PARALLEL DO
 
@@ -409,19 +435,25 @@ contains
       cleaf_out(:)  = 0.0D0
       cwood_out(:)  = 0.0D0
       croot_out(:)  = 0.0D0
-      cheart_out(:) = 0.0D0
       csap_out(:)   = 0.0D0
+      cheart_out(:) = 0.0D0
       csto_out(:)   = 0.0D0
 
       dleaf_out(:)  = 0.0D0
       dwood_out(:)  = 0.0D0
       droot_out(:)  = 0.0D0
-      dheart_out(:) = 0.0D0
       dsap_out(:)   = 0.0D0
+      dheart_out(:) = 0.0D0
       dsto_out(:)   = 0.0D0
 
 
-      cleaf_grd = 0.0D0
+      cleaf_grd  = 0.0D0
+      cwood_grd  = 0.0D0
+      croot_grd  = 0.0D0
+      csap_grd   = 0.0D0
+      cheart_grd = 0.0D0
+      csto_grd   = 0.0D0
+
 
       ! Calculate CWM for ecosystem processes
  
@@ -430,21 +462,26 @@ contains
          if(isnan(ocp_coeffs(p))) ocp_coeffs(p) = 0.0D0
       enddo
 
-      evavg  = sum(real(evap, kind=r_8) * ocp_coeffs, mask= .not. isnan(evap))
-      phavg  = sum(real(ph, kind=r_8) * ocp_coeffs, mask= .not. isnan(ph))
-      aravg  = sum(real(ar, kind=r_8) * ocp_coeffs, mask= .not. isnan(ar))
-      nppavg = sum(real(nppa, kind=r_8) * ocp_coeffs, mask= .not. isnan(nppa))
-      laiavg = sum(laia * ocp_coeffs, mask= .not. isnan(laia))
-      rcavg = sum(real(rc2, kind=r_8) * ocp_coeffs, mask= .not. isnan(rc2))
-      f5avg = sum(f5 * ocp_coeffs, mask= .not. isnan(f5))
-      rmavg = sum(real(rm, kind=r_8) * ocp_coeffs, mask= .not. isnan(rm))
-      rgavg = sum(real(rg, kind=r_8) * ocp_coeffs, mask= .not. isnan(rg))
-      wueavg = sum(real(wue, kind=r_8) * ocp_coeffs, mask= .not. isnan(wue))
-      cueavg = sum(real(cue, kind=r_8) * ocp_coeffs, mask= .not. isnan(cue))
-      vcmax_1 = sum(vcmax * ocp_coeffs, mask= .not. isnan(vcmax))
+      evavg         = sum(real(evap, kind=r_8) * ocp_coeffs, mask= .not. isnan(evap))
+      phavg         = sum(real(ph, kind=r_8) * ocp_coeffs, mask= .not. isnan(ph))
+      aravg         = sum(real(ar, kind=r_8) * ocp_coeffs, mask= .not. isnan(ar))
+      nppavg        = sum(real(nppa, kind=r_8) * ocp_coeffs, mask= .not. isnan(nppa))
+      laiavg        = sum(laia * ocp_coeffs, mask= .not. isnan(laia))
+      rcavg         = sum(real(rc2, kind=r_8) * ocp_coeffs, mask= .not. isnan(rc2))
+      f5avg         = sum(f5 * ocp_coeffs, mask= .not. isnan(f5))
+      rmavg         = sum(real(rm, kind=r_8) * ocp_coeffs, mask= .not. isnan(rm))
+      rgavg         = sum(real(rg, kind=r_8) * ocp_coeffs, mask= .not. isnan(rg))
+      wueavg        = sum(real(wue, kind=r_8) * ocp_coeffs, mask= .not. isnan(wue))
+      cueavg        = sum(real(cue, kind=r_8) * ocp_coeffs, mask= .not. isnan(cue))
+      vcmax_1       = sum(vcmax * ocp_coeffs, mask= .not. isnan(vcmax))
       specific_la_1 = sum(specific_la * ocp_coeffs, mask= .not. isnan(specific_la))
 
-      cleaf_grd = sum(cleaf_pls_aux * ocp_coeffs, mask = .not. isnan(cleaf_pls_aux))
+      cleaf_grd  = sum(cleaf_pls_aux  * ocp_coeffs, mask = .not. isnan(cleaf_pls_aux ))
+      cwood_grd  = sum(cwood_pls_aux  * ocp_coeffs, mask = .not. isnan(cwood_pls_aux ))
+      croot_grd  = sum(croot_pls_aux  * ocp_coeffs, mask = .not. isnan(croot_pls_aux ))
+      csap_grd   = sum(csap_pls_aux   * ocp_coeffs, mask = .not. isnan(csap_pls_aux  ))
+      cheart_grd = sum(cheart_pls_aux * ocp_coeffs, mask = .not. isnan(cheart_pls_aux))
+      csto_grd   = sum(csto_pls_aux   * ocp_coeffs, mask = .not. isnan(csto_pls_aux  ))
 
       !daily output to carbon pools (not CWM)
       do p = 1, nlen
@@ -455,6 +492,7 @@ contains
          croot_out(ri)  =  1.0
          cheart_out(ri) =  15.0
          csap_out(ri)   =  5.0
+         csto_out(ri)   =  1.0
          cwood_out(ri)  =  cheart_out(ri) + csap_out(ri)
 
          !deltas
@@ -490,8 +528,20 @@ contains
       deallocate(litter_fr)
       deallocate(tra)
       deallocate(idx_grasses)
+
       deallocate(cleaf_pls2)
+      deallocate(cwood_pls2)
+      deallocate(croot_pls2)
+      deallocate(csap_pls2)
+      deallocate(cheart_pls2)
+      deallocate(csto_pls2)
+
       deallocate(cleaf_pls_aux)
+      deallocate(cwood_pls_aux)
+      deallocate(croot_pls_aux)
+      deallocate(csap_pls_aux)
+      deallocate(cheart_pls_aux)
+      deallocate(csto_pls_aux)
 
 
 

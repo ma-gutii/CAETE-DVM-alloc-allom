@@ -235,7 +235,8 @@ def catch_out_budget_allom (out):
 
     lst = ["dly_cleaf", "dly_cwood", "dly_croot","dly_csap","dly_cheart","dly_csto",
            "dly_dleaf", "dly_dwood", "dly_droot","dly_dsap","dly_dheart","dly_dsto",
-           "cleaf_grd","evavg", "epavg", "phavg", "aravg", "nppavg", 
+           "cleaf_grd", "cwood_grd", "croot_grd", "csap_grd", "cheart_grd", "csto_grd",
+           "evavg", "epavg", "phavg", "aravg", "nppavg", 
            "laiavg","rcavg","f5avg","rmavg","rgavg",
            "wueavg", "cueavg","vcmax","specific_la", "ocpavg"]
     
@@ -532,7 +533,13 @@ class grd:
             allocate space for the outputs using allometric constraints
             n: int number of days being simulated
         """
-        self.cleaf_allom = np.zeros(shape=(n,), order='F')
+        self.cleaf_allom  = np.zeros(shape=(n,), order='F')
+        self.cwood_allom  = np.zeros(shape=(n,), order='F')
+        self.croot_allom  = np.zeros(shape=(n,), order='F')
+        self.csap_allom   = np.zeros(shape=(n,), order='F')
+        self.cheart_allom = np.zeros(shape=(n,), order='F')
+        self.csto_allom   = np.zeros(shape=(n,), order='F')
+        
 
 
     def _flush_output(self, run_descr, index):
@@ -664,14 +671,24 @@ class grd:
 
         self.outputs[spiname] = os.path.join(self.out_dir, spiname)
 
-        to_pickle = {'cleaf': self.cleaf_allom,                  
-                    'time_unit': self.time_unit,   # Time unit
-                    'sind': index[0],
-                    'eind': index[1]}
+        to_pickle = {'cleaf' : self.cleaf_allom,
+                     'cwood' : self.cwood_allom,
+                     'croot' : self.croot_allom,
+                     'csap'  : self.csap_allom,
+                     'cheart': self.cheart_allom,
+                     'csto'  : self.csto_allom,                                       
+                     'time_unit': self.time_unit,   # Time unit
+                     'sind': index[0],
+                     'eind': index[1]}
             
             
         # Flush attrs (clear outputs)
-        self.cleaf = None
+        self.cleaf_allom  = None
+        self.cwood_allom  = None
+        self.croot_allom  = None
+        self.csap_allom   = None
+        self.cheart_allom = None
+        self.csto_allom   = None
        
         return to_pickle
 
@@ -1608,7 +1625,14 @@ class grd:
                 if save:
                     assert self.save == True
 
-                    self.cleaf_allom = daily_output_allom['cleaf_grd']
+                    self.cleaf_allom  = daily_output_allom['cleaf_grd']
+                    self.wood_allom   = daily_output_allom['cwood_grd']
+                    self.root_allom   = daily_output_allom['croot_grd']
+                    self.csap_allom   = daily_output_allom['csap_grd']
+                    self.cheart_allom = daily_output_allom['cheart_grd']
+                    self.csto_allom   = daily_output_allom['csto_grd']
+                    
+
                 
                 if ABORT:
                     rwarn("No living PLS - ABORT")
