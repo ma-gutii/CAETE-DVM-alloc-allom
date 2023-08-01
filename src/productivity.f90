@@ -181,6 +181,7 @@ contains
 !     Net primary productivity(kgC/m2/yr)
 !     ====================================
     nppa = ph - ar
+    print*, 'npp', nppa, 'ph', ph, 'ar', ar
 ! this operation affects the model mass balance
 ! If ar is bigger than ph, what is the source or respired C?
 

@@ -410,14 +410,7 @@ contains
          ! mr_sto = 0.0D0
          ! sr = 0.0D0
 
-         !aqui teria que mudar para as suas variáveis
-         ! delta_cveg(1,p) = cl2(p) - cl1_pft(ri)  !kg m-2
-         ! if(dt1(4) .lt. 0.0D0) then
-         !    delta_cveg(2,p) = 0.0D0
-         ! else
-         !    delta_cveg(2,p) = ca2(p) - ca1_pft(ri)
-         ! endif
-         ! delta_cveg(3,p) = cf2(p) - cf1_pft(ri)
+         
          
          !calculating deltas
          dleaf_pls_aux(p)  = cleaf_pls2(p)  - cleaf_pls(p)

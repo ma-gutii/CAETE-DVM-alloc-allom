@@ -215,6 +215,7 @@ module alloc2
         wood_in_ind    = sap_in_ind + heart_in_ind
 
         bminc_in_ind = (bminc_in)*1.D3
+        print*, 'bminc', bminc_in_ind
 
 
         ! call functions to logic
@@ -285,7 +286,7 @@ module alloc2
                                 
                         ! print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc' !ok
 
-                        call reallocation(sto_in_ind, bminc_in_ind, leaf_inc_min, root_inc_min,&
+                        call reallocation(bminc_in_ind, leaf_inc_min, root_inc_min,&
                         leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc, sto_inc_alloc)
 
                         ! print*, 'use storage and discount leaf inc and root inc' !ok
@@ -308,7 +309,7 @@ module alloc2
 
                     ! print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc' !ok
 
-                    call reallocation(sto_in_ind, bminc_in_ind, leaf_inc_min, root_inc_min,&
+                    call reallocation(bminc_in_ind, leaf_inc_min, root_inc_min,&
                     leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc, sto_inc_alloc)
              
                 else
@@ -364,7 +365,7 @@ module alloc2
         endif
 
     !ATTENTION: PROVISORY OUTPUTS
-        leaf_out  = leaf_in + .1
+        leaf_out  = leaf_in + 1.1
         root_out  = 0.40D0
         sap_out   = 0.20D0
         heart_out = 10.0D0
@@ -773,14 +774,13 @@ module alloc2
         
     end subroutine
 
-    subroutine reallocation (sto_in_ind, bminc_in_ind, leaf_inc_min, root_inc_min,&
+    subroutine reallocation (bminc_in_ind, leaf_inc_min, root_inc_min,&
         leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc, sto_inc_alloc)
         
         !here for reallocation we sum the C available from NPP and storage to reallocate (only for leaves and fine roots)
 
 
         !inputs
-        real(r_8), intent(in) :: sto_in_ind
         real(r_8), intent(in) :: leaf_inc_min
         real(r_8), intent(in) :: root_inc_min
         real(r_8), intent(in) :: bminc_in_ind
