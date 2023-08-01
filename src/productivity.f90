@@ -43,9 +43,9 @@ contains
     real(r_4), intent(in) :: p0                   !Mean surface pressure (hPa)
     real(r_8), intent(in) :: w                    !Soil moisture kg m-2
     real(r_4), intent(in) :: ipar                 !Incident photosynthetic active radiation (w/m2)
-    real(r_4), intent(in) :: rh,emax !Relative humidity/MAXIMUM EVAPOTRANSPIRATION
+    real(r_4), intent(in) :: rh,emax              !Relative humidity/MAXIMUM EVAPOTRANSPIRATION
     real(r_8), intent(in) :: catm, cl1_prod, cf1_prod, ca1_prod        !Carbon in plant tissues (kg/m2)
-    real(r_8), intent(in) :: beta_leaf            !npp allocation to carbon pools (kg/m2/day)
+    real(r_8), intent(in) :: beta_leaf            !carbon deltas (kg/m2/day)
     real(r_8), intent(in) :: beta_awood
     real(r_8), intent(in) :: beta_froot, wmax
     logical(l_1), intent(in) :: light_limit                !True for no ligth limitation
