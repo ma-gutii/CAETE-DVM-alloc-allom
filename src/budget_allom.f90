@@ -35,7 +35,7 @@ contains
       &, dleaf_out, dwood_out, droot_out, dsap_out, dheart_out, dsto_out&
       &, cleaf_grd, cwood_grd, croot_grd, csap_grd, cheart_grd, csto_grd&
       &, evavg, epavg, phavg, aravg, nppavg, laiavg, rcavg&
-      &, f5avg, rmavg, rgavg, wueavg, cueavg, vcmax_1, cdefavg&
+      &, f5avg, rmavg, rgavg, wueavg, cueavg, vcmax_1&
       &, specific_la_1, ocpavg)
 
       use types
@@ -131,8 +131,6 @@ contains
       real(r_8),intent(out) :: cueavg         ! [0-1]
       real(r_8),intent(out) :: vcmax_1          ! µmol m-2 s-1
       real(r_8),intent(out) :: specific_la_1    ! m2 g(C)-1
-      real(r_8),intent(out) :: cdefavg        !carbon deficit when ar > gpp (Kg m-2 y-1) - it is the absolute value
-
 
       !carbon veg. pools for the gridcell (grd)
       !Values considering all the PLSs weighted by their relative C contribution
@@ -190,7 +188,7 @@ contains
       real(r_8),dimension(:), allocatable :: csap_pls_aux
       real(r_8),dimension(:), allocatable :: cheart_pls_aux
       real(r_8),dimension(:), allocatable :: csto_pls_aux
-      
+
 
       !Delta veg pools
       real(r_8),dimension(npls) :: dleaf
@@ -199,15 +197,6 @@ contains
       real(r_8),dimension(npls) :: dsap
       real(r_8),dimension(npls) :: dheart
       real(r_8),dimension(npls) :: dsto
-
-      ! vegetation pools (auxiliar for internal convertions)
-      real(r_8),dimension(:), allocatable :: dleaf_aux
-      real(r_8),dimension(:), allocatable :: dwood_aux
-      real(r_8),dimension(:), allocatable :: droot_aux
-      real(r_8),dimension(:), allocatable :: dsap_aux
-      real(r_8),dimension(:), allocatable :: dheart_aux
-      real(r_8),dimension(:), allocatable :: dsto_aux
-
 
 
 
@@ -273,6 +262,10 @@ contains
          dheart(i) = dheart_in(i)
          dsto(i)   = dsto_in(i)
 
+         
+         ! cleaf_out(i) = cleaf_pls(i) + 1.
+         print*,'cleaf_in',cleaf_in(i), i
+      
       enddo
 
       w = w1 + w2        
@@ -343,14 +336,6 @@ contains
       allocate(cheart_pls_aux(nlen))
       allocate(csto_pls_aux(nlen))
 
-      allocate(dleaf_aux(nlen))
-      allocate(dwood_aux(nlen))
-      allocate(droot_aux(nlen))
-      allocate(dsap_aux(nlen))
-      allocate(dheart_aux(nlen))
-      allocate(dsto_aux(nlen))
-      
-
       !     Maximum evapotranspiration (emax)
       !     =================================
       emax = evpot2(p0,temp,rh,available_energy(temp))
@@ -388,6 +373,7 @@ contains
             &, soil_sat, ph(p), ar(p), nppa(p), laia(p), f5(p), vpd(p)&
             &, rm(p), rg(p), rc2(p), wue(p), c_def(p), vcmax(p), specific_la(p), tra(p))
       
+         
          evap(p) = penman(p0, temp, rh, available_energy(temp), rc2(p)) !actual evapotranspiration (evap, mm/day)
 
          call allocation2(dt1, nppa(p)&
@@ -410,7 +396,7 @@ contains
          ! sr = 0.0D0
 
          !aqui teria que mudar para as suas variáveis
-         ! !delta_cveg(1,p) =  cleaf_pls2(p) - cleaf_pls(ri)  !kg m-2
+         ! delta_cveg(1,p) = cl2(p) - cl1_pft(ri)  !kg m-2
          ! if(dt1(4) .lt. 0.0D0) then
          !    delta_cveg(2,p) = 0.0D0
          ! else
@@ -418,9 +404,6 @@ contains
          ! endif
          ! delta_cveg(3,p) = cf2(p) - cf1_pft(ri)
 
-         dleaf_aux(p) = cleaf_pls2(p) - cleaf_pls(p)
-         
-         print*, 'dleaf_aux', dleaf_aux(p), cleaf_pls2(p), cleaf_pls(p)
          !mass balance (acho que vai direto na alloc)ATTENTION
          cleaf_pls_aux(p)  = cleaf_pls2(p)
          cwood_pls_aux(p)  = cwood_pls2(p)
@@ -435,20 +418,19 @@ contains
       epavg = emax
 
       !Fill output data
-      evavg         = 0.0D0
-      phavg         = 0.0D0
-      aravg         = 0.0D0
-      nppavg        = 0.0D0
-      laiavg        = 0.0D0        
-      rcavg         = 0.0D0        
-      f5avg         = 0.0D0        
-      rmavg         = 0.0D0       
-      rgavg         = 0.0D0       
-      wueavg        = 0.0D0       
-      cueavg        = 0.0D0       
-      vcmax_1       = 0.0D0       
+      evavg  = 0.0D0
+      phavg  = 0.0D0
+      aravg  = 0.0D0
+      nppavg = 0.0D0
+      laiavg = 0.0D0        
+      rcavg  = 0.0D0        
+      f5avg  = 0.0D0        
+      rmavg  = 0.0D0       
+      rgavg  = 0.0D0       
+      wueavg = 0.0D0       
+      cueavg = 0.0D0       
+      vcmax_1 = 0.0D0       
       specific_la_1 = 0.0D0
-      cdefavg       = 0.0D0
       
       cleaf_out(:)  = 0.0D0
       cwood_out(:)  = 0.0D0
@@ -493,8 +475,6 @@ contains
       cueavg        = sum(real(cue, kind=r_8) * ocp_coeffs, mask= .not. isnan(cue))
       vcmax_1       = sum(vcmax * ocp_coeffs, mask= .not. isnan(vcmax))
       specific_la_1 = sum(specific_la * ocp_coeffs, mask= .not. isnan(specific_la))
-      cdefavg       = sum(real(c_def, kind=r_8) * ocp_coeffs, mask= .not. isnan(c_def)) / 2.73791 !diviion by 2.73791 back to kg/m2/year
-
 
       cleaf_grd  = sum(cleaf_pls_aux  * ocp_coeffs, mask = .not. isnan(cleaf_pls_aux ))
       cwood_grd  = sum(cwood_pls_aux  * ocp_coeffs, mask = .not. isnan(cwood_pls_aux ))
@@ -516,8 +496,7 @@ contains
          cwood_out(ri)  =  cheart_out(ri) + csap_out(ri)
 
          !deltas
-         dleaf_out(ri)  =  dleaf_aux(p)
-         !ATTENTION this value comes from allocation
+         dleaf_out(ri)  =  0.3 !ATTENTION this value comes from allocation
          droot_out(ri)  =  0.2
          dheart_out(ri) =  1.0
          dsap_out(ri)   =  0.1
@@ -564,14 +543,6 @@ contains
       deallocate(cheart_pls_aux)
       deallocate(csto_pls_aux)
 
-      deallocate(dleaf_aux)
-      deallocate(dwood_aux)
-      deallocate(droot_aux)
-      deallocate(dsap_aux)
-      deallocate(dheart_aux)
-      deallocate(dsto_aux)
-
-      
 
 
 

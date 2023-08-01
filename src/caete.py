@@ -238,7 +238,7 @@ def catch_out_budget_allom (out):
            "cleaf_grd", "cwood_grd", "croot_grd", "csap_grd", "cheart_grd", "csto_grd",
            "evavg", "epavg", "phavg", "aravg", "nppavg", 
            "laiavg","rcavg","f5avg","rmavg","rgavg",
-           "wueavg", "cueavg","vcmax", "cdefavg", "specific_la", "ocpavg"]
+           "wueavg", "cueavg","vcmax","specific_la", "ocpavg"]
     
     return dict(zip(lst, out))
 
