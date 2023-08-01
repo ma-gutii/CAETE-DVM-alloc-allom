@@ -410,7 +410,7 @@ contains
          ! sr = 0.0D0
 
          !aqui teria que mudar para as suas variáveis
-         ! delta_cveg(1,p) =  cleaf_pls2(p) - cleaf_pls(ri)  !kg m-2
+         ! !delta_cveg(1,p) =  cleaf_pls2(p) - cleaf_pls(ri)  !kg m-2
          ! if(dt1(4) .lt. 0.0D0) then
          !    delta_cveg(2,p) = 0.0D0
          ! else
