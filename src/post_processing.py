@@ -230,13 +230,13 @@ def write_h5(out_dir=Path('../outputs'), RUN=0, reclen=0):
             "/", f'RUN{RUN}', f'CAETÊ outputs tables Run {RUN}')
         exp_rows = 41965625 # values for 60 grid points/// 916080 * (60/2749) 
         exp_rows_snap = 57033 # 1254  * (60/2749)
-        # table_g1 = h5file.create_table(
-            # group_run, 'Outputs_G1', tt.run_g1, "out vars of g1",
-            # filters=h5_opt, expectedrows=exp_rows)
-        # table_g2 = h5file.create_table(
-            # group_run, 'Outputs_G2', tt.run_g2, "out vars of g2",
-            # filters=h5_opt, expectedrows=exp_rows)
-        # table_g3 = h5file.create_table(
+        table_g1 = h5file.create_table(
+            group_run, 'Outputs_G1', tt.run_g1, "out vars of g1",
+            filters=h5_opt, expectedrows=exp_rows)
+        table_g2 = h5file.create_table(
+            group_run, 'Outputs_G2', tt.run_g2, "out vars of g2",
+            filters=h5_opt, expectedrows=exp_rows)
+        table_g3 = h5file.create_table(
             # group_run, 'Outputs_G3', tt.run_g3, "out vars of g3",
             # filters=h5_opt, expectedrows=exp_rows)
         PLS_table = h5file.create_table(
@@ -273,100 +273,100 @@ def write_h5(out_dir=Path('../outputs'), RUN=0, reclen=0):
                 # if prefix in filepath:
                 cells.append((filepath, X, Y))
 
-        # Write table G1
-        # rec = 0
-        # for fp, X, Y in cells:
-            # dt = open_fh(fp)
-            # date_range = se_dates(dt)
-            # ndays = dt['emaxm'].size
-            # g1_row = table_g1.row
-# 
-            # for day in range(ndays):
-# 
-                # g1_row['row_id'] = rec
-                # g1_row['date'] = cf_date2str(date_range[day].date())
-                # g1_row['grid_y'] = Y
-                # g1_row['grid_x'] = X
-                # 1 D outputs
-                # for key in tt.G1_1d:
-                    # g1_row[key] = dt[key][day]
-# 
-                # nupt
-                # g1_row['nupt1'] = dt['nupt'][0, day]
-                # g1_row['nupt2'] = dt['nupt'][1, day]
-                # g1_row['pupt1'] = dt['pupt'][0, day]
-                # g1_row['pupt2'] = dt['pupt'][1, day]
-                # g1_row['pupt3'] = dt['pupt'][2, day]
-                # rec += 1
-                # g1_row.append()
-        # table_g1.flush()
-# 
-        # Write table G2
-        # rec = 0
-        # for fp, X, Y in cells:
-            # dt = open_fh(fp)
-            # date_range = se_dates(dt)
-            # ndays = dt['emaxm'].size
-            # g2_row = table_g2.row
-# 
-            # for day in range(ndays):
-                # g2_row['row_id'] = rec
-                # g2_row['date'] = cf_date2str(date_range[day].date())
-                # g2_row['grid_y'] = Y
-                # g2_row['grid_x'] = X
-# 
-                # 1 D outputs
-                # for key in tt.G2_1d:
-                    # g2_row[key] = dt[key][day]
-# 
-                # g2_row['csoil1'] = dt['csoil'][0, day]
-                # g2_row['csoil2'] = dt['csoil'][1, day]
-                # g2_row['csoil3'] = dt['csoil'][2, day]
-                # g2_row['csoil4'] = dt['csoil'][3, day]
-# 
-                # g2_row['sncN1'] = dt['snc'][0, day]
-                # g2_row['sncN2'] = dt['snc'][1, day]
-                # g2_row['sncN3'] = dt['snc'][2, day]
-                # g2_row['sncN4'] = dt['snc'][3, day]
-                # g2_row['sncP1'] = dt['snc'][4, day]
-                # g2_row['sncP2'] = dt['snc'][5, day]
-                # g2_row['sncP3'] = dt['snc'][6, day]
-                # g2_row['sncP4'] = dt['snc'][7, day]
-                # rec += 1
-                # g2_row.append()
-        # table_g2.flush()
+        Write table G1
+        rec = 0
+        for fp, X, Y in cells:
+            dt = open_fh(fp)
+            date_range = se_dates(dt)
+            ndays = dt['emaxm'].size
+            g1_row = table_g1.row
 
-        # Write table G3
-        # rec = 0
-        # for fp, X, Y in cells:
-            # dt = open_fh(fp)
-            # date_range = se_dates(dt)
-            # ndays = dt['emaxm'].size
-            # g3_row = table_g3.row
+            for day in range(ndays):
+
+                g1_row['row_id'] = rec
+                g1_row['date'] = cf_date2str(date_range[day].date())
+                g1_row['grid_y'] = Y
+                g1_row['grid_x'] = X
+                1 D outputs
+                for key in tt.G1_1d:
+                    g1_row[key] = dt[key][day]
+
+                nupt
+                g1_row['nupt1'] = dt['nupt'][0, day]
+                g1_row['nupt2'] = dt['nupt'][1, day]
+                g1_row['pupt1'] = dt['pupt'][0, day]
+                g1_row['pupt2'] = dt['pupt'][1, day]
+                g1_row['pupt3'] = dt['pupt'][2, day]
+                rec += 1
+                g1_row.append()
+        table_g1.flush()
+
+        Write table G2
+        rec = 0
+        for fp, X, Y in cells:
+            dt = open_fh(fp)
+            date_range = se_dates(dt)
+            ndays = dt['emaxm'].size
+            g2_row = table_g2.row
+
+            for day in range(ndays):
+                g2_row['row_id'] = rec
+                g2_row['date'] = cf_date2str(date_range[day].date())
+                g2_row['grid_y'] = Y
+                g2_row['grid_x'] = X
+
+                1 D outputs
+                for key in tt.G2_1d:
+                    g2_row[key] = dt[key][day]
+
+                g2_row['csoil1'] = dt['csoil'][0, day]
+                g2_row['csoil2'] = dt['csoil'][1, day]
+                g2_row['csoil3'] = dt['csoil'][2, day]
+                g2_row['csoil4'] = dt['csoil'][3, day]
+
+                g2_row['sncN1'] = dt['snc'][0, day]
+                g2_row['sncN2'] = dt['snc'][1, day]
+                g2_row['sncN3'] = dt['snc'][2, day]
+                g2_row['sncN4'] = dt['snc'][3, day]
+                g2_row['sncP1'] = dt['snc'][4, day]
+                g2_row['sncP2'] = dt['snc'][5, day]
+                g2_row['sncP3'] = dt['snc'][6, day]
+                g2_row['sncP4'] = dt['snc'][7, day]
+                rec += 1
+                g2_row.append()
+        table_g2.flush()
 # 
-            # for day in range(ndays):
-                # g3_row['row_id'] = rec
-                # g3_row['date'] = cf_date2str(date_range[day].date())
-                # g3_row['grid_y'] = Y
-                # g3_row['grid_x'] = X
-# 
-                # for key in tt.G3_1d:
-                    # g3_row[key] = dt[key][day]
-# 
-                # g3_row['lnc1'] = dt['lnc'][0, day]
-                # g3_row['lnc2'] = dt['lnc'][1, day]
-                # g3_row['lnc3'] = dt['lnc'][2, day]
-                # g3_row['lnc4'] = dt['lnc'][3, day]
-                # g3_row['lnc5'] = dt['lnc'][4, day]
-                # g3_row['lnc6'] = dt['lnc'][5, day]
-# 
-                # g3_row['sto1'] = dt['storage_pool'][0, day]
-                # g3_row['sto2'] = dt['storage_pool'][1, day]
-                # g3_row['sto3'] = dt['storage_pool'][2, day]
-                # rec += 1
-                # g3_row.append()
-        # table_g3.flush()
-# 
+        Write table G3
+        rec = 0
+        for fp, X, Y in cells:
+            dt = open_fh(fp)
+            date_range = se_dates(dt)
+            ndays = dt['emaxm'].size
+            g3_row = table_g3.row
+
+            for day in range(ndays):
+                g3_row['row_id'] = rec
+                g3_row['date'] = cf_date2str(date_range[day].date())
+                g3_row['grid_y'] = Y
+                g3_row['grid_x'] = X
+
+                for key in tt.G3_1d:
+                    g3_row[key] = dt[key][day]
+
+                g3_row['lnc1'] = dt['lnc'][0, day]
+                g3_row['lnc2'] = dt['lnc'][1, day]
+                g3_row['lnc3'] = dt['lnc'][2, day]
+                g3_row['lnc4'] = dt['lnc'][3, day]
+                g3_row['lnc5'] = dt['lnc'][4, day]
+                g3_row['lnc6'] = dt['lnc'][5, day]
+
+                g3_row['sto1'] = dt['storage_pool'][0, day]
+                g3_row['sto2'] = dt['storage_pool'][1, day]
+                g3_row['sto3'] = dt['storage_pool'][2, day]
+                rec += 1
+                g3_row.append()
+        table_g3.flush()
+
         # Write Spin_snapshot
         rec = 0
         spsh_row = spin_table.row

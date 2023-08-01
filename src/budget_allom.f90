@@ -190,7 +190,7 @@ contains
       real(r_8),dimension(:), allocatable :: csap_pls_aux
       real(r_8),dimension(:), allocatable :: cheart_pls_aux
       real(r_8),dimension(:), allocatable :: csto_pls_aux
-
+      
 
       !Delta veg pools
       real(r_8),dimension(npls) :: dleaf
@@ -199,6 +199,15 @@ contains
       real(r_8),dimension(npls) :: dsap
       real(r_8),dimension(npls) :: dheart
       real(r_8),dimension(npls) :: dsto
+
+      ! vegetation pools (auxiliar for internal convertions)
+      real(r_8),dimension(:), allocatable :: dleaf_aux
+      real(r_8),dimension(:), allocatable :: dwood_aux
+      real(r_8),dimension(:), allocatable :: droot_aux
+      real(r_8),dimension(:), allocatable :: dsap_aux
+      real(r_8),dimension(:), allocatable :: dheart_aux
+      real(r_8),dimension(:), allocatable :: dsto_aux
+
 
 
 
@@ -264,10 +273,6 @@ contains
          dheart(i) = dheart_in(i)
          dsto(i)   = dsto_in(i)
 
-         
-         ! cleaf_out(i) = cleaf_pls(i) + 1.
-         ! print*,'cleaf_in',cleaf_in(i), i
-      
       enddo
 
       w = w1 + w2        
@@ -338,6 +343,14 @@ contains
       allocate(cheart_pls_aux(nlen))
       allocate(csto_pls_aux(nlen))
 
+      allocate(dleaf_aux(nlen))
+      allocate(dwood_aux(nlen))
+      allocate(droot_aux(nlen))
+      allocate(dsap_aux(nlen))
+      allocate(dheart_aux(nlen))
+      allocate(dsto_aux(nlen))
+      
+
       !     Maximum evapotranspiration (emax)
       !     =================================
       emax = evpot2(p0,temp,rh,available_energy(temp))
@@ -405,6 +418,9 @@ contains
          ! endif
          ! delta_cveg(3,p) = cf2(p) - cf1_pft(ri)
 
+         dleaf_aux(p) = cleaf_pls2(p) - cleaf_pls(p)
+         
+         print*, 'dleaf_aux', dleaf_aux(p), cleaf_pls2(p), cleaf_pls(p)
          !mass balance (acho que vai direto na alloc)ATTENTION
          cleaf_pls_aux(p)  = cleaf_pls2(p)
          cwood_pls_aux(p)  = cwood_pls2(p)
@@ -500,7 +516,8 @@ contains
          cwood_out(ri)  =  cheart_out(ri) + csap_out(ri)
 
          !deltas
-         dleaf_out(ri)  =  0.3 !ATTENTION this value comes from allocation
+         dleaf_out(ri)  =  dleaf_aux(p)
+         !ATTENTION this value comes from allocation
          droot_out(ri)  =  0.2
          dheart_out(ri) =  1.0
          dsap_out(ri)   =  0.1
@@ -547,6 +564,14 @@ contains
       deallocate(cheart_pls_aux)
       deallocate(csto_pls_aux)
 
+      deallocate(dleaf_aux)
+      deallocate(dwood_aux)
+      deallocate(droot_aux)
+      deallocate(dsap_aux)
+      deallocate(dheart_aux)
+      deallocate(dsto_aux)
+
+      
 
 
 
