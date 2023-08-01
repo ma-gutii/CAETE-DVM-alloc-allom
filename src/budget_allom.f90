@@ -198,6 +198,14 @@ contains
       real(r_8),dimension(npls) :: dheart
       real(r_8),dimension(npls) :: dsto
 
+      !Carbon vegetation pools (auxiliar for internal convertions)
+      real(r_8),dimension(:), allocatable :: dleaf_pls_aux
+      real(r_8),dimension(:), allocatable :: dwood_pls_aux
+      real(r_8),dimension(:), allocatable :: droot_pls_aux
+      real(r_8),dimension(:), allocatable :: dsap_pls_aux
+      real(r_8),dimension(:), allocatable :: dheart_pls_aux
+      real(r_8),dimension(:), allocatable :: dsto_pls_aux
+
 
 
       !Carbon Cycle
@@ -336,6 +344,13 @@ contains
       allocate(cheart_pls_aux(nlen))
       allocate(csto_pls_aux(nlen))
 
+      allocate(dleaf_pls_aux(nlen))
+      allocate(dwood_pls_aux(nlen))
+      allocate(droot_pls_aux(nlen))
+      allocate(dsap_pls_aux(nlen))
+      allocate(dheart_pls_aux(nlen))
+      allocate(dsto_pls_aux(nlen))
+
       !     Maximum evapotranspiration (emax)
       !     =================================
       emax = evpot2(p0,temp,rh,available_energy(temp))
@@ -403,6 +418,16 @@ contains
          !    delta_cveg(2,p) = ca2(p) - ca1_pft(ri)
          ! endif
          ! delta_cveg(3,p) = cf2(p) - cf1_pft(ri)
+         
+         !calculating deltas
+         dleaf_pls_aux(p)  = cleaf_pls2(p)  - cleaf_pls(p)
+         droot_pls_aux(p)  = croot_pls2(p)  - croot_pls(p)
+         dsap_pls_aux(p)   = csap_pls2(p)   - csap_pls(p)
+         dheart_pls_aux(p) = cheart_pls2(p) - cheart_pls(p)
+         dsto_pls_aux(p)   = csto_pls2(p)   - csto_pls(p)
+
+
+         print*,'dleaf pls aux', dleaf_pls_aux(p)
 
          !mass balance (acho que vai direto na alloc)ATTENTION
          cleaf_pls_aux(p)  = cleaf_pls2(p)
@@ -542,6 +567,13 @@ contains
       deallocate(csap_pls_aux)
       deallocate(cheart_pls_aux)
       deallocate(csto_pls_aux)
+
+      deallocate(dleaf_pls_aux)
+      deallocate(dwood_pls_aux)
+      deallocate(droot_pls_aux)
+      deallocate(dsap_pls_aux)
+      deallocate(dheart_pls_aux)
+      deallocate(dsto_pls_aux)
 
 
 
