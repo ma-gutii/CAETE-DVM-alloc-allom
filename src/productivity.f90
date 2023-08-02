@@ -96,6 +96,8 @@ contains
     n2cf_resp = dt(12)
     p2cl = dt(13)
 
+    ! print*, 'n2cl', n2cl
+
 
     n2cl = n2cl * 1.0D3 ! N in leaf mg g-1
     p2cl = p2cl * 1.0D3 ! P in leaf mg g-1
@@ -162,9 +164,12 @@ contains
     rm = m_resp(temp,ts,cl1_prod,cf1_prod,ca1_prod &
          &,n2cl_resp,n2cw_resp,n2cf_resp,awood)
 
+    ! print*, 'rm', rm
+
 ! c     Growth respiration (KgC/m2/yr)(based in Ryan 1991; Sitch et al.
 ! c     2003; Levis et al. 2004)
     rg = g_resp(beta_leaf,beta_awood, beta_froot,awood)
+    ! print*, 'rg', rg
 
     if (rg.lt.0) then
        rg = 0.0
@@ -181,9 +186,16 @@ contains
 !     Net primary productivity(kgC/m2/yr)
 !     ====================================
     nppa = ph - ar
-    print*, 'npp', nppa, 'ph', ph, 'ar', ar
+
+    ! print*, 'npp', nppa, 'ph', ph, 'ar', ar, rm, rg
+    if (nppa.ge.0) then
+
+        print*, 'npp', nppa, 'ph', ph, 'ar', ar
+    endif
+
 ! this operation affects the model mass balance
-! If ar is bigger than ph, what is the source or respired C?
+! If ar is bigger than ph, what is the source or respired C? 
+! The mass balance can be found in allocation2 (when allometry version is used) 
 
     if(ar .gt. ph) then
        c_defcit = ((ar - ph) * 2.73791) ! tranform kg m-2 year-1 in  g m-2 day-1

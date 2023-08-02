@@ -255,12 +255,12 @@ contains
       do i = 1, npls
          awood_aux(i) = dt(7,i)
 
-         cleaf_pls(i)  = cleaf_in(i)
-         cwood_pls(i)  = cwood_in(i)
-         croot_pls(i)  = croot_in(i)
-         csap_pls(i)   = csap_in(i)
-         cheart_pls(i) = cheart_in(i)
-         csto_pls(i)   = csto_in(i)
+         cleaf_pls(i)  = 0.3 !cleaf_in(i)
+         cwood_pls(i)  = 10. !cwood_in(i)
+         croot_pls(i)  = 0.3 !croot_in(i)
+         csap_pls(i)   = 0.5 !csap_in(i)
+         cheart_pls(i) = 9.5 !cheart_in(i)
+         csto_pls(i)   = 0.1 !csto_in(i)
 
 
          dleaf(i)  = dleaf_in(i)
@@ -272,7 +272,7 @@ contains
 
          
          ! cleaf_out(i) = cleaf_pls(i) + 1.
-         print*,'cleaf_in',cleaf_in(i), i
+         ! print*,'cleaf_in',cleaf_in(i), i
       
       enddo
 
@@ -413,14 +413,14 @@ contains
          
          
          !calculating deltas
-         dleaf_pls_aux(p)  = cleaf_pls2(p)  - cleaf_pls(p)
-         droot_pls_aux(p)  = croot_pls2(p)  - croot_pls(p)
-         dsap_pls_aux(p)   = csap_pls2(p)   - csap_pls(p)
-         dheart_pls_aux(p) = cheart_pls2(p) - cheart_pls(p)
-         dsto_pls_aux(p)   = csto_pls2(p)   - csto_pls(p)
+         dleaf_pls_aux(p)  = 0.1 !cleaf_pls2(p)  - cleaf_pls(p)
+         droot_pls_aux(p)  = 0.1 !croot_pls2(p)  - croot_pls(p)
+         dsap_pls_aux(p)   = 0.1 !csap_pls2(p)   - csap_pls(p)
+         dheart_pls_aux(p) = 0.1 !cheart_pls2(p) - cheart_pls(p)
+         dsto_pls_aux(p)   = 0.1 !csto_pls2(p)   - csto_pls(p)
 
 
-         print*,'dleaf pls aux', dleaf_pls_aux(p)
+         ! print*,'dleaf pls aux', dleaf_pls_aux(p)
 
          !mass balance (acho que vai direto na alloc)ATTENTION
          cleaf_pls_aux(p)  = cleaf_pls2(p)

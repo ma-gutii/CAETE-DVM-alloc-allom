@@ -213,7 +213,7 @@ contains
 
       lai = leaf_area_index(cleaf, sla)
 
-      sunlai = (1.0D0-(dexp(-p26*lai)))/p26
+      sunlai = (1.0D0-(exp(-p26*lai)))/p26
       shadelai = lai - sunlai
 
       lai_ss = sunlai
@@ -232,13 +232,13 @@ contains
       !------------------------------------------------------------------------
       if(fs .eq. 1) then
          ! f4sun
-         lai_ss = (1.0-(dexp(-p26*sunlai)))/p26 !sun decl 90 degrees
+         lai_ss = (1.0-(exp(-p26*sunlai)))/p26 !sun decl 90 degrees
          return
       endif
 
       if(fs .eq. 2) then
          !f4shade
-         lai_ss = (1.0-(dexp(-p27*shadelai)))/p27 !sun decl ~20 degrees
+         lai_ss = (1.0-(exp(-p27*shadelai)))/p27 !sun decl ~20 degrees
          return
       endif
    end function f_four
@@ -675,7 +675,7 @@ contains
       if(vm .gt. p25) vm = p25
 
       ! Rubisco Carboxilation Rate - temperature dependence
-      vm_in = (vm*2.0D0**(0.1D0*(temp-25.0D0)))/(1.0D0+dexp(0.3D0*(temp-36.0)))
+      vm_in = (vm*2.0D0**(0.1D0*(temp-25.0D0)))/(1.0D0+exp(0.3D0*(temp-36.0)))
       if(vm_in + 1 .eq. vm_in) vm_in = p25 - 5.0D-5
       if(vm_in .gt. p25) vm_in = p25
 
@@ -1029,7 +1029,8 @@ contains
 
       real(r_8) :: csa, rm64, rml64
       real(r_8) :: rmf64, rms64
-      real(r_8), parameter :: a1 = 25.0D0, a2 = 0.04D0
+      ! real(r_8), parameter :: a1 = 25.0D0, a2 = 0.04D0
+      real(r_8), parameter :: a1 = 10.0D0, a2 = 0.03D0
       !   Autothrophic respiration
       !   ========================
       !   Maintenance respiration (kgC/m2/yr) (based in Ryan 1991)
@@ -1038,14 +1039,20 @@ contains
       ! only for woody PLSs
       if(aawood_mr .gt. 0.0) then
          csa = sapwood * ca1_mr
-         rms64 = ((n2cw * (csa * 1D3)) * a1 * dexp(a2 * temp))
+         ! rms64 = ((n2cw * (csa * 1D3)) * a1 * exp(a2 * temp))
+         rms64 = ((ncs * (csa * 1D3)) * a1 * exp(a2 * temp))
       else
          rms64 = 0.0
       endif
+      
+      rml64 = ((ncl*(cl1_mr*1D3))*a1*exp(a2 * temp))
+            ! rml64 = ((n2cl * (cl1_mr * 1D3)) * a1 * exp(a2 * temp))
 
-      rml64 = ((n2cl * (cl1_mr * 1D3)) * a1 * dexp(a2 * temp))
+      print*, 'rml64', rml64
 
-      rmf64 = ((n2cf * (cf1_mr * 1D3)) * a1 * dexp(a2 * ts))
+      rmf64 = ((ncf * (cf1_mr * 1D3)) * a1 * exp(a2 * ts))
+! 
+      ! rmf64 = ((n2cf * (cf1_mr * 1D3)) * a1 * exp(a2 * ts))
 
       rm64 = (rml64 + rmf64 + rms64) * 1D-3
 
@@ -1090,7 +1097,7 @@ contains
       ston = ston/stoc
     endif
 
-    rm = ((ston * stoc) * a1 * dexp(a2 * temp))
+    rm = ((ston * stoc) * a1 * exp(a2 * temp))
 
     if (rm .lt. 0) then
        rm = 0.0

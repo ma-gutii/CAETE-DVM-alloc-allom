@@ -215,7 +215,7 @@ module alloc2
         wood_in_ind    = sap_in_ind + heart_in_ind
 
         bminc_in_ind = (bminc_in)*1.D3
-        print*, 'bminc', bminc_in_ind
+        ! print*, 'bminc', bminc_in_ind
 
 
         ! call functions to logic
@@ -365,12 +365,12 @@ module alloc2
         endif
 
     !ATTENTION: PROVISORY OUTPUTS
-        leaf_out  = leaf_in + 1.1
-        root_out  = 0.40D0
-        sap_out   = 0.20D0
-        heart_out = 10.0D0
-        sto_out   = 1.0D0
-        wood_out  = sap_out + heart_out
+        leaf_out  = 0.3  !leaf_in + 0.1
+        wood_out  = 10.  !0.040D0
+        root_out   = 0.3  !0.020D0
+        sap_out = 0.5  !1.0D0
+        heart_out   = 9.5  !1.0D0
+        sto_out  = 0.1  !sap_out + heart_out
     
     ! !!!end of conditions for allocation!!!!
 
