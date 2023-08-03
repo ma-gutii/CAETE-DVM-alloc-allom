@@ -1014,7 +1014,7 @@ contains
         & n2cl,n2cw,n2cf,aawood_mr) result(rm)
 
       use types, only: r_4,r_8
-      use global_par, only: sapwood
+      use global_par, only: sapwood, ncf, ncl, ncs
       !implicit none
 
       real(r_4), intent(in) :: temp, ts
@@ -1048,7 +1048,7 @@ contains
       rml64 = ((ncl*(cl1_mr*1D3))*a1*exp(a2 * temp))
             ! rml64 = ((n2cl * (cl1_mr * 1D3)) * a1 * exp(a2 * temp))
 
-      print*, 'rml64', rml64
+      ! print*, 'rml64', rml64
 
       rmf64 = ((ncf * (cf1_mr * 1D3)) * a1 * exp(a2 * ts))
 ! 

@@ -388,7 +388,7 @@ contains
             &, soil_sat, ph(p), ar(p), nppa(p), laia(p), f5(p), vpd(p)&
             &, rm(p), rg(p), rc2(p), wue(p), c_def(p), vcmax(p), specific_la(p), tra(p))
       
-         
+         print*, 'nppa', nppa(p), p
          evap(p) = penman(p0, temp, rh, available_energy(temp), rc2(p)) !actual evapotranspiration (evap, mm/day)
 
          call allocation2(dt1, nppa(p)&
