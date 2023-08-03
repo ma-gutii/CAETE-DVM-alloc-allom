@@ -187,11 +187,11 @@ contains
 !     ====================================
     nppa = ph - ar
 
-    ! print*, 'npp', nppa, 'ph', ph, 'ar', ar, rm, rg
-    if (nppa.ge.0) then
-
-        print*, 'npp', nppa, 'ph', ph, 'ar', ar
-    endif
+    print*, 'npp', nppa, 'ph', ph, 'ar', ar, rm, rg
+    ! if (nppa.ge.0) then
+! 
+        ! print*, 'npp', nppa, 'ph', ph, 'ar', ar
+    ! endif
 
 ! this operation affects the model mass balance
 ! If ar is bigger than ph, what is the source or respired C? 

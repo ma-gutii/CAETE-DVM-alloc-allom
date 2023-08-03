@@ -1029,18 +1029,23 @@ contains
 
       real(r_8) :: csa, rm64, rml64
       real(r_8) :: rmf64, rms64
+      real(r_8) :: t_resp !Temperature influence on respiration
       ! real(r_8), parameter :: a1 = 25.0D0, a2 = 0.04D0
       real(r_8), parameter :: a1 = 10.0D0, a2 = 0.03D0
       !   Autothrophic respiration
       !   ========================
       !   Maintenance respiration (kgC/m2/yr) (based in Ryan 1991)
+      !ATTENTION: . The “seed” and storage carbon pools are not subject to maintenance res10 piration within the model, however, they do decay at a constant rate as described in
+!Sect. A6.
 
+      t_resp = (3.22 - (0.046 * temp))**((temp - 20)/10)
       ! sapwood carbon content (kgC/m2). X% of woody tissues (Pavlick, 2013)
       ! only for woody PLSs
       if(aawood_mr .gt. 0.0) then
          csa = sapwood * ca1_mr
          ! rms64 = ((n2cw * (csa * 1D3)) * a1 * exp(a2 * temp))
          rms64 = ((ncs * (csa * 1D3)) * a1 * exp(a2 * temp))
+         
       else
          rms64 = 0.0
       endif
@@ -1048,8 +1053,11 @@ contains
       rml64 = ((ncl*(cl1_mr*1D3))*a1*exp(a2 * temp))
             ! rml64 = ((n2cl * (cl1_mr * 1D3)) * a1 * exp(a2 * temp))
 
-      ! print*, 'rml64', rml64
+      ! print*, 'rml64 previous', rml64
 
+      ! rml64 = 0.3*((cl1_mr*1D3)/(1.0/29.0))*1.6180
+      ! print*, 'rml64 lpj', rml64
+      
       rmf64 = ((ncf * (cf1_mr * 1D3)) * a1 * exp(a2 * ts))
 ! 
       ! rmf64 = ((n2cf * (cf1_mr * 1D3)) * a1 * exp(a2 * ts))

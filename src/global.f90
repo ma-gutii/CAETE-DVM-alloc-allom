@@ -48,10 +48,10 @@ module global_par
    real(r_8),parameter,public :: gm = 3.26D0 * 86400D0           ! (*86400 transform s/mm to dia/mm)
    real(r_8),parameter,public :: sapwood = 0.05D0                ! Fraction of wood tissues that are sapwood
    real(r_4),parameter,public :: ks = 0.25                       ! P Sorption
-   integer(i_4),parameter,public :: npls = 10                  ! Number of Plant Life Strategies-PLSs simulated (Defined at compile time)
+   integer(i_4),parameter,public :: npls = 100                  ! Number of Plant Life Strategies-PLSs simulated (Defined at compile time)
    integer(i_4),parameter,public :: ntraits = 17                 ! Number of traits for each PLS
-   real(r_8),parameter, public :: ncl = (1.0/29.0)          !(gN/gC) used in maintenance respiration (from Smitth et al 2001)
-   real(r_8),parameter, public :: ncf = (1.0/29.0)          !(gN/gC)
+   real(r_8),parameter, public :: ncl = (1.0/60.0)          !(gN/gC) used in maintenance respiration (from Smitth et al 2001)
+   real(r_8),parameter, public :: ncf = (1.0/60.0)          !(gN/gC)
    real(r_8),parameter, public :: ncs = (1.0/330.0)         !(gN/gC)
 
    !allometric parameters
@@ -70,7 +70,7 @@ module global_par
    real(r_8), parameter, public :: xacc =  0.1     !x-axis precision threshold for the allocation solution
    real(r_8), parameter, public :: yacc =  1.e-10  !y-axis precision threshold for the allocation solution
 
-   !turnover parameters !see parameters in Bucley & Roberts  2006 - Tree physiology
+   !turnover parameters - see parameters in Bucley & Roberts  2006 - Tree physiology
    !provisory
    real(r_8), parameter, public :: l_turnover = 1./2 !Sitch et al 2003
    real(r_8), parameter, public :: r_turnover = 1./2 !Sitch et al 2003

@@ -58,8 +58,8 @@ module global_par
    real(r_4),parameter,public :: ks = 0.25                       ! P Sorption
    integer(i_4),parameter,public :: npls = {s}                  ! Number of Plant Life Strategies-PLSs simulated (Defined at compile time)
    integer(i_4),parameter,public :: ntraits = 17                 ! Number of traits for each PLS
-   real(r_8),parameter, public :: ncl = (1.0/29.0)          !(gN/gC) used in maintenance respiration (from Smitth et al 2001)
-   real(r_8),parameter, public :: ncf = (1.0/29.0)          !(gN/gC)
+   real(r_8),parameter, public :: ncl = (1.0/60.0)          !(gN/gC) used in maintenance respiration (from Smitth et al 2001)
+   real(r_8),parameter, public :: ncf = (1.0/60.0)          !(gN/gC)
    real(r_8),parameter, public :: ncs = (1.0/330.0)         !(gN/gC)
 
    !allometric parameters
