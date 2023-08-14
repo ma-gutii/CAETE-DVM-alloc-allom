@@ -780,20 +780,20 @@ class grd:
 
         # Biomass 
             #Initial value for biomass
-        self.vp_cleaf = np.zeros(shape=(npls,), order='F') + 1.0
-        self.vp_croot = np.zeros(shape=(npls,), order='F') + 1.0
+        self.vp_cleaf = np.zeros(shape=(npls,), order='F') + 5.0
+        self.vp_croot = np.zeros(shape=(npls,), order='F') + 5.0
         self.vp_cwood = np.zeros(shape=(npls,), order='F') + 0.1
         self.vp_cwood[pls_table[6,:] == 0.0] = 0.0
        
 
         #Initial value for biomass for alloc_allom
         #for trees
-        self.vp_cleaf_allom = np.zeros(shape=(npls,), order='F') + 1.0
-        self.vp_croot_allom = np.zeros(shape=(npls,), order='F') + 1.0
-        self.vp_cwood_allom = np.zeros(shape=(npls,), order='F') + 0.1
-        self.vp_cheart_allom = 0.85*(self.vp_cwood_allom)
-        self.vp_csap_allom = 0.15*(self.vp_cwood_allom)
-        self.vp_csto_allom = np.zeros(shape=(npls,), order='F') + 0.1
+        self.vp_cleaf_allom = np.zeros(shape=(npls,), order='F') + 1.22
+        self.vp_croot_allom = np.zeros(shape=(npls,), order='F') + 0.88
+        self.vp_cheart_allom = np.zeros(shape=(npls,), order='F')+ 108.91#0.85*(self.vp_cwood_allom)
+        self.vp_csap_allom = np.zeros(shape=(npls,), order='F') + 29.79 #0.15*(self.vp_cwood_allom)
+        self.vp_csto_allom = np.zeros(shape=(npls,), order='F') + 1.0
+        self.vp_cwood_allom = np.zeros(shape=(npls,), order='F') + self.vp_csap_allom + self.vp_cheart_allom
         
         #for grasses
         self.vp_cwood_allom[self.pls_table[6, :] == 0.0]  = 0.0
@@ -1024,7 +1024,7 @@ class grd:
                 self.save = False
             
             for step in range(steps.size): #make the loop for the size of array (number of years to be simulated)
-                print('STEP', step)
+                # print('STEP', step)
                 #both
                 if fix_co2_p:
                     pass
@@ -1525,7 +1525,9 @@ class grd:
                 self.save = False
 
             for step in range(steps.size): #make the loop for the size of array (number of years to be simulated)
-                # print('STEP', step)
+                # if step == 2:
+                #     break
+                print('STEP', step)
                 #both
                 if fix_co2_p:
                     pass

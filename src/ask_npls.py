@@ -58,16 +58,16 @@ module global_par
    real(r_4),parameter,public :: ks = 0.25                       ! P Sorption
    integer(i_4),parameter,public :: npls = {s}                  ! Number of Plant Life Strategies-PLSs simulated (Defined at compile time)
    integer(i_4),parameter,public :: ntraits = 17                 ! Number of traits for each PLS
-   real(r_8),parameter, public :: ncl = (1.0/60.0)          !(gN/gC) used in maintenance respiration (from Smitth et al 2001)
+   real(r_8),parameter, public :: ncl = (1.0/60.0)          !(gN/gC) used in maintenance respiration (from Scheiter & Higgins 2008)
    real(r_8),parameter, public :: ncf = (1.0/60.0)          !(gN/gC)
-   real(r_8),parameter, public :: ncs = (1.0/330.0)         !(gN/gC)
+   real(r_8),parameter, public :: ncs = (1.0/330.0)         !(gN/gC) from Smith et al 2001
 
    !allometric parameters
    real(r_8), parameter, public :: dwood = 0.74*1.D6 !provisory
    real(r_8), parameter, public :: pi = 3.1415926536
-   real(r_8), parameter, public :: k_allom2 = 36!40.0
-   real(r_8), parameter, public :: k_allom3 = 0.22!0.50
-   real(r_8), parameter, public :: klatosa =  6000.0
+   real(r_8), parameter, public :: k_allom2 = 10.
+   real(r_8), parameter, public :: k_allom3 = 0.1
+   real(r_8), parameter, public :: klatosa =  8000.0
    real(r_8), parameter, public :: sla_allom = 0.023!15.36 !0.023!provisory
    real(r_8), parameter, public :: ltor = 0.77302587552347657
 
@@ -80,8 +80,8 @@ module global_par
 
    !turnover parameters - see parameters in Bucley & Roberts  2006 - Tree physiology
    !provisory
-   real(r_8), parameter, public :: l_turnover = 1./2 !Sitch et al 2003
-   real(r_8), parameter, public :: r_turnover = 1./2 !Sitch et al 2003
+   real(r_8), parameter, public :: l_turnover = 1./4. !Sitch et al 2003
+   real(r_8), parameter, public :: r_turnover = 1./2. !Sitch et al 2003
    real(r_8), parameter, public :: s_turnover = 1./20 !0.05 !Sitch et al 2003
    !ATTENTION TO HEARt TURNOVER
    real(r_8), parameter, public :: h_turnover = 1./30.!1/50. !Sitch et al 2003

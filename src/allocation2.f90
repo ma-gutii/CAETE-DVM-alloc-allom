@@ -46,7 +46,7 @@ module alloc2
 
     contains
 
-    subroutine allocation2(dt, bminc_in, leaf_in, wood_in, root_in, sap_in, heart_in, sto_in&
+    subroutine allocation2(dt, photo, ar, leaf_in, wood_in, root_in, sap_in, heart_in, sto_in&
         &, leaf_out, wood_out, root_out, sap_out, heart_out, sto_out)
     
         
@@ -62,6 +62,7 @@ module alloc2
         real(r_8), intent(in) :: wood_in
 
 
+
         !provisory
         real(r_8) :: dens_in
 
@@ -69,9 +70,10 @@ module alloc2
         ! real(r_8), intent(in) :: dens_in !ind/m2 initial density of individuals
 
         !input of carbon available gc/m2/time_step
-        real(r_4), intent(in) :: bminc_in ! carbon (NPP) available to be allocated
-                                          !basically NPPt - NPPt-1. NPP accumulated in the year/month/day
-                                         
+        real(r_4):: bminc_in ! carbon (NPP) available to be allocated
+        real(r_4), intent(in) :: photo                                !basically NPPt - NPPt-1. NPP accumulated in the year/month/day
+        real(r_4), intent(in) :: ar
+
         !VARIABLES OUTPUTS 
         !carbon outputs (kgC/m2)
         real(r_8), intent(out) :: leaf_out
@@ -130,6 +132,8 @@ module alloc2
 
         !used to identify wood/non wood strategies
         real(r_8) :: awood
+        real(r_8) :: height2
+
         
         !take the allocation proportion to wood (to identify) the grasses
         awood = dt(7)
@@ -193,29 +197,28 @@ module alloc2
      
 
         !provisory
-        dens_in = 10.
+        dens_in = 1.
         
 
         !carbon (gC) in compartments considering the density (ind/m2) -- NOT APPLIED IN THIS VERSION
-        ! leaf_in_ind = (leaf_in/dens_in)*1.D3
-        ! root_in_ind = (root_in/dens_in)*1.D3
-        ! sap_in_ind = (sap_in/dens_in)*1.D3 
-        ! heart_in_ind = (heart_in/dens_in)*1.D3
-        ! storage_in_ind = (storage_in/dens_in)*1.D3
-        ! wood_in_ind = sap_in_ind + heart_in_ind
+        leaf_in_ind = (leaf_in/dens_in)*1.D3
+        root_in_ind = (root_in/dens_in)*1.D3
+        sap_in_ind = (sap_in/dens_in)*1.D3 
+        heart_in_ind = (heart_in/dens_in)*1.D3
+        sto_in_ind = (sto_in/dens_in)*1.D3
+        wood_in_ind = sap_in_ind + heart_in_ind
 
-        ! bminc_in_ind = (bminc_in/dens_in)*1.D3
 
         !transforms to gC/m2
-        leaf_in_ind    = (leaf_in)*1.D3
-        root_in_ind    = (root_in)*1.D3
-        sap_in_ind     = (sap_in)*1.D3 
-        heart_in_ind   = (heart_in)*1.D3
-        sto_in_ind     = (sto_in)*1.D3
-        wood_in_ind    = sap_in_ind + heart_in_ind
-
-        bminc_in_ind = (bminc_in)*1.D3
-        ! print*, 'bminc', bminc_in_ind
+        ! leaf_in_ind    = (leaf_in)*1.D3
+        ! root_in_ind    = (root_in)*1.D3
+        ! sap_in_ind     = (sap_in)*1.D3 
+        ! heart_in_ind   = (heart_in)*1.D3
+        ! sto_in_ind     = (sto_in)*1.D3
+        ! wood_in_ind    = sap_in_ind + heart_in_ind
+        bminc_in = photo - ar
+        bminc_in_ind = (bminc_in/dens_in)*1.D3
+        print*, 'bminc', bminc_in_ind
 
 
         ! call functions to logic
@@ -242,10 +245,10 @@ module alloc2
         
         ! if ( leaf_inc_min.gt.0.0.and.root_inc_min.gt.0.0) then          
         
-        !     print*, 'leaf inc min', leaf_inc_min
-        !     print*, ' '
+            ! print*, 'leaf inc min', leaf_inc_min
+            ! print*, ' '
         ! print*, 'root inc min', root_inc_min, root_in_ind
-        !     print*, ''
+            ! print*, ''
         ! endif
 
 
@@ -254,12 +257,13 @@ module alloc2
        
         if (leaf_inc_min.gt.0.0D0.and.root_inc_min.gt.0.0D0) then
 
-            ! print*, 'leaf and root inc minimum are > 0' !ok
+            print*, "alocação normal"
+            print*,'leaf and root inc minimum are > 0' !ok
 
            
             if((bminc_in_ind.gt.0)) then
 
-                ! print*, 'NPP > 0.' !ok
+                print*, 'NPP > 0.' !ok
                 
                 if (bminc_in_ind.ge.(root_inc_min + leaf_inc_min)) then
 
@@ -280,20 +284,20 @@ module alloc2
 
                 else
 
-                    ! print*, 'NPP < sum of root and leaf inc min' !ok
+                    print*, 'NPP < sum of root and leaf inc min' !ok
 
                     if ( (sto_in_ind + bminc_in_ind).ge.(root_inc_min + leaf_inc_min) ) then !!AND NUTRIENTS
                                 
-                        ! print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc' !ok
+                        print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc' !ok
 
                         call reallocation(bminc_in_ind, leaf_inc_min, root_inc_min,&
                         leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc, sto_inc_alloc)
 
-                        ! print*, 'use storage and discount leaf inc and root inc' !ok
+                        print*, 'use storage and discount leaf inc and root inc' !ok
 
                     else
 
-                        ! print*, 'storage + npp < inc min non used npp goes to storage'!ok
+                        print*, 'storage + npp < inc min non used npp goes to storage'!ok
                         
                         sto_inc_alloc = bminc_in_ind 
 
@@ -302,21 +306,23 @@ module alloc2
                 end if
 
             else
-                
-                ! print*, 'NPP < 0 but storage + NPP > minimum requirement' !ok
+                print*, 'NPP <0'
 
                 if ( (sto_in_ind + bminc_in_ind).ge.(root_inc_min + leaf_inc_min) ) then !!AND NUTRIENTS
+                    print*, 'NPP < 0 but storage + NPP > minimum requirement' !ok
 
-                    ! print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc' !ok
+                    print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc' !ok
 
                     call reallocation(bminc_in_ind, leaf_inc_min, root_inc_min,&
                     leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc, sto_inc_alloc)
              
                 else
                     
-                    ! print*, 'C deficit (NPP < GPP - resp)' !ok
+                    print*, 'C deficit (NPP < GPP - resp)' !ok
 
                     c_deficit      = abs(bminc_in_ind)
+
+                    print*, 'c deficit', c_deficit, bminc_in_ind
 
                     leaf_inc_alloc = - (c_deficit*0.33)
 
@@ -334,18 +340,18 @@ module alloc2
             endif
 
         else 
-
-            ! print*, 'leaf and root inc minimum are < 0' !ok
+            print*, "alocação anormal"
+            print*, 'leaf and root inc minimum are < 0' !ok
     
 
             if ( bminc_in_ind.gt.0.0D0 ) then
 
-                ! print*, 'NPP > 0. -> non allocated goes to storage' !ok
+                print*, 'NPP > 0. -> non allocated goes to storage' !ok
                 sto_inc_alloc = bminc_in_ind
                 
             else 
 
-                ! print*, 'NPP < 0 -> discount the deficit equally between alive tissues', bminc_in_ind !ok
+                print*, 'NPP < 0 -> discount the deficit equally between alive tissues', bminc_in_ind !ok
 
                 c_deficit     = abs(bminc_in_ind)
 
@@ -365,12 +371,12 @@ module alloc2
         endif
 
     !ATTENTION: PROVISORY OUTPUTS
-        leaf_out  = 0.3  !leaf_in + 0.1
-        wood_out  = 10.  !0.040D0
-        root_out   = 0.3  !0.020D0
-        sap_out = 0.5  !1.0D0
-        heart_out   = 9.5  !1.0D0
-        sto_out  = 0.1  !sap_out + heart_out
+        ! leaf_out  = 0.0001  !leaf_in + 0.1
+        ! wood_out  = 50.  !0.040D0
+        ! root_out   = 0.00001  !0.020D0
+        ! sap_out = 100000.5 !1.0D0
+        ! heart_out   = 47.5  !1.0D0
+        ! sto_out  = 0.1  !sap_out + heart_out
     
     ! !!!end of conditions for allocation!!!!
 
@@ -383,31 +389,28 @@ module alloc2
         sto_updt     = sto_in_ind   + sto_inc_alloc
         wood_updt    = sap_updt     + heart_updt
 
-        ! print*, 'leaf', leaf_updt, leaf_inc_alloc
-        ! print*, 'sap', sap_updt
-        ! print*, 'heart', heart_updt
-        ! print*, 'root', root_updt
-        ! print*, 'sto', sto_updt
-        ! print*, 'wood', wood_updt
+        ! print*, 'leaf updt', leaf_updt, 'leaf_in_ind', leaf_in_ind, 'leaf_inc_alloc',leaf_inc_alloc
 
-    !     !mortality through turnover
-    !     call mortality_turnover(leaf_in_ind, root_in_ind, sap_in_ind, heart_in_ind,sto_in_ind,&
-    !         leaf_turn, root_turn, sap_turn, heart_turn, sto_turn)
+    !mortality through turnover
+        call mortality_turnover(leaf_in_ind, root_in_ind, sap_in_ind, heart_in_ind,sto_in_ind,&
+            leaf_turn, root_turn, sap_turn, heart_turn, sto_turn)
 
-    !     !discout C due to turnover and transform variable in kgC/m2 to ouput
-    !     leaf_out = ((leaf_updt - leaf_turn)*dens_in)/1.D3
-    !     root_out = ((root_updt - root_turn)*dens_in)/1.D3
-    !     sap_out  = ((sap_updt - sap_turn)*dens_in)/1.D3
-    !     !!!ATENÇÃO: CORRIGIR HEART_INC_ALLOC PRA ALLOC NORMAL
-    !     heart_out = (((heart_updt - heart_turn) + sap_turn)*dens_in)/1.D3
-    !     sto_out = ((sto_updt - sto_turn) * dens_in)/1.D3
+        !discout C due to turnover and transform variable in kgC/m2 to ouput
+        leaf_out = ((leaf_updt - leaf_turn)*dens_in)/1.D3
+        root_out = ((root_updt - root_turn)*dens_in)/1.D3
+        sap_out  = ((sap_updt - sap_turn)*dens_in)/1.D3
+        heart_out = (((heart_updt - heart_turn) + sap_turn)*dens_in)/1.D3
+        sto_out = ((sto_updt - sto_turn) * dens_in)/1.D3
 
-    !     ! print*, '__________________________'
-    !     ! print*, 'leaf out', leaf_out
-    !     ! print*, 'sap out', sap_out
-    !     ! print*, 'root out', root_out
-    !     ! print*, 'heart out', heart_out 
-    !     ! print*, '__________________________'
+        ! print*, '__________________________'
+        ! print*, 'leaf out', leaf_out*1000,'leaf inc', leaf_inc_alloc, 'leaf_in_ind', leaf_in_ind
+        ! print*, 'sap out', sap_out,'sap inc', sap_inc_alloc
+        ! print*, 'root out', root_out,'root inc', root_inc_alloc
+        ! print*, 'heart out', heart_out ,'heart inc', heart_inc_alloc
+        ! print*, 'sto out', heart_out ,'sto inc', sto_inc_alloc
+
+
+        print*, '__________________________'
 
     !     !________________
     !     !sensitivity test
@@ -474,10 +477,10 @@ module alloc2
     function leaf_req_calc (sap_in_ind, height)  result (leaf_req)
     
         real(r_8), intent(in) :: sap_in_ind !gC - sapwood input
-        real(r_8), intent(in) :: height !m
+        real(r_8), intent(in) :: height !me
        
-        real(r_8) :: leaf_req !gC - output- leaf mass requeriment to satisfy allometry 
-
+        real(r_8) :: leaf_req !gC - output- leaf mass requeriment to satisfy allometry
+        real(r_8) :: height2 
         !Traits from constants.f90
         !dwood - wood density (gc/m3) - already transformed in constants.f90
         !sla - specific leaf area
@@ -485,9 +488,18 @@ module alloc2
 
         !initializing variables
         leaf_req = 0.0D0
+        height2 = 20.
 
-
+        
         leaf_req = klatosa * sap_in_ind / (dwood * height * sla_allom)
+        ! print*, '******************************'
+        ! print*, 'sap in ind', sap_in_ind/1000
+        ! print*, 'dwood', dwood
+        ! print*, 'height', height
+        ! print*, 'sla allom',sla_allom
+        ! print*, 'leaf req', leaf_req
+        ! print*, '******************************'
+
 
  
     end function leaf_req_calc
@@ -503,6 +515,8 @@ module alloc2
         leaf_inc_min = 0.0D0
 
         leaf_inc_min = leaf_req - leaf_in_ind
+        ! print*,'leaf inc min', leaf_inc_min
+
 
     end function leaf_inc_min_calc
 
@@ -516,6 +530,7 @@ module alloc2
         real(r_8) :: root_inc_min !gC -output- minimum root increment to satisfy allocation equation
         
         root_inc_min = leaf_req / ltor - root_in_ind
+        print*, 'root inc min', root_inc_min
 
     end function root_inc_min_calc
 
@@ -751,7 +766,7 @@ module alloc2
 
         sap_turn = sap_in_ind*s_turnover
 
-        sto_turn = sto_in_ind*0.2 !provisory
+        sto_turn = sto_in_ind*1/3 !provisory
 
         !heartwood incorporates the dead tissue from sapwood
         heart_turn = (heart_in_ind*h_turnover) + sap_turn
@@ -801,6 +816,7 @@ module alloc2
         sto_inc_alloc = 0.0D0
 
         leaf_inc_alloc = leaf_inc_min
+        print*, 'leaf reallocation', leaf_inc_alloc, leaf_inc_min
 
         root_inc_alloc = root_inc_min
 

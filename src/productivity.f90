@@ -187,7 +187,10 @@ contains
 !     ====================================
     nppa = ph - ar
 
-    print*, 'npp', nppa, 'ph', ph, 'ar', ar, rm, rg
+    print*, '______________________________________'
+    print*, 'npp', nppa, 'ph', ph, 'ar', ar, 'rm', rm,'rg',rg
+    print*, '______________________________________'
+
     ! if (nppa.ge.0) then
 ! 
         ! print*, 'npp', nppa, 'ph', ph, 'ar', ar

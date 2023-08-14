@@ -255,12 +255,12 @@ contains
       do i = 1, npls
          awood_aux(i) = dt(7,i)
 
-         cleaf_pls(i)  = 0.3 !cleaf_in(i)
-         cwood_pls(i)  = 10. !cwood_in(i)
-         croot_pls(i)  = 0.3 !croot_in(i)
-         csap_pls(i)   = 0.5 !csap_in(i)
-         cheart_pls(i) = 9.5 !cheart_in(i)
-         csto_pls(i)   = 0.1 !csto_in(i)
+         cleaf_pls(i)  = cleaf_in(i)
+         cwood_pls(i)  = cwood_in(i)
+         croot_pls(i)  = croot_in(i)
+         csap_pls(i)   = csap_in(i)
+         cheart_pls(i) = cheart_in(i)
+         csto_pls(i)   = csto_in(i)
 
 
          dleaf(i)  = dleaf_in(i)
@@ -388,10 +388,10 @@ contains
             &, soil_sat, ph(p), ar(p), nppa(p), laia(p), f5(p), vpd(p)&
             &, rm(p), rg(p), rc2(p), wue(p), c_def(p), vcmax(p), specific_la(p), tra(p))
       
-         print*, 'nppa', nppa(p), p
+         
          evap(p) = penman(p0, temp, rh, available_energy(temp), rc2(p)) !actual evapotranspiration (evap, mm/day)
 
-         call allocation2(dt1, nppa(p)&
+         call allocation2(dt1, ph(p), ar(p)&
             &,cleaf_pls(ri), cwood_pls(ri), croot_pls(ri), csap_pls(ri), cheart_pls(ri), csto_pls(ri)&
             &,cleaf_pls2(p), cwood_pls2(p), croot_pls2(p), csap_pls2(p), cheart_pls2(p), csto_pls2(p))
             !!!ATENÇÃO cleaf_pls2 is output from allocation
@@ -507,10 +507,10 @@ contains
 
          !provisory general valeus
          cleaf_out(ri)  =  cleaf_pls2(p) !ATTENTION this value comes from allocation
-         croot_out(ri)  =  1.0
-         cheart_out(ri) =  15.0
-         csap_out(ri)   =  5.0
-         csto_out(ri)   =  1.0
+         croot_out(ri)  =  croot_pls2(p)
+         cheart_out(ri) =  cheart_pls2(p)
+         csap_out(ri)   =  csap_pls2(p)
+         csto_out(ri)   =  csto_pls2(p)
          cwood_out(ri)  =  cheart_out(ri) + csap_out(ri)
 
          !deltas

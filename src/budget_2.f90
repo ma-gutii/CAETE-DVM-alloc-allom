@@ -78,7 +78,7 @@ module budget_allom
        real(r_8),intent(out) :: evavg          !Actual evapotranspiration Daily average (mm/day)
        real(r_8),intent(out) :: phavg          !Daily photosynthesis (Kg m-2 y-1)
        real(r_8),intent(out) :: aravg          !Daily autotrophic respiration (Kg m-2 y-1)
-       real(r_8),intent(out) :: nppavg         !Daily NPP (average between PFTs)(Kg m-2 y-1)
+       real(r_8),intent(out) :: nppavg         !Daily NPP (average  ween PFTs)(Kg m-2 y-1)
        real(r_8),intent(out) :: laiavg         !Daily leaf19010101', '19551231 area Index m2m-2
        real(r_8),intent(out) :: rcavg          !Daily canopy resistence s/m
        real(r_8),intent(out) :: f5avg          !Daily canopy resistence s/m
