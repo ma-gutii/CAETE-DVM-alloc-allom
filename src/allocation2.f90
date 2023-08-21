@@ -222,7 +222,7 @@ module alloc2
 
 
         ! call functions to logic
-        height = height_calc(wood_in_ind)
+        height = height_calc(wood_in_ind, sap_in_ind, leaf_in_ind)
         ! print*, 'height', height
         ! print*, 'wood_in_ind', wood_in_ind
 
@@ -447,11 +447,12 @@ module alloc2
 148 continue
     end subroutine allocation2
 
-    function height_calc (wood_in_ind) result (height)
+    function height_calc (wood_in_ind, sap_in_ind, leaf_in_ind) result (height)
         
         real(r_8), intent(in) :: wood_in_ind !gC/ind - total wood (sap + heart) carbon stock
-        
-        !Trait
+        real(r_8), intent(in) :: sap_in_ind !gC/ind - total wood (sap + heart) carbon stock
+        real(r_8), intent(in) :: leaf_in_ind !gC/ind 
+                !Trait
         !dwood - wood density
 
 
@@ -465,12 +466,14 @@ module alloc2
         height = 0.0D0
         
         !Calculo diameter (necessary to height)
-        diameter = ((4*wood_in_ind)/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
-        ! print*, 'diameter', diameter
+        diameter = ((4*(wood_in_ind/1000.))/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
+        print*, 'diameter', diameter*100
 
         !Height 
         height = k_allom2*(diameter**k_allom3)
-
+        print*, 'HEIGHT', 'HEIGHT','HEIGHT LPJ', height
+        ! height = sap_in_ind*klatosa/dwood*leaf_in_ind*sla_allom
+        ! print*, 'HEIGHT', 'HEIGHT','HEIGHT LPJ2', height
 
     end function height_calc
 

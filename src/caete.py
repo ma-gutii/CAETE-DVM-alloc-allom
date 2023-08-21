@@ -788,11 +788,11 @@ class grd:
 
         #Initial value for biomass for alloc_allom
         #for trees
-        self.vp_cleaf_allom = np.zeros(shape=(npls,), order='F') + 1.22
-        self.vp_croot_allom = np.zeros(shape=(npls,), order='F') + 0.88
-        self.vp_cheart_allom = np.zeros(shape=(npls,), order='F')+ 108.91#0.85*(self.vp_cwood_allom)
-        self.vp_csap_allom = np.zeros(shape=(npls,), order='F') + 29.79 #0.15*(self.vp_cwood_allom)
-        self.vp_csto_allom = np.zeros(shape=(npls,), order='F') + 1.0
+        self.vp_cleaf_allom = np.zeros(shape=(npls,), order='F') + 1.
+        self.vp_croot_allom = np.zeros(shape=(npls,), order='F') + 0.8
+        self.vp_cheart_allom = np.zeros(shape=(npls,), order='F')+ 80.#0.85*(self.vp_cwood_allom)
+        self.vp_csap_allom = np.zeros(shape=(npls,), order='F') + 30. #0.15*(self.vp_cwood_allom)
+        self.vp_csto_allom = np.zeros(shape=(npls,), order='F') + 5.0
         self.vp_cwood_allom = np.zeros(shape=(npls,), order='F') + self.vp_csap_allom + self.vp_cheart_allom
         
         #for grasses
@@ -1341,7 +1341,7 @@ class grd:
 
                 # END SOIL NUTRIENT DYNAMICS
 
-                # # #  store (np.array) outputs
+                # # #  storestore (np.array) outputs
 
                 if save:
                     assert self.save == True
@@ -1525,8 +1525,8 @@ class grd:
                 self.save = False
 
             for step in range(steps.size): #make the loop for the size of array (number of years to be simulated)
-                # if step == 2:
-                #     break
+                if step == 100:
+                     break
                 print('STEP', step)
                 #both
                 if fix_co2_p:
@@ -1619,12 +1619,12 @@ class grd:
                 if save:
                     assert self.save == True
 
-                    self.cleaf_allom  = daily_output_allom['cleaf_grd']
-                    self.wood_allom   = daily_output_allom['cwood_grd']
-                    self.root_allom   = daily_output_allom['croot_grd']
-                    self.csap_allom   = daily_output_allom['csap_grd']
-                    self.cheart_allom = daily_output_allom['cheart_grd']
-                    self.csto_allom   = daily_output_allom['csto_grd']
+                    self.cleaf_allom[step]  = daily_output_allom['cleaf_grd']
+                    self.cwood_allom[step]   = daily_output_allom['cwood_grd']
+                    self.croot_allom[step]   = daily_output_allom['croot_grd']
+                    self.csap_allom[step]   = daily_output_allom['csap_grd']
+                    self.cheart_allom[step] = daily_output_allom['cheart_grd']
+                    self.csto_allom[step]   = daily_output_allom['csto_grd']
                     
 
                 

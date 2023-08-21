@@ -50,7 +50,7 @@ module global_par
    real(r_4),parameter,public :: rcmin = 100                     ! ResistÊncia estomática mínima s/m
    real(r_8),parameter,public :: cmin = 1.0D-6                   ! Minimum to survive kg m-2
    ! real(r_4),parameter,public :: wmax = 500.0                    ! Maximum water soil capacity (Kg m-2)
-   real(r_8),parameter,public :: vcmax = 10.0D-5 
+   real(r_8),parameter,public :: vcmax = 50.0D-5 
    real(r_8),parameter,public :: csru = 0.5D0                    ! Root attribute
    real(r_8),parameter,public :: alfm = 1.391D0                  ! Root attribute
    real(r_8),parameter,public :: gm = 3.26D0 * 86400D0           ! (*86400 transform s/mm to dia/mm)
@@ -65,8 +65,8 @@ module global_par
    !allometric parameters
    real(r_8), parameter, public :: dwood = 0.74*1.D6 !provisory
    real(r_8), parameter, public :: pi = 3.1415926536
-   real(r_8), parameter, public :: k_allom2 = 10.
-   real(r_8), parameter, public :: k_allom3 = 0.1
+   real(r_8), parameter, public :: k_allom2 = 29.
+   real(r_8), parameter, public :: k_allom3 = 0.4
    real(r_8), parameter, public :: klatosa =  8000.0
    real(r_8), parameter, public :: sla_allom = 0.023!15.36 !0.023!provisory
    real(r_8), parameter, public :: ltor = 0.77302587552347657
