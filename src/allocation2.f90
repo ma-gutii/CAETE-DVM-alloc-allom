@@ -324,16 +324,18 @@ module alloc2
 
                     print*, 'c deficit', c_deficit, bminc_in_ind
 
-                    leaf_inc_alloc = - (c_deficit*0.33)
+                    
+                    leaf_inc_alloc = - (c_deficit*0.25)
 
-                    root_inc_alloc = - (c_deficit*0.33)
+                    root_inc_alloc = - (c_deficit*0.25)
 
-                    sap_inc_alloc  = - (c_deficit*0.33)
+                    sap_inc_alloc  = - (c_deficit*0.25)
 
                     !when sap dies it turns into heartwood
                     heart_inc_alloc = abs(sap_inc_alloc)
 
-                    sto_inc_alloc = 0.0D0
+                    sto_inc_alloc = - (c_deficit*0.25)
+
                      
                 end if
                     
@@ -355,16 +357,16 @@ module alloc2
 
                 c_deficit     = abs(bminc_in_ind)
 
-                leaf_inc_alloc = - (c_deficit*0.33)
+                leaf_inc_alloc = - (c_deficit*0.25)
 
-                root_inc_alloc = - (c_deficit*0.33)
+                root_inc_alloc = - (c_deficit*0.25)
 
-                sap_inc_alloc  = - (c_deficit*0.33)
+                sap_inc_alloc  = - (c_deficit*0.25)
 
                 !when sap dies it turns into heartwood
                 heart_inc_alloc = abs(sap_inc_alloc)
 
-                sto_inc_alloc = 0.0D0
+                sto_inc_alloc = - (c_deficit*0.25)
 
             end if    
             
@@ -399,15 +401,21 @@ module alloc2
         leaf_out = ((leaf_updt - leaf_turn)*dens_in)/1.D3
         root_out = ((root_updt - root_turn)*dens_in)/1.D3
         sap_out  = ((sap_updt - sap_turn)*dens_in)/1.D3
-        heart_out = (((heart_updt - heart_turn) + sap_turn)*dens_in)/1.D3
+        if (sap_out.ge.0.0) then
+            heart_out = (((heart_updt - heart_turn) + sap_turn)*dens_in)/1.D3
+        else 
+            heart_out = (((heart_updt - heart_turn) + abs(sap_out))*dens_in)/1.D3   
+        endif
+        
         sto_out = ((sto_updt - sto_turn) * dens_in)/1.D3
 
-        ! print*, '__________________________'
-        ! print*, 'leaf out', leaf_out*1000,'leaf inc', leaf_inc_alloc, 'leaf_in_ind', leaf_in_ind
-        ! print*, 'sap out', sap_out,'sap inc', sap_inc_alloc
-        ! print*, 'root out', root_out,'root inc', root_inc_alloc
-        ! print*, 'heart out', heart_out ,'heart inc', heart_inc_alloc
-        ! print*, 'sto out', heart_out ,'sto inc', sto_inc_alloc
+        print*, '__________________________'
+        print*, 'leaf out', leaf_out,'leaf inc', leaf_inc_alloc, 'leaf_in_ind', leaf_in_ind
+        print*, 'sap out', sap_out,'sap inc', sap_inc_alloc
+        print*, 'root out', root_out,'root inc', root_inc_alloc
+        print*, 'heart out', heart_out ,'heart inc', heart_inc_alloc
+        print*, 'heart updt', heart_updt,'heart turn', heart_turn,'sap_turn', sap_turn
+        print*, 'sto out', sto_out ,'sto inc', sto_inc_alloc
 
 
         print*, '__________________________'
@@ -467,7 +475,7 @@ module alloc2
         
         !Calculo diameter (necessary to height)
         diameter = ((4*(wood_in_ind/1000.))/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
-        print*, 'diameter', diameter*100
+        print*, 'diameter', diameter
 
         !Height 
         height = k_allom2*(diameter**k_allom3)
