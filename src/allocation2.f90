@@ -458,7 +458,7 @@ module alloc2
     function height_calc (wood_in_ind, sap_in_ind, leaf_in_ind) result (height)
         
         real(r_8), intent(in) :: wood_in_ind !gC/ind - total wood (sap + heart) carbon stock
-        real(r_8), intent(in) :: sap_in_ind !gC/ind - total wood (sap + heart) carbon stock
+        real(r_8), intent(in) :: sap_in_ind !gC/ind - sapwood
         real(r_8), intent(in) :: leaf_in_ind !gC/ind 
                 !Trait
         !dwood - wood density
@@ -466,6 +466,7 @@ module alloc2
 
         real(r_8) :: height !m - output
 
+        real(r_8) :: height_seiler
         !variable internal
         real(r_8) :: diameter 
 
@@ -478,10 +479,17 @@ module alloc2
         print*, 'diameter', diameter
 
         !Height 
-        height = k_allom2*(diameter**k_allom3)
-        print*, 'HEIGHT', 'HEIGHT','HEIGHT LPJ', height
-        ! height = sap_in_ind*klatosa/dwood*leaf_in_ind*sla_allom
-        ! print*, 'HEIGHT', 'HEIGHT','HEIGHT LPJ2', height
+        ! height = k_allom2*(diameter**k_allom3)
+        ! print*, 'HEIGHT', 'HEIGHT','HEIGHT LPJ', height
+
+
+        height = ((sap_in_ind/1000.)*klatosa)/((dwood/1.0D3)*(leaf_in_ind/1000.)*(sla_allom*1.0D3))
+        ! height_seiler = (20.*8000.)/(500.*2.*23.)
+        print*, 'HEIGHT Seiler', height
+        print*, 'sap', sap_in_ind/1000.
+        print*, 'dwood', dwood/1000.
+        print*, 'leaf', leaf_in_ind/1000.
+        print*, 'sla', sla_allom*1000.
 
     end function height_calc
 

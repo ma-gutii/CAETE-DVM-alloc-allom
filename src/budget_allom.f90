@@ -413,11 +413,11 @@ contains
          
          
          !calculating deltas
-         dleaf_pls_aux(p)  = 0.1 !cleaf_pls2(p)  - cleaf_pls(p)
-         droot_pls_aux(p)  = 0.1 !croot_pls2(p)  - croot_pls(p)
-         dsap_pls_aux(p)   = 0.1 !csap_pls2(p)   - csap_pls(p)
-         dheart_pls_aux(p) = 0.1 !cheart_pls2(p) - cheart_pls(p)
-         dsto_pls_aux(p)   = 0.1 !csto_pls2(p)   - csto_pls(p)
+         dleaf_pls_aux(p)  = cleaf_pls2(p)  - cleaf_pls(p)
+         droot_pls_aux(p)  = croot_pls2(p)  - croot_pls(p)
+         dsap_pls_aux(p)   = csap_pls2(p)   - csap_pls(p)
+         dheart_pls_aux(p) = cheart_pls2(p) - cheart_pls(p)
+         dsto_pls_aux(p)   = csto_pls2(p)   - csto_pls(p)
 
 
          ! print*,'dleaf pls aux', dleaf_pls_aux(p)
