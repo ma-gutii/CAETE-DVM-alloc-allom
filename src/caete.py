@@ -539,6 +539,13 @@ class grd:
         self.csap_allom   = np.zeros(shape=(n,), order='F')
         self.cheart_allom = np.zeros(shape=(n,), order='F')
         self.csto_allom   = np.zeros(shape=(n,), order='F')
+
+        self.dleaf_allom  = np.zeros(shape=(n,), order='F')
+        self.dwood_allom  = np.zeros(shape=(n,), order='F')
+        self.droot_allom  = np.zeros(shape=(n,), order='F')
+        self.dsap_allom   = np.zeros(shape=(n,), order='F')
+        self.dheart_allom = np.zeros(shape=(n,), order='F')
+        self.dsto_allom   = np.zeros(shape=(n,), order='F')
         
 
 
@@ -788,10 +795,10 @@ class grd:
 
         #Initial value for biomass for alloc_allom
         #for trees
-        self.vp_cleaf_allom = np.zeros(shape=(npls,), order='F') + 1.
+        self.vp_cleaf_allom = np.zeros(shape=(npls,), order='F') + 0.5
         self.vp_croot_allom = np.zeros(shape=(npls,), order='F') + 0.8
-        self.vp_cheart_allom = np.zeros(shape=(npls,), order='F')+ 60.#0.85*(self.vp_cwood_allom)
-        self.vp_csap_allom = np.zeros(shape=(npls,), order='F') + 10. #0.15*(self.vp_cwood_allom)
+        self.vp_cheart_allom = np.zeros(shape=(npls,), order='F')+ 150.#0.85*(self.vp_cwood_allom)
+        self.vp_csap_allom = np.zeros(shape=(npls,), order='F') + 100. #0.15*(self.vp_cwood_allom)
         self.vp_csto_allom = np.zeros(shape=(npls,), order='F') + 5.0
         self.vp_cwood_allom = np.zeros(shape=(npls,), order='F') + self.vp_csap_allom + self.vp_cheart_allom
         
@@ -1615,6 +1622,7 @@ class grd:
                 self.vp_cheart_allom = daily_output_allom['dly_cheart'][self.vp_lsid]
                 self.vp_csto_allom   = daily_output_allom['dly_csto'][self.vp_lsid]
 
+                # self.vp_dcl_allom    = daily_output_allom['dly_dleaf'][self.vp_lsid]
 
                 if save:
                     assert self.save == True

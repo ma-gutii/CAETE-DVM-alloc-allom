@@ -180,6 +180,11 @@ contains
       real(r_8),dimension(:), allocatable :: cheart_pls2
       real(r_8),dimension(:), allocatable :: csto_pls2
 
+      real(r_8),dimension(:), allocatable :: leaf_req
+      real(r_8),dimension(:), allocatable :: leaf_inc_min
+      real(r_8),dimension(:), allocatable :: root_inc_min
+
+
 
       !Carbon vegetation pools (auxiliar for internal convertions)
       real(r_8),dimension(:), allocatable :: cleaf_pls_aux
@@ -337,6 +342,11 @@ contains
       allocate(cheart_pls2(nlen))
       allocate(csto_pls2(nlen))
 
+      allocate(leaf_req(nlen))
+      allocate(leaf_inc_min(nlen))
+      allocate(root_inc_min(nlen))
+
+
       allocate(cleaf_pls_aux(nlen))
       allocate(cwood_pls_aux(nlen))
       allocate(croot_pls_aux(nlen))
@@ -388,13 +398,12 @@ contains
             &, soil_sat, ph(p), ar(p), nppa(p), laia(p), f5(p), vpd(p)&
             &, rm(p), rg(p), rc2(p), wue(p), c_def(p), vcmax(p), specific_la(p), tra(p))
       
-         
          evap(p) = penman(p0, temp, rh, available_energy(temp), rc2(p)) !actual evapotranspiration (evap, mm/day)
 
          call allocation2(dt1, ph(p), ar(p)&
             &,cleaf_pls(ri), cwood_pls(ri), croot_pls(ri), csap_pls(ri), cheart_pls(ri), csto_pls(ri)&
-            &,cleaf_pls2(p), cwood_pls2(p), croot_pls2(p), csap_pls2(p), cheart_pls2(p), csto_pls2(p))
-            !!!ATENÇÃO cleaf_pls2 is output from allocation
+            &,cleaf_pls2(p), cwood_pls2(p), croot_pls2(p), csap_pls2(p), cheart_pls2(p), csto_pls2(p)&
+            &,leaf_req(p), leaf_inc_min(p), root_inc_min(p))
          
          !Carbon use efficiency & Delta C
          if(ph(p) .eq. 0.0 .or. nppa(p) .eq. 0.0) then
@@ -420,7 +429,12 @@ contains
          dsto_pls_aux(p)   = csto_pls2(p)   - csto_pls(p)
 
 
-         ! print*,'dleaf pls aux', dleaf_pls_aux(p)
+         if (p.eq.1000) then
+            print*, 'ph', ph(p), 'rm', rm(p), 'rg', rg(p), 'ar', ar(p), 'p', p
+            print*,'delta_leaf', dleaf_pls_aux(p)
+            print*, 'leaf req', leaf_req(p), 'leaf inc min', leaf_inc_min(p), 'root inc min', root_inc_min(p)
+
+         endif         
 
          !mass balance (acho que vai direto na alloc)ATTENTION
          cleaf_pls_aux(p)  = cleaf_pls2(p)
@@ -514,10 +528,10 @@ contains
          cwood_out(ri)  =  cheart_out(ri) + csap_out(ri)
 
          !deltas
-         dleaf_out(ri)  =  0.3 !ATTENTION this value comes from allocation
-         droot_out(ri)  =  0.2
-         dheart_out(ri) =  1.0
-         dsap_out(ri)   =  0.1
+         dleaf_out(ri)  =  dleaf_pls_aux(p)!0.3 !ATTENTION this value comes from allocation
+         droot_out(ri)  =  droot_pls_aux(p)!0.2
+         dheart_out(ri) =  dheart_pls_aux(p)!1.0
+         dsap_out(ri)   =  dsap_pls_aux(p)!0.1
          dwood_out(ri)  =  dheart_out(ri) + dsap_out(ri)
 
 
@@ -553,6 +567,10 @@ contains
       deallocate(csap_pls2)
       deallocate(cheart_pls2)
       deallocate(csto_pls2)
+
+      deallocate(leaf_req)
+      deallocate(leaf_inc_min)
+      deallocate(root_inc_min)
 
       deallocate(cleaf_pls_aux)
       deallocate(cwood_pls_aux)
