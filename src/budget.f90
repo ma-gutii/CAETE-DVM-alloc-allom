@@ -296,9 +296,11 @@ contains
       !$OMP SCHEDULE(AUTO) &
       !$OMP DEFAULT(SHARED) &
       !$OMP PRIVATE(p, ri, carbon_in_storage, testcdef, sr, dt1, mr_sto, growth_stoc, ar_aux)
+      
+      ! print*, 'BUDGETTTTTTT 111111111111111111111'
       do p = 1,nlen
          ! print*, 'p', p
-
+         
          carbon_in_storage = 0.0D0
          testcdef = 0.0D0
          sr = 0.0D0
@@ -343,7 +345,7 @@ contains
             &, cf1_pft(ri),storage_out_bdgt(:,p),day_storage(:,p),cl2(p),ca2(p)&
             &, cf2(p),litter_l(p),cwd(p), litter_fr(p),nupt(:,p),pupt(:,p)&
             &, lit_nut_content(:,p), limitation_status(:,p), npp2pay(p), uptk_strat(:, p), ar_aux)
-         
+         !print*, 'cl2', cl2(p)
       
          ! Estimate growth of storage C pool
          ar_fix_hr(p) = ar_aux

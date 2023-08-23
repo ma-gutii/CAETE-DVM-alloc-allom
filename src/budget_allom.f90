@@ -400,7 +400,7 @@ contains
       
          evap(p) = penman(p0, temp, rh, available_energy(temp), rc2(p)) !actual evapotranspiration (evap, mm/day)
 
-         call allocation2(dt1, ph(p), ar(p)&
+         call allocation2(p, dt1, ph(p), ar(p)&
             &,cleaf_pls(ri), cwood_pls(ri), croot_pls(ri), csap_pls(ri), cheart_pls(ri), csto_pls(ri)&
             &,cleaf_pls2(p), cwood_pls2(p), croot_pls2(p), csap_pls2(p), cheart_pls2(p), csto_pls2(p)&
             &,leaf_req(p), leaf_inc_min(p), root_inc_min(p))
@@ -429,12 +429,24 @@ contains
          dsto_pls_aux(p)   = csto_pls2(p)   - csto_pls(p)
 
 
-         if (p.eq.1000) then
-            print*, 'ph', ph(p), 'rm', rm(p), 'rg', rg(p), 'ar', ar(p), 'p', p
-            print*,'delta_leaf', dleaf_pls_aux(p)
-            print*, 'leaf req', leaf_req(p), 'leaf inc min', leaf_inc_min(p), 'root inc min', root_inc_min(p)
+         ! if (p.eq.1000) then
+            ! print*, 'ph', ph(p), 'rm', rm(p), 'rg', rg(p), 'ar', ar(p), 'p', p
+            ! print*,'delta_leaf', dleaf_pls_aux(p)
+            ! print*, 'leaf req', leaf_req(p), 'leaf inc min', leaf_inc_min(p), 'root inc min', root_inc_min(p)
+! 
+         ! endif
+         ! if (p.eq.1647.or.p.eq.2325.or.p.eq.1259.or.p.eq.887.or.&
+         ! p.eq.2809.or.p.eq.2250)then
+            ! print*,'_____________'
+            ! print*, 'cleaf_pls',cleaf_pls(p), p
+            ! print*, 'cleaf_pls2',cleaf_pls2(p), p
+            ! print*, 'dleaf aux', dleaf_pls_aux(p), p
+            ! print*, 'ph', ph(p), p
+            ! print*, 'nppa', nppa(p), p
+! 
+            ! print*,'_____________'
+         ! endif
 
-         endif         
 
          !mass balance (acho que vai direto na alloc)ATTENTION
          cleaf_pls_aux(p)  = cleaf_pls2(p)

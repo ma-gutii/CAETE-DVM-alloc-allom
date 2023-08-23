@@ -46,13 +46,15 @@ module alloc2
 
     contains
 
-    subroutine allocation2(dt, photo, ar, leaf_in, wood_in, root_in, sap_in, heart_in, sto_in&
+    subroutine allocation2(p, dt, photo, ar, leaf_in, wood_in, root_in, sap_in, heart_in, sto_in&
         &, leaf_out, wood_out, root_out, sap_out, heart_out, sto_out&
         &, leaf_req, leaf_inc_min, root_inc_min)
     
         
         !VARIABLE INPUTS
         real(r_8), dimension(ntraits),intent(in) :: dt  ! PLS attributes
+        integer(i_4), intent(in) :: p  ! PLS 
+
 
         !carbon inputs (kgC/m2)
         real(r_8), intent(in) :: leaf_in
@@ -200,8 +202,6 @@ module alloc2
             continue
         endif
 
-        
-     
 
         !provisory
         dens_in = 1.
@@ -215,14 +215,6 @@ module alloc2
         sto_in_ind = (sto_in/dens_in)*1.D3
         wood_in_ind = sap_in_ind + heart_in_ind
 
-
-        !transforms to gC/m2
-        ! leaf_in_ind    = (leaf_in)*1.D3
-        ! root_in_ind    = (root_in)*1.D3
-        ! sap_in_ind     = (sap_in)*1.D3 
-        ! heart_in_ind   = (heart_in)*1.D3
-        ! sto_in_ind     = (sto_in)*1.D3
-        ! wood_in_ind    = sap_in_ind + heart_in_ind
         bminc_in = photo - ar
         bminc_in_ind = (bminc_in/dens_in)*1.D3
         ! print*, 'bminc', bminc_in_ind
@@ -257,6 +249,15 @@ module alloc2
         ! print*, 'root inc min', root_inc_min, root_in_ind
             ! print*, ''
         ! endif
+
+        if (p.eq.1647.or.p.eq.2325.or.p.eq.1259.or.p.eq.887.or.&
+        p.eq.2809.or.p.eq.2250)then
+            print*,'_____________'
+            print*, 'height',height, p
+            print*, 'leaf req',leaf_req, p, sap_in_ind
+            print*, 'leaf inc min',leaf_inc_min, p
+            print*,'_____________'
+         endif
 
 
     !!conditions for allocation!!! see fluxogram in https://lucid.app/lucidchart/74db0739-29ee-4894-9ecc-42b2cf3d0ae5/edit?invitationId=inv_d3a94efe-b397-45df-9af2-9467d19bee97&page=0_0#
@@ -486,16 +487,20 @@ module alloc2
         ! print*, 'diameter', diameter
 
         !Height 
+        height = k_allom2*(diameter**k_allom3)
+        ! print*, 'HEIGHT', 'HEIGHT','HEIGHT LPJ', height
+
+        !Height 
         ! height = k_allom2*(diameter**k_allom3)
         ! print*, 'HEIGHT', 'HEIGHT','HEIGHT LPJ', height
 
 
-        height = ((sap_in_ind/1000.)*klatosa)/((dwood/1.0D3)*(leaf_in_ind/1000.)*(sla_allom*1.0D3))
+        ! height = ((sap_in_ind/1000.)*klatosa)/((dwood/1.0D3)*(leaf_in_ind/1000.)*(sla_allom*1.0D3))
         ! height_seiler = (20.*8000.)/(500.*2.*23.)
         ! print*, 'HEIGHT Seiler', height
         ! print*, 'sap', sap_in_ind/1000.
         ! print*, 'dwood', dwood/1000.
-        ! print*, 'leaf', leaf_in_ind/1000.
+        ! print*, 'leaf g ', leaf_in_ind
         ! print*, 'sla', sla_allom*1000.
 
     end function height_calc
@@ -514,10 +519,10 @@ module alloc2
 
         !initializing variables
         leaf_req = 0.0D0
-        height2 = 20.
+        
 
         
-        leaf_req = klatosa * sap_in_ind / (dwood * height * sla_allom)
+        leaf_req = (klatosa * (sap_in_ind/1000.) / (500 * height * sla_allom*1000))*1000.
         ! print*, '******************************'
         ! print*, 'sap in ind', sap_in_ind/1000
         ! print*, 'dwood', dwood
@@ -541,7 +546,7 @@ module alloc2
         leaf_inc_min = 0.0D0
 
         leaf_inc_min = leaf_req - leaf_in_ind
-        ! print*,'leaf inc min', leaf_inc_min
+        ! print*,'leaf inc min', leaf_inc_min, leaf_in_ind, leaf_req
 
 
     end function leaf_inc_min_calc
@@ -708,7 +713,7 @@ module alloc2
             
             if (fmid * fx1 .le. 0. .or. xmid .ge. x2) exit  !sign has changed or we are over the upper bound
 
-            if (i > 20) print*, 'first alloc loop flag'
+            ! if (i > 20) print*, 'first alloc loop flag'
             if (i > 100) stop 'Too many iterations allocmod'
       
 

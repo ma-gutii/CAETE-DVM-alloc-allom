@@ -787,18 +787,18 @@ class grd:
 
         # Biomass 
             #Initial value for biomass
-        self.vp_cleaf = np.zeros(shape=(npls,), order='F') + 5.0
-        self.vp_croot = np.zeros(shape=(npls,), order='F') + 5.0
+        self.vp_cleaf = np.zeros(shape=(npls,), order='F') + 8.0
+        self.vp_croot = np.zeros(shape=(npls,), order='F') + 8.0
         self.vp_cwood = np.zeros(shape=(npls,), order='F') + 0.1
         self.vp_cwood[pls_table[6,:] == 0.0] = 0.0
        
 
         #Initial value for biomass for alloc_allom
         #for trees
-        self.vp_cleaf_allom = np.zeros(shape=(npls,), order='F') + 0.5
+        self.vp_cleaf_allom = np.zeros(shape=(npls,), order='F') + 0.3
         self.vp_croot_allom = np.zeros(shape=(npls,), order='F') + 0.8
-        self.vp_cheart_allom = np.zeros(shape=(npls,), order='F')+ 150.#0.85*(self.vp_cwood_allom)
-        self.vp_csap_allom = np.zeros(shape=(npls,), order='F') + 100. #0.15*(self.vp_cwood_allom)
+        self.vp_cheart_allom = np.zeros(shape=(npls,), order='F')+ 120.#0.85*(self.vp_cwood_allom)
+        self.vp_csap_allom = np.zeros(shape=(npls,), order='F') + 60. #0.15*(self.vp_cwood_allom)
         self.vp_csto_allom = np.zeros(shape=(npls,), order='F') + 5.0
         self.vp_cwood_allom = np.zeros(shape=(npls,), order='F') + self.vp_csap_allom + self.vp_cheart_allom
         
@@ -1532,8 +1532,8 @@ class grd:
                 self.save = False
 
             for step in range(steps.size): #make the loop for the size of array (number of years to be simulated)
-                # if step == 2:
-                    # break
+                if step == 2:
+                    break
                 print('STEP', step)
                 #both
                 if fix_co2_p:
