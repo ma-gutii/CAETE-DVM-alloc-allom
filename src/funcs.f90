@@ -118,7 +118,6 @@ contains
 
       real(r_8) :: f4sun, f1in
       real(r_8) :: f4shade
-
       f1in = f1
       f4sun = f_four(1,cleaf,sla)
       f4shade = f_four(2,cleaf,sla)
@@ -140,7 +139,7 @@ contains
       real(r_8),intent(in) :: sla   !m2 gC-1
       real(r_8) :: lai
 
-
+      
       lai  = cleaf * 1.0D3 * sla  ! Converts cleaf from (KgC m-2) to (gCm-2)
       if(lai .lt. 0.0D0) lai = 0.0D0
 

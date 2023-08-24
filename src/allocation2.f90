@@ -486,7 +486,9 @@ module alloc2
         
         real(r_8), intent(in) :: wood_in_ind !gC/ind - total wood (sap + heart) carbon stock
         real(r_8), intent(in) :: sap_in_ind !gC/ind - sapwood
-        real(r_8), intent(in) :: leaf_in_ind !gC/ind 
+        real(r_8), intent(in) :: leaf_in_ind !gC/ind
+
+        real(r_8) :: sap_xsa !parameter to calculate height (comes from the LPJmlfire code)
                 !Trait
         !dwood - wood density
 
@@ -502,8 +504,16 @@ module alloc2
         height = 0.0D0
         
         !Calculo diameter (necessary to height)
-        diameter = ((4*(wood_in_ind/1000.))/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
+
+        ! diameter = (sap_in_ind * klatosa / (leaf_in_ind * sla_allom * dwood))**(1.0 / k_allom3)
+        diameter = ((sap_in_ind)/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
         ! print*, 'diameter', diameter
+
+        ! sap_xsa = leaf_in_ind * sla_allom / klatosa
+
+        ! height = sap_in_ind/ sap_xsa / dwood
+
+        ! print*, 'height lpjmlfire',height
 
         !Height 
         height = k_allom2*(diameter**k_allom3)

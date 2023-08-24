@@ -798,7 +798,7 @@ class grd:
         self.vp_cleaf_allom = np.zeros(shape=(npls,), order='F') + 1.0
         self.vp_croot_allom = np.zeros(shape=(npls,), order='F') + 0.8
         self.vp_cheart_allom = np.zeros(shape=(npls,), order='F')+ 80.#0.85*(self.vp_cwood_allom)
-        self.vp_csap_allom = np.zeros(shape=(npls,), order='F') + 60. #0.15*(self.vp_cwood_allom)
+        self.vp_csap_allom = np.zeros(shape=(npls,), order='F') + 80. #0.15*(self.vp_cwood_allom)
         self.vp_csto_allom = np.zeros(shape=(npls,), order='F') + 5.0
         self.vp_cwood_allom = np.zeros(shape=(npls,), order='F') + self.vp_csap_allom + self.vp_cheart_allom
         
