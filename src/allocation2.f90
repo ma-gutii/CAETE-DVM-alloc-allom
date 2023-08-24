@@ -249,15 +249,18 @@ module alloc2
         ! print*, 'root inc min', root_inc_min, root_in_ind
             ! print*, ''
         ! endif
-
-        if (p.eq.1647.or.p.eq.2325.or.p.eq.1259.or.p.eq.887.or.&
-        p.eq.2809.or.p.eq.2250)then
-            print*,'_____________'
+        
+        if (p.eq.1259)then
+            print*, '______________________'    
             print*, 'height',height, p
-            print*, 'leaf req',leaf_req, p, sap_in_ind
+            print*, 'leaf req',leaf_req, p
             print*, 'leaf inc min',leaf_inc_min, p
-            print*,'_____________'
-         endif
+            print*, 'root inc min', root_inc_min, p
+            print*, 'bminc ', bminc_in_ind, p
+            print*, 'ar', ar, p
+            print*, '_______________________'
+        endif
+        
 
 
     !!conditions for allocation!!! see fluxogram in https://lucid.app/lucidchart/74db0739-29ee-4894-9ecc-42b2cf3d0ae5/edit?invitationId=inv_d3a94efe-b397-45df-9af2-9467d19bee97&page=0_0#
@@ -265,30 +268,34 @@ module alloc2
        
         if (leaf_inc_min.gt.0.0D0.and.root_inc_min.gt.0.0D0) then
 
-            ! print*, "alocação normal"
-            ! print*,'leaf and root inc minimum are > 0' !ok
+            if (p.eq.1259)then
 
+                print*, "alocação normal"
+                print*,'leaf and root inc minimum are > 0' !ok
+                
+                
+            endif
            
             if((bminc_in_ind.gt.0)) then
-
-                ! print*, 'NPP > 0.' !ok
+                if (p.eq.1259)then
+                    print*, 'NPP > 0.', bminc_in_ind !ok
+                endif
                 
                 if (bminc_in_ind.ge.(root_inc_min + leaf_inc_min)) then
-
-                    ! print*, 'NPP > sum of root and leaf inc min' !ok
+                    if (p.eq.1259)then
                     
-                    !if minimum nutrients then
+                        print*, 'NPP > sum of root and leaf inc min' !ok
+                        print*, 'call normal alloc' !ok
+                    endif
 
-                    ! print*, 'call normal alloc' !ok
-
-                    call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,&
+                    call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,p,&
                     sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
-                   
-                    !else
-                        
-                        !storage = storage + bminc
-
-                    !endif
+                    if (p.eq.1259)then
+                    
+                        print*, 'leaf inc', leaf_inc_alloc, p !ok
+                        print*, 'root inc alloc', root_inc_alloc, p !ok
+                        print*, 'sap inc', sap_inc_alloc, p
+                    endif
 
                 else
 
@@ -398,8 +405,19 @@ module alloc2
         root_updt    = root_in_ind  + root_inc_alloc
         sto_updt     = sto_in_ind   + sto_inc_alloc
         wood_updt    = sap_updt     + heart_updt
+        if (p.eq.1259)then
+            print*, '________increment_____________', p
+            print*, 'l updt', leaf_updt/1000.
+            print*, 's updt', sap_updt
+            print*, 'h updt', heart_updt
+            print*, 'r updt', root_updt
+            print*, 'sto updt', sto_updt
+            print*, 'w updt', wood_updt
+            print*, '_______________________________'
+        endif
 
-        ! print*, 'leaf updt', leaf_updt, 'leaf_in_ind', leaf_in_ind, 'leaf_inc_alloc',leaf_inc_alloc
+
+
 
     !mortality through turnover
         call mortality_turnover(leaf_in_ind, root_in_ind, sap_in_ind, heart_in_ind,sto_in_ind,&
@@ -416,17 +434,18 @@ module alloc2
         endif
         
         sto_out = ((sto_updt - sto_turn) * dens_in)/1.D3
+        wood_out = sap_out + heart_out
 
-        ! print*, '__________________________'
-        ! print*, 'leaf out', leaf_out,'leaf inc', leaf_inc_alloc, 'leaf_in_ind', leaf_in_ind
-        ! print*, 'sap out', sap_out,'sap inc', sap_inc_alloc
-        ! print*, 'root out', root_out,'root inc', root_inc_alloc
-        ! print*, 'heart out', heart_out ,'heart inc', heart_inc_alloc
-        ! print*, 'heart updt', heart_updt,'heart turn', heart_turn,'sap_turn', sap_turn
-        ! print*, 'sto out', sto_out ,'sto inc', sto_inc_alloc
-
-
-        ! print*, '__________________________'
+        if (p.eq.1259)then
+            print*, '_________out consider turn_____________', p
+            print*, 'leaf out', leaf_out
+            print*, 'sap out', sap_out
+            print*, 'root out', root_out
+            print*, 'heart out', heart_out 
+            print*, 'sto out', sto_out
+            print*, 'wood out', wood_out
+            print*, '___________________________'
+        endif
 
     !     !________________
     !     !sensitivity test
@@ -565,7 +584,7 @@ module alloc2
 
     end function root_inc_min_calc
 
-    subroutine normal_alloc (leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,&
+    subroutine normal_alloc (leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,p,&
         sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
 
         real(r_8), intent(in) :: leaf_inc_min 
@@ -574,6 +593,8 @@ module alloc2
         real(r_8), intent(in) :: sap_in_ind  
         real(r_8), intent(in) :: heart_in_ind
         real(r_8), intent(in) :: bminc_in_ind
+        integer(i_4), intent(in) :: p
+
 
         real(r_8), intent(out) :: leaf_inc_alloc
         real(r_8), intent(out) :: root_inc_alloc
@@ -611,18 +632,25 @@ module alloc2
             leaf_inc_alloc = x1 + 0.5 * dx
 
 
+            if (p.eq.1259) then
+                print*,'_________dx < 0.01__________', p
+            endif
+
         else 
             !Find a root for non-negative lminc_ind, rminc_ind and sminc_ind using Bisection Method (Press et al., 1986, p 346)
             !There should be exactly one solution (no proof presented, but Steve has managed one).
 
             call positive_leaf_inc_min(leaf_in_ind, sap_in_ind, heart_in_ind,&
             root_in_ind, bminc_in_ind, dx, x1, x2, leaf_inc_alloc)        
-            
-            root_inc_alloc = ((leaf_in_ind + leaf_inc_alloc) / ltor) - root_in_ind
-
-            sap_inc_alloc = bminc_in_ind - leaf_inc_alloc - root_inc_alloc
+            if (p.eq.1259) then
+                print*,'_________positive leaf inc min__________', p
+            endif
 
         endif
+
+        root_inc_alloc = ((leaf_in_ind + leaf_inc_alloc) / ltor) - root_in_ind
+
+        sap_inc_alloc = bminc_in_ind - leaf_inc_alloc - root_inc_alloc
             ! print*, 'l', leaf_inc_alloc
             ! print*, 'r', root_inc_alloc
             ! print*, 's', sap_inc_alloc
