@@ -185,7 +185,7 @@ contains
          ca1_pft(i) = ca1_in(i)
          cf1_pft(i) = cf1_in(i)
 
-         !provisory (sapwood and heartwood compartment)
+         !(sapwood and heartwood compartment)
          cs1_pft(i) = 0.1*ca1_pft(i)
          ch1_pft(i) = 0.9*ca1_pft(i)
 
@@ -309,7 +309,7 @@ contains
          dt1 = dt(:,ri) ! Pick up the pls functional attributes list
 
          call prod(dt1, ocp_wood(ri),catm, temp, soil_temp, p0, w, ipar, rh, emax&
-               &, cl1_pft(ri), ca1_pft(ri), cf1_pft(ri), dleaf(ri), dwood(ri), droot(ri)&
+               &, cl1_pft(ri), cs1_pft(ri), cf1_pft(ri), dleaf(ri), dwood(ri), droot(ri)&
                &, soil_sat, ph(p), ar(p), nppa(p), laia(p), f5(p), vpd(p), rm(p), rg(p), rc2(p)&
                &, wue(p), c_def(p), vcmax(p), specific_la(p), tra(p))
 

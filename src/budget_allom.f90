@@ -255,7 +255,7 @@ contains
 
       !Initializing
 
-      !ATENÇÃO, VERIFICAR QUESTÃO DO TOTAL WOOD
+     
       
       do i = 1, npls
          awood_aux(i) = dt(7,i)
@@ -276,9 +276,6 @@ contains
          dsto(i)   = dsto_in(i)
 
          
-         ! cleaf_out(i) = cleaf_pls(i) + 1.
-         ! print*,'cleaf_in',cleaf_in(i), i
-      
       enddo
 
       w = w1 + w2        
@@ -394,7 +391,7 @@ contains
 
          
          call prod(dt1, ocp_wood(ri), catm, temp, soil_temp, p0, w, ipar&
-            &, rh, emax, cleaf_pls(ri), cwood_pls(ri), croot_pls(ri), dleaf(ri), dwood(ri), droot(ri)&
+            &, rh, emax, cleaf_pls(ri), csap_pls(ri), croot_pls(ri), dleaf(ri), dwood(ri), droot(ri)&
             &, soil_sat, ph(p), ar(p), nppa(p), laia(p), f5(p), vpd(p)&
             &, rm(p), rg(p), rc2(p), wue(p), c_def(p), vcmax(p), specific_la(p), tra(p))
 
@@ -451,8 +448,6 @@ contains
          ! endif
         
 
-
-         !mass balance (acho que vai direto na alloc)ATTENTION
          cleaf_pls_aux(p)  = cleaf_pls2(p)
          cwood_pls_aux(p)  = cwood_pls2(p)
          croot_pls_aux(p)  = croot_pls2(p)
@@ -536,7 +531,7 @@ contains
          ri = lp(p)
 
          !provisory general valeus
-         cleaf_out(ri)  =  cleaf_pls2(p) !ATTENTION this value comes from allocation
+         cleaf_out(ri)  =  cleaf_pls2(p) 
          croot_out(ri)  =  croot_pls2(p)
          cheart_out(ri) =  cheart_pls2(p)
          csap_out(ri)   =  csap_pls2(p)
@@ -544,10 +539,10 @@ contains
          cwood_out(ri)  =  cheart_out(ri) + csap_out(ri)
 
          !deltas
-         dleaf_out(ri)  =  dleaf_pls_aux(p)!0.3 !ATTENTION this value comes from allocation
-         droot_out(ri)  =  droot_pls_aux(p)!0.2
-         dheart_out(ri) =  dheart_pls_aux(p)!1.0
-         dsap_out(ri)   =  dsap_pls_aux(p)!0.1
+         dleaf_out(ri)  =  dleaf_pls_aux(p)
+         droot_out(ri)  =  droot_pls_aux(p)
+         dheart_out(ri) =  dheart_pls_aux(p)
+         dsap_out(ri)   =  dsap_pls_aux(p)
          dwood_out(ri)  =  dheart_out(ri) + dsap_out(ri)
 
 

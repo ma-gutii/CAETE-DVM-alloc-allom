@@ -388,15 +388,7 @@ module alloc2
             
         endif
 
-    !ATTENTION: PROVISORY OUTPUTS
-        ! leaf_out  = 0.0001  !leaf_in + 0.1
-        ! wood_out  = 50.  !0.040D0
-        ! root_out   = 0.00001  !0.020D0
-        ! sap_out = 100000.5 !1.0D0
-        ! heart_out   = 47.5  !1.0D0
-        ! sto_out  = 0.1  !sap_out + heart_out
-    
-    ! !!!end of conditions for allocation!!!!
+   
 
        
     !     !Update variable and add Increment to C compartments 
@@ -836,7 +828,7 @@ module alloc2
 
         sap_turn = sap_in_ind*s_turnover
 
-        sto_turn = sto_in_ind*1/3 !provisory
+        sto_turn = sto_in_ind*sto_turnover
 
         !heartwood incorporates the dead tissue from sapwood
         heart_turn = (heart_in_ind*h_turnover) + sap_turn
