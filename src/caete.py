@@ -787,8 +787,8 @@ class grd:
 
         # Biomass 
             #Initial value for biomass
-        self.vp_cleaf = np.zeros(shape=(npls,), order='F') + 8.0
-        self.vp_croot = np.zeros(shape=(npls,), order='F') + 8.0
+        self.vp_cleaf = np.zeros(shape=(npls,), order='F') + 1.0
+        self.vp_croot = np.zeros(shape=(npls,), order='F') + 1.0
         self.vp_cwood = np.zeros(shape=(npls,), order='F') + 0.1
         self.vp_cwood[pls_table[6,:] == 0.0] = 0.0
        
@@ -798,8 +798,8 @@ class grd:
         self.vp_cleaf_allom = np.zeros(shape=(npls,), order='F') + 1.0
         self.vp_croot_allom = np.zeros(shape=(npls,), order='F') + 0.8
         self.vp_cheart_allom = np.zeros(shape=(npls,), order='F')+ 80.#0.85*(self.vp_cwood_allom)
-        self.vp_csap_allom = np.zeros(shape=(npls,), order='F') + 80. #0.15*(self.vp_cwood_allom)
-        self.vp_csto_allom = np.zeros(shape=(npls,), order='F') + 5.0
+        self.vp_csap_allom = np.zeros(shape=(npls,), order='F') + 20. #0.15*(self.vp_cwood_allom)
+        self.vp_csto_allom = np.zeros(shape=(npls,), order='F') + 15.0
         self.vp_cwood_allom = np.zeros(shape=(npls,), order='F') + self.vp_csap_allom + self.vp_cheart_allom
         
         #for grasses

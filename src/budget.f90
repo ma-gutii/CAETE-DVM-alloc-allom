@@ -345,7 +345,7 @@ contains
             &, cf1_pft(ri),storage_out_bdgt(:,p),day_storage(:,p),cl2(p),ca2(p)&
             &, cf2(p),litter_l(p),cwd(p), litter_fr(p),nupt(:,p),pupt(:,p)&
             &, lit_nut_content(:,p), limitation_status(:,p), npp2pay(p), uptk_strat(:, p), ar_aux)
-         !print*, 'cl2', cl2(p)
+         ! print*, 'cl2', cl2(p)
       
          ! Estimate growth of storage C pool
          ar_fix_hr(p) = ar_aux

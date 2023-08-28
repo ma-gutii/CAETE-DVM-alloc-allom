@@ -237,8 +237,8 @@ def write_h5(out_dir=Path('../outputs'), RUN=0, reclen=0):
             group_run, 'Outputs_G2', tt.run_g2, "out vars of g2",
             filters=h5_opt, expectedrows=exp_rows)
         table_g3 = h5file.create_table(
-            # group_run, 'Outputs_G3', tt.run_g3, "out vars of g3",
-            # filters=h5_opt, expectedrows=exp_rows)
+            group_run, 'Outputs_G3', tt.run_g3, "out vars of g3",
+            filters=h5_opt, expectedrows=exp_rows)
         PLS_table = h5file.create_table(
             group_run, 'PLS', tt.PLS_temp, f"PLS table for RUN{RUN}", expectedrows=int(gp.npls))
         spin_table = h5file.create_table(
@@ -273,7 +273,7 @@ def write_h5(out_dir=Path('../outputs'), RUN=0, reclen=0):
                 # if prefix in filepath:
                 cells.append((filepath, X, Y))
 
-        Write table G1
+        # Write table G1
         rec = 0
         for fp, X, Y in cells:
             dt = open_fh(fp)
@@ -287,11 +287,11 @@ def write_h5(out_dir=Path('../outputs'), RUN=0, reclen=0):
                 g1_row['date'] = cf_date2str(date_range[day].date())
                 g1_row['grid_y'] = Y
                 g1_row['grid_x'] = X
-                1 D outputs
+                # 1 D outputs
                 for key in tt.G1_1d:
                     g1_row[key] = dt[key][day]
 
-                nupt
+                # nupt
                 g1_row['nupt1'] = dt['nupt'][0, day]
                 g1_row['nupt2'] = dt['nupt'][1, day]
                 g1_row['pupt1'] = dt['pupt'][0, day]
@@ -301,7 +301,7 @@ def write_h5(out_dir=Path('../outputs'), RUN=0, reclen=0):
                 g1_row.append()
         table_g1.flush()
 
-        Write table G2
+        # Write table G2
         rec = 0
         for fp, X, Y in cells:
             dt = open_fh(fp)
@@ -315,7 +315,7 @@ def write_h5(out_dir=Path('../outputs'), RUN=0, reclen=0):
                 g2_row['grid_y'] = Y
                 g2_row['grid_x'] = X
 
-                1 D outputs
+                # 1 D outputs
                 for key in tt.G2_1d:
                     g2_row[key] = dt[key][day]
 
@@ -335,8 +335,8 @@ def write_h5(out_dir=Path('../outputs'), RUN=0, reclen=0):
                 rec += 1
                 g2_row.append()
         table_g2.flush()
-# 
-        Write table G3
+
+        # Write table G3
         rec = 0
         for fp, X, Y in cells:
             dt = open_fh(fp)

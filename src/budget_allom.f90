@@ -418,8 +418,8 @@ contains
             &,cleaf_pls(ri), cwood_pls(ri), croot_pls(ri), csap_pls(ri), cheart_pls(ri), csto_pls(ri)&
             &,cleaf_pls2(p), cwood_pls2(p), croot_pls2(p), csap_pls2(p), cheart_pls2(p), csto_pls2(p)&
             &,leaf_req(p), leaf_inc_min(p), root_inc_min(p))
-         
-         !Carbon use efficiency & Delta C
+
+            !Carbon use efficiency & Delta C
          if(ph(p) .eq. 0.0 .or. nppa(p) .eq. 0.0) then
             cue(p) = 0.0
          else

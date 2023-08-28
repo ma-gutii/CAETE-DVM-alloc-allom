@@ -347,7 +347,7 @@ def apply_fun(grid:grd, allometry = allom)->grd:
 def apply_fun0(grid:grd, allometry = allom)->grd:
     if allom:
         grid.run_caete_allom('19790101', '19891231', spinup=35,
-                   fix_co2='1980', save=False)
+                   fix_co2='1980', save=False, nutri_cycle=False)
     else:
         grid.run_caete('19790101', '19891231', spinup=35,
                    fix_co2='1980', save=False)
@@ -363,7 +363,7 @@ def zip_gridtime(grd_pool, interval):
 
 def apply_funX(grid:grd, brk:list, allometry = allom)->grd:
     if allom:
-        grid.run_caete_allom(brk[0], brk[1])
+        grid.run_caete_allom(brk[0], brk[1], nutri_cycle=False)
     else:
         grid.run_caete(brk[0], brk[1])
     return grid
@@ -387,8 +387,8 @@ if __name__ == "__main__":
 
     import time
 
-    # from post_processing import write_h5
-    # from h52nc import h52nc
+    from post_processing import write_h5
+    from h52nc import h52nc
 
     n_proc = mp.cpu_count()
 
@@ -466,8 +466,8 @@ if __name__ == "__main__":
 
     print("\nEND OF MODEL EXECUTION ", time.ctime(), "\n\n")
     print("Saving db - This will take some hours\n")
-    # write_h5(dump_folder)
-    # print("\n\nSaving netCDF4 files")
-    # h5path = Path(os.path.join(dump_folder, Path('CAETE.h5'))).resolve()
-    # h52nc(h5path, nc_outputs)
+    write_h5(dump_folder)
+    print("\n\nSaving netCDF4 files")
+    h5path = Path(os.path.join(dump_folder, Path('CAETE.h5'))).resolve()
+    h52nc(h5path, nc_outputs)
     print(time.ctime())
