@@ -143,7 +143,7 @@ module alloc2
         real(r_8) :: awood
         real(r_8) :: height2
 
-        if (p.eq.1000) print*, 'entrando na alloc'
+        if (p.eq.1054) print*, 'entrando na alloc'
         
         !take the allocation proportion to wood (to identify) the grasses
         awood = dt(7)
@@ -428,7 +428,7 @@ module alloc2
 
 
     !mortality through turnover
-        call mortality_turnover(leaf_in_ind, root_in_ind, sap_in_ind, heart_in_ind,sto_in_ind,&
+        call mortality_turnover(leaf_updt, root_updt, sap_updt, heart_updt,sto_updt,&
             leaf_turn, root_turn, sap_turn, heart_turn, sto_turn)
 
         !discout C due to turnover and transform variable in kgC/m2 to ouput
@@ -444,14 +444,14 @@ module alloc2
         sto_out = ((sto_updt - sto_turn) * dens_in)/1.D3
         wood_out = sap_out + heart_out
 
-        if (p.eq.1000)then
+        if (leaf_out.lt.0.0D0.or.sap_out.lt.0.0D0.or.root_out.lt.0.0D0)then
             print*, '_________out consider turn_____________', p
-            print*, 'leaf out', leaf_out
-            print*, 'sap out', sap_out
-            print*, 'root out', root_out
-            print*, 'heart out', heart_out 
-            print*, 'sto out', sto_out
-            print*, 'wood out', wood_out
+            print*, 'leaf out', leaf_out, 'updt', leaf_updt, leaf_turn
+            print*, 'sap out', sap_out,'updt', sap_updt, sap_turn
+            print*, 'root out', root_out,'updt', root_updt, root_turn
+            print*, 'heart out', heart_out ,'updt', heart_updt, heart_turn
+            print*, 'sto out', sto_out, 'updt', sto_updt, sto_turn
+            print*, 'wood out', wood_out, 'updt', wood_updt
             print*, '___________________________'
         endif
 

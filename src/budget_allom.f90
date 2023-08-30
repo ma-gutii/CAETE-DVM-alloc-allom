@@ -419,17 +419,17 @@ contains
             &,cleaf_pls2(p), cwood_pls2(p), croot_pls2(p), csap_pls2(p), cheart_pls2(p), csto_pls2(p)&
             &,leaf_req(p), leaf_inc_min(p), root_inc_min(p))
 
-         if (p.eq.1000) then
-            print*, 'after allocation inside bdgt'
-            print*, 'l', cleaf_pls2(p)
-            print*, 'w', cwood_pls2(p)
-            print*, 'r', croot_pls2(p)
-            print*, 'sap', csap_pls2(p)
-            print*, 'h', cheart_pls2(p)
-            print*, 'sto', csto_pls2(p)
-            print*, 'ph', ph(p)
+         ! if (p.eq.1054) then
+         !    print*, 'after allocation inside bdgt'
+         !    print*, 'l', cleaf_pls2(p)
+         !    print*, 'w', cwood_pls2(p)
+         !    print*, 'r', croot_pls2(p)
+         !    print*, 'sap', csap_pls2(p)
+         !    print*, 'h', cheart_pls2(p)
+         !    print*, 'sto', csto_pls2(p)
+         !    print*, 'ph', ph(p)
 
-         endif
+         ! endif
             !Carbon use efficiency & Delta C
          if(ph(p) .eq. 0.0 .or. nppa(p) .eq. 0.0) then
             cue(p) = 0.0

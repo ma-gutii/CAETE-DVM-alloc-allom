@@ -1534,7 +1534,7 @@ class grd:
             for step in range(steps.size): #make the loop for the size of array (number of years to be simulated)
                 # if step == 2:
                     # break
-                print('STEP', step)
+                # print('STEP', step)
                 #both
                 if fix_co2_p:
                     pass
