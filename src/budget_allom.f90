@@ -180,6 +180,14 @@ contains
       real(r_8),dimension(:), allocatable :: cheart_pls2
       real(r_8),dimension(:), allocatable :: csto_pls2
 
+      !carbon vegetation pools discounting c deficit
+      real(r_8),dimension(:), allocatable :: cleaf_int
+      real(r_8),dimension(:), allocatable :: cwood_int
+      real(r_8),dimension(:), allocatable :: croot_int
+      real(r_8),dimension(:), allocatable :: csap_int
+      real(r_8),dimension(:), allocatable :: cheart_int
+      real(r_8),dimension(:), allocatable :: csto_int
+
       real(r_8),dimension(:), allocatable :: leaf_req
       real(r_8),dimension(:), allocatable :: leaf_inc_min
       real(r_8),dimension(:), allocatable :: root_inc_min
@@ -276,6 +284,8 @@ contains
          dsto(i)   = dsto_in(i)
 
          
+
+         
          ! cleaf_out(i) = cleaf_pls(i) + 1.
          ! print*,'cleaf_in',cleaf_in(i), i
       
@@ -346,13 +356,12 @@ contains
       allocate(leaf_inc_min(nlen))
       allocate(root_inc_min(nlen))
 
-
-      allocate(cleaf_pls_aux(nlen))
-      allocate(cwood_pls_aux(nlen))
-      allocate(croot_pls_aux(nlen))
-      allocate(csap_pls_aux(nlen))
-      allocate(cheart_pls_aux(nlen))
-      allocate(csto_pls_aux(nlen))
+      allocate(cleaf_int(nlen))
+      allocate(cwood_int(nlen))
+      allocate(croot_int(nlen))
+      allocate(csap_int(nlen))
+      allocate(cheart_int(nlen))
+      allocate(csto_int(nlen))
 
       allocate(dleaf_pls_aux(nlen))
       allocate(dwood_pls_aux(nlen))
@@ -398,6 +407,7 @@ contains
             &, soil_sat, ph(p), ar(p), nppa(p), laia(p), f5(p), vpd(p)&
             &, rm(p), rg(p), rc2(p), wue(p), c_def(p), vcmax(p), specific_la(p), tra(p))
 
+
          ! if (p.eq.1259)then
             ! print*,'_____________'
             ! print*, 'cleaf_pls',cleaf_pls(p), p
@@ -419,23 +429,72 @@ contains
             &,cleaf_pls2(p), cwood_pls2(p), croot_pls2(p), csap_pls2(p), cheart_pls2(p), csto_pls2(p)&
             &,leaf_req(p), leaf_inc_min(p), root_inc_min(p))
 
-         ! if (p.eq.1054) then
-         !    print*, 'after allocation inside bdgt'
-         !    print*, 'l', cleaf_pls2(p)
-         !    print*, 'w', cwood_pls2(p)
-         !    print*, 'r', croot_pls2(p)
-         !    print*, 'sap', csap_pls2(p)
-         !    print*, 'h', cheart_pls2(p)
-         !    print*, 'sto', csto_pls2(p)
-         !    print*, 'ph', ph(p)
+         
 
-         ! endif
             !Carbon use efficiency & Delta C
          if(ph(p) .eq. 0.0 .or. nppa(p) .eq. 0.0) then
             cue(p) = 0.0
          else
             cue(p) = nppa(p)/ph(p)
          endif
+
+
+         !Carbon balance (c deficit)
+         c_def(p) = c_def(p)/2.73791 !/2.73791 transforms to year
+
+         if (c_def(p).gt.0.0D0) then
+            if (dt1(7) .gt. 0.0D0) then
+               cleaf_int(p) = cleaf_pls2(p) - (c_def(p) * 0.15)
+               croot_int(p) = croot_pls2(p) - (c_def(p) * 0.15)
+               csap_int(p)  = csap_pls2(p) - (c_def(p) * 0.15)
+               cheart_int(p) = cheart_pls2(p) + (csap_pls2(p) - (c_def(p) * 0.15))
+               csto_int(p) = csto_pls2(p) - (c_def(p)*0.55)
+               cwood_int(p) = csap_int(p) + cheart_int(p)
+            else
+               cleaf_int(p) = cleaf_pls2(p) - (c_def(p) * 0.5)
+               croot_int(p) = croot_pls2(p) - (c_def(p) * 0.5)
+               csap_int(p)  = 0.0D0
+               cheart_int(p) = 0.0D0
+               csto_int(p) = 0.0D0
+               cwood_int(p) = 0.0D0
+            endif
+         else 
+            if (dt1(7) .gt. 0.0D0)then
+               cleaf_int(p) = cleaf_pls2(p) 
+               croot_int(p) = croot_pls2(p) 
+               csap_int(p)  = csap_pls2(p)
+               cheart_int(p) = cheart_pls2(p) 
+               csto_int(p) = csto_pls2(p) 
+               cwood_int(p) = csap_int(p) + cheart_int(p)
+            else
+               cleaf_int(p) = cleaf_pls2(p) 
+               croot_int(p) = croot_pls2(p) 
+               csap_int(p)  = 0.0D0
+               cheart_int(p) = 0.0D0
+               csto_int(p) = 0.0D0
+               cwood_int(p) = 0.0D0
+            endif
+         endif
+
+         if (cleaf_int(p).lt.0.0D0)  cleaf_int(p) = 0.0D0
+         if (croot_int(p).lt.0.0D0)  croot_int(p) = 0.0D0
+         if (csap_int(p).lt.0.0D0)   csap_int(p) = 0.0D0
+         if (cheart_int(p).lt.0.0D0) cheart_int(p) = 0.0D0
+         if (csto_int(p).lt.0.0D0)   csto_int(p) = 0.0D0
+         if (cwood_int(p).lt.0.0D0)  cwood_int(p) = 0.0D0
+
+         ! if (p.eq.1054) then
+         print*, 'after allocation and c def inside bdgt',p
+         print*, 'l', cleaf_int(p)
+         print*, 'w', cwood_int(p)
+         print*, 'r', croot_int(p)
+         print*, 'sap', csap_int(p)
+         print*, 'h', cheart_int(p)
+         print*, 'sto', csto_int(p)
+         print*, 'ph', ph(p)
+         print*, 'c_def', c_def(p)
+
+         ! endif
 
          !estimate growth of storage pool (acho que isso vai ser dentro da alloc)
          !calculate storage growth respi(onde isso?)
@@ -462,12 +521,12 @@ contains
          ! endif
         
 
-         cleaf_pls_aux(p)  = cleaf_pls2(p)
-         cwood_pls_aux(p)  = cwood_pls2(p)
-         croot_pls_aux(p)  = croot_pls2(p)
-         csap_pls_aux(p)   = csap_pls2(p)
-         cheart_pls_aux(p) = cheart_pls2(p)
-         csto_pls_aux(p)   = csto_pls2(p)
+         ! cleaf_pls_aux(p)  = cleaf_int(p)
+         ! cwood_pls_aux(p)  = cwood_int(p)
+         ! croot_pls_aux(p)  = croot_int(p)
+         ! csap_pls_aux(p)   = csap_int(p)
+         ! cheart_pls_aux(p) = cheart_int(p)
+         ! csto_pls_aux(p)   = csto_int(p)
 
       enddo
       !$OMP END PARALLEL DO
@@ -533,23 +592,23 @@ contains
       vcmax_1       = sum(vcmax * ocp_coeffs, mask= .not. isnan(vcmax))
       specific_la_1 = sum(specific_la * ocp_coeffs, mask= .not. isnan(specific_la))
 
-      cleaf_grd  = sum(cleaf_pls_aux  * ocp_coeffs, mask = .not. isnan(cleaf_pls_aux ))
-      cwood_grd  = sum(cwood_pls_aux  * ocp_coeffs, mask = .not. isnan(cwood_pls_aux ))
-      croot_grd  = sum(croot_pls_aux  * ocp_coeffs, mask = .not. isnan(croot_pls_aux ))
-      csap_grd   = sum(csap_pls_aux   * ocp_coeffs, mask = .not. isnan(csap_pls_aux  ))
-      cheart_grd = sum(cheart_pls_aux * ocp_coeffs, mask = .not. isnan(cheart_pls_aux))
-      csto_grd   = sum(csto_pls_aux   * ocp_coeffs, mask = .not. isnan(csto_pls_aux  ))
+      cleaf_grd  = sum(cleaf_int  * ocp_coeffs, mask = .not. isnan(cleaf_int))
+      cwood_grd  = sum(cwood_int * ocp_coeffs, mask = .not. isnan(cwood_int ))
+      croot_grd  = sum(croot_int  * ocp_coeffs, mask = .not. isnan(croot_int ))
+      csap_grd   = sum(csap_int   * ocp_coeffs, mask = .not. isnan(csap_int  ))
+      cheart_grd = sum(cheart_int * ocp_coeffs, mask = .not. isnan(cheart_int))
+      csto_grd   = sum(csto_int   * ocp_coeffs, mask = .not. isnan(csto_int  ))
 
       !daily output to carbon pools (not CWM)
       do p = 1, nlen
          ri = lp(p)
 
-         !provisory general valeus
-         cleaf_out(ri)  =  cleaf_pls2(p) 
-         croot_out(ri)  =  croot_pls2(p)
-         cheart_out(ri) =  cheart_pls2(p)
-         csap_out(ri)   =  csap_pls2(p)
-         csto_out(ri)   =  csto_pls2(p)
+  
+         cleaf_out(ri)  =  cleaf_int(p) 
+         croot_out(ri)  =  croot_int(p)
+         cheart_out(ri) =  cheart_int(p)
+         csap_out(ri)   =  csap_int(p)
+         csto_out(ri)   =  csto_int(p)
          cwood_out(ri)  =  cheart_out(ri) + csap_out(ri)
 
          !deltas
@@ -597,12 +656,12 @@ contains
       deallocate(leaf_inc_min)
       deallocate(root_inc_min)
 
-      deallocate(cleaf_pls_aux)
-      deallocate(cwood_pls_aux)
-      deallocate(croot_pls_aux)
-      deallocate(csap_pls_aux)
-      deallocate(cheart_pls_aux)
-      deallocate(csto_pls_aux)
+      deallocate(cleaf_int)
+      deallocate(cwood_int)
+      deallocate(croot_int)
+      deallocate(csap_int)
+      deallocate(cheart_int)
+      deallocate(csto_int)
 
       deallocate(dleaf_pls_aux)
       deallocate(dwood_pls_aux)

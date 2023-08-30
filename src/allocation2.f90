@@ -143,7 +143,7 @@ module alloc2
         real(r_8) :: awood
         real(r_8) :: height2
 
-        if (p.eq.1054) print*, 'entrando na alloc'
+        ! if (p.eq.1054) print*, 'entrando na alloc'
         
         !take the allocation proportion to wood (to identify) the grasses
         awood = dt(7)
@@ -351,21 +351,21 @@ module alloc2
                     
                     ! print*, 'C deficit (NPP < GPP - resp)' !ok
 
-                    c_deficit      = abs(bminc_in_ind)
+                    ! c_deficit      = abs(bminc_in_ind)
 
                     ! print*, 'c deficit', c_deficit, bminc_in_ind
 
                     
-                    leaf_inc_alloc = - (c_deficit*0.15)
+                    leaf_inc_alloc = 0.0D0 !- (c_deficit*0.15)
 
-                    root_inc_alloc = - (c_deficit*0.15)
+                    root_inc_alloc = 0.0D0 !- (c_deficit*0.15)
 
-                    sap_inc_alloc  = - (c_deficit*0.15)
+                    sap_inc_alloc  = 0.0D0 !- (c_deficit*0.15)
 
                     !when sap dies it turns into heartwood
-                    heart_inc_alloc = abs(sap_inc_alloc)
+                    heart_inc_alloc = 0.0D0 !abs(sap_inc_alloc)
 
-                    sto_inc_alloc = - (c_deficit*0.55)
+                    sto_inc_alloc = 0.0D0 !- (c_deficit*0.55)
 
                      
                 end if
@@ -381,30 +381,42 @@ module alloc2
 
                 ! print*, 'NPP > 0. -> non allocated goes to storage' !ok
                 sto_inc_alloc = bminc_in_ind
+                leaf_inc_alloc = 0.0D0 
+
+                root_inc_alloc = 0.0D0 
+                sap_inc_alloc  = 0.0D0 
+                !
+                heart_inc_alloc = 0.0D0 
+                sto_inc_alloc = 0.0D0 
                 
             else 
 
                 ! print*, 'NPP < 0 -> discount the deficit equally between alive tissues', bminc_in_ind !ok
 
-                c_deficit     = abs(bminc_in_ind)
+                ! c_deficit     = abs(bminc_in_ind)
 
-                leaf_inc_alloc = - (c_deficit*0.15)
+                leaf_inc_alloc = 0.0D0 
 
-                root_inc_alloc = - (c_deficit*0.15)
+                root_inc_alloc = 0.0D0 
+                sap_inc_alloc  = 0.0D0 
+                !
+                heart_inc_alloc = 0.0D0 
+                sto_inc_alloc = 0.0D0 
+                
+                ! leaf_inc_alloc = - (c_deficit*0.15)
 
-                sap_inc_alloc  = - (c_deficit*0.15)
+                ! root_inc_alloc = - (c_deficit*0.15)
 
-                !when sap dies it turns into heartwood
-                heart_inc_alloc = abs(sap_inc_alloc)
+                ! sap_inc_alloc  = - (c_deficit*0.15)
 
-                sto_inc_alloc = - (c_deficit*0.55)
+                ! !when sap dies it turns into heartwood
+                ! heart_inc_alloc = abs(sap_inc_alloc)
+
+                ! sto_inc_alloc = - (c_deficit*0.55)
 
             end if    
             
         endif
-
-   
-
        
     !     !Update variable and add Increment to C compartments 
         leaf_updt    = leaf_in_ind  + leaf_inc_alloc
