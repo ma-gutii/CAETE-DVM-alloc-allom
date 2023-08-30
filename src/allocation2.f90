@@ -143,9 +143,11 @@ module alloc2
         real(r_8) :: awood
         real(r_8) :: height2
 
+        if (p.eq.1000) print*, 'entrando na alloc'
         
         !take the allocation proportion to wood (to identify) the grasses
         awood = dt(7)
+        ! print*, 'awood', awood
 
         !initializing variables
         leaf_in_ind  = 0.0D0
@@ -191,16 +193,29 @@ module alloc2
 
         !wood/non wood strategies !provisory
         if (awood .le. 0.0D0) then
-            goto 148
-        else 
-            continue
+            ! print*, 'sou grama', p
+            leaf_out = 0.3
+            root_out = 0.2
+            sap_out = 0.0
+            heart_out = 0.0
+            sto_out = 1.
+            wood_out = 0.0
         endif
+            ! goto 148
+        ! else 
+        !     continue
+        ! endif
 
-        if (sap_in .le.0.0D0 .or. heart_in.le.0.0) then
-            goto 149
-        else 
-            continue
-        endif
+        ! if (sap_in .le.0.0D0 .or. heart_in.le.0.0D0) then
+        !     print*,'condiçãp sap/heart', sap_in, heart_in, p
+        !     if (awood .le. 0.0D0) then
+        !         print*, 'é gramínea', p
+        !     endif
+        !     goto 149
+        ! else 
+        !     continue
+        ! endif
+        
 
 
         !provisory
@@ -217,9 +232,9 @@ module alloc2
 
         bminc_in = photo - ar
         bminc_in_ind = (bminc_in/dens_in)*1.D3
-        if (p.eq.2000)then
-            print*, 'bminc', bminc_in_ind, p
-        endif
+        ! if (p.eq.2000)then
+        !     print*, 'bminc', bminc_in_ind, p
+        ! endif
 
         ! call functions to logic
         height = height_calc(wood_in_ind, sap_in_ind, leaf_in_ind)
@@ -251,16 +266,16 @@ module alloc2
             ! print*, ''
         ! endif
         
-        if (p.eq.2000)then
-            print*, '______________________'    
-            print*, 'height',height, p
-            print*, 'leaf req',leaf_req, p
-            print*, 'leaf inc min',leaf_inc_min, p
-            print*, 'root inc min', root_inc_min, p
-            print*, 'bminc ', bminc_in_ind, p
-            print*, 'ar', ar, p
-            print*, '_______________________'
-        endif
+        ! if (p.eq.1000)then
+        !     print*, '______________________'    
+        !     print*, 'height',height, p
+        !     print*, 'leaf req',leaf_req, p
+        !     print*, 'leaf inc min',leaf_inc_min, p
+        !     print*, 'root inc min', root_inc_min, p
+        !     print*, 'npp ', bminc_in_ind, p
+        !     print*, 'ar', ar, p
+        !     print*, '_______________________'
+        ! endif
         
 
 
@@ -269,34 +284,34 @@ module alloc2
        
         if (leaf_inc_min.gt.0.0D0.and.root_inc_min.gt.0.0D0) then
 
-            if (p.eq.2000)then
+            ! if (p.eq.2000)then
 
-                print*, "alocação normal"
-                print*,'leaf and root inc minimum are > 0' !ok
+            !     print*, "alocação normal"
+            !     print*,'leaf and root inc minimum are > 0' !ok
                 
                 
-            endif
+            ! endif
            
             if((bminc_in_ind.gt.0)) then
-                if (p.eq.2000)then
-                    print*, 'NPP > 0.', bminc_in_ind !ok
-                endif
+                ! if (p.eq.2000)then
+                !     print*, 'NPP > 0.', bminc_in_ind !ok
+                ! endif
                 
                 if (bminc_in_ind.ge.(root_inc_min + leaf_inc_min)) then
-                    if (p.eq.2000)then
+                    ! if (p.eq.2000)then
                     
-                        print*, 'NPP > sum of root and leaf inc min' !ok
-                        print*, 'call normal alloc' !ok
-                    endif
+                    !     print*, 'NPP > sum of root and leaf inc min' !ok
+                    !     print*, 'call normal alloc' !ok
+                    ! endif
 
                     call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind,p,&
                     sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
-                    if (p.eq.2000)then
+                    ! if (p.eq.1000)then
                     
-                        print*, 'leaf inc', leaf_inc_alloc, p !ok
-                        print*, 'root inc alloc', root_inc_alloc, p !ok
-                        print*, 'sap inc', sap_inc_alloc, p
-                    endif
+                    !     print*, 'leaf inc', leaf_inc_alloc, p !ok
+                    !     print*, 'root inc alloc', root_inc_alloc, p !ok
+                    !     print*, 'sap inc', sap_inc_alloc, p
+                    ! endif
 
                 else
 
@@ -429,16 +444,16 @@ module alloc2
         sto_out = ((sto_updt - sto_turn) * dens_in)/1.D3
         wood_out = sap_out + heart_out
 
-        ! if (p.eq.2000)then
-        print*, '_________out consider turn_____________', p
-        print*, 'leaf out', leaf_out
-        print*, 'sap out', sap_out
-        print*, 'root out', root_out
-        print*, 'heart out', heart_out 
-        print*, 'sto out', sto_out
-        print*, 'wood out', wood_out
-        print*, '___________________________'
-        ! endif
+        if (p.eq.1000)then
+            print*, '_________out consider turn_____________', p
+            print*, 'leaf out', leaf_out
+            print*, 'sap out', sap_out
+            print*, 'root out', root_out
+            print*, 'heart out', heart_out 
+            print*, 'sto out', sto_out
+            print*, 'wood out', wood_out
+            print*, '___________________________'
+        endif
 
     !     !________________
     !     !sensitivity test
@@ -635,9 +650,9 @@ module alloc2
             leaf_inc_alloc = x1 + 0.5 * dx
 
 
-            if (p.eq.2000) then
-                print*,'_________dx < 0.01__________', p
-            endif
+            ! if (p.eq.1000) then
+            !     print*,'_________dx < 0.01__________', p
+            ! endif
 
         else 
             !Find a root for non-negative lminc_ind, rminc_ind and sminc_ind using Bisection Method (Press et al., 1986, p 346)
@@ -645,9 +660,9 @@ module alloc2
 
             call positive_leaf_inc_min(leaf_in_ind, sap_in_ind, heart_in_ind,&
             root_in_ind, bminc_in_ind, dx, x1, x2, leaf_inc_alloc)        
-            if (p.eq.2000) then
-                print*,'_________positive leaf inc min__________', p
-            endif
+            ! if (p.eq.2000) then
+            !     print*,'_________positive leaf inc min__________', p
+            ! endif
 
         endif
 

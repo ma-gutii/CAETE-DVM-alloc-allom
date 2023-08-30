@@ -1241,6 +1241,7 @@ contains
 
       ! check for nan in cleaf cawood cfroot
       do p = 1,npft
+         
          if(isnan(cleaf(p))) cleaf(p) = 0.0D0
          if(isnan(cfroot(p))) cfroot(p) = 0.0D0
          if(isnan(cawood(p))) cawood(p) = 0.0D0
@@ -1286,6 +1287,12 @@ contains
             run_pls(p) = 0
          enddo
       endif
+
+      ! do p = 1,npft
+      !    if(p.eq.1000) then
+      !       print*, 'ocp coefficient', ocp_coeffs(p), p
+      !    endif
+      ! enddo
 
       !     gridcell pft ligth limitation by wood content
       five_percent = nint(real(npft) * 0.05)

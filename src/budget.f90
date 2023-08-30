@@ -207,6 +207,7 @@ contains
       call pft_area_frac(cl1_pft, cf1_pft, ca1_pft, awood_aux,&
       &                  ocpavg, ocp_wood, run, ocp_mm)
 
+      ! print*, 'ocpavg', ocpavg
       nlen = sum(run)    ! New length for the arrays in the main loop
       ! print*, 'NLEN',  nlen
       allocate(lp(nlen))
