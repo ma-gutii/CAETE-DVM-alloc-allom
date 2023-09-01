@@ -238,7 +238,7 @@ module alloc2
 
         ! call functions to logic
         height = height_calc(wood_in_ind, sap_in_ind, leaf_in_ind)
-        ! print*, 'height', height
+        print*, 'height', height
         ! print*, 'wood_in_ind', wood_in_ind
 
         ! if (height.le.0.0D0) then

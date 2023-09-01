@@ -617,9 +617,9 @@ contains
          dsap_out(ri)   =  dsap_pls_aux(p)
          dwood_out(ri)  =  dheart_out(ri) + dsap_out(ri)
 
-         ! print*, 'LEAF', cleaf_out(ri), p
-         ! print*, 'ROOT', croot_out(ri), p
-         ! print*, 'WOOD', cwood_out(ri), p
+         print*, 'LEAF', cleaf_out(ri), p
+         print*, 'ROOT', croot_out(ri), p
+         print*, 'WOOD', cwood_out(ri), p
          
       enddo
 
