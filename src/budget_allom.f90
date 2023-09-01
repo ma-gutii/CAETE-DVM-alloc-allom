@@ -483,16 +483,16 @@ contains
          if (csto_int(p).lt.0.0D0)   csto_int(p) = 0.0D0
          if (cwood_int(p).lt.0.0D0)  cwood_int(p) = 0.0D0
 
-         ! if (p.eq.1054) then
-         print*, 'after allocation and c def inside bdgt',p
-         print*, 'l', cleaf_int(p)
-         print*, 'w', cwood_int(p)
-         print*, 'r', croot_int(p)
-         print*, 'sap', csap_int(p)
-         print*, 'h', cheart_int(p)
-         print*, 'sto', csto_int(p)
-         print*, 'ph', ph(p)
-         print*, 'c_def', c_def(p)
+         ! if (p.eq.105) then
+            ! print*, 'after allocation and c def inside bdgt',p
+            ! print*, 'l', cleaf_int(p)
+            ! print*, 'w', cwood_int(p)
+            ! print*, 'r', croot_int(p)
+            ! print*, 'sap', csap_int(p)
+            ! print*, 'h', cheart_int(p)
+            ! print*, 'sto', csto_int(p)
+            ! print*, 'ph', ph(p)
+            ! print*, 'c_def', c_def(p)
 
          ! endif
 
@@ -603,7 +603,6 @@ contains
       do p = 1, nlen
          ri = lp(p)
 
-  
          cleaf_out(ri)  =  cleaf_int(p) 
          croot_out(ri)  =  croot_int(p)
          cheart_out(ri) =  cheart_int(p)
@@ -618,7 +617,9 @@ contains
          dsap_out(ri)   =  dsap_pls_aux(p)
          dwood_out(ri)  =  dheart_out(ri) + dsap_out(ri)
 
-
+         ! print*, 'LEAF', cleaf_out(ri), p
+         ! print*, 'ROOT', croot_out(ri), p
+         ! print*, 'WOOD', cwood_out(ri), p
          
       enddo
 
