@@ -46,7 +46,7 @@ module alloc2
 
     contains
 
-    subroutine allocation2(p, dt, photo, ar, leaf_in, wood_in, root_in, sap_in, heart_in, sto_in&
+    subroutine allocation2(p, dt, npp, photo, ar, leaf_in, wood_in, root_in, sap_in, heart_in, sto_in&
         &, leaf_out, wood_out, root_out, sap_out, heart_out, sto_out&
         &, leaf_req, leaf_inc_min, root_inc_min)
     
@@ -63,6 +63,8 @@ module alloc2
         real(r_8), intent(in) :: heart_in
         real(r_8), intent(in) :: sto_in
         real(r_8), intent(in) :: wood_in
+        real(r_8), intent(in) :: npp
+
 
 
 
@@ -230,8 +232,8 @@ module alloc2
         sto_in_ind = (sto_in/dens_in)*1.D3
         wood_in_ind = sap_in_ind + heart_in_ind
 
-        bminc_in = photo - ar
-        bminc_in_ind = (bminc_in/dens_in)*1.D3
+        ! bminc_in = photo - ar
+        bminc_in_ind = (npp/dens_in)*1.D3
         ! if (p.eq.2000)then
         !     print*, 'bminc', bminc_in_ind, p
         ! endif
@@ -348,6 +350,8 @@ module alloc2
                 ! print*, 'NPP < 0'
 
                 ! print*, 'bminc_2', bminc_in_ind
+
+            
 
                 if ( (sto_in_ind + bminc_in_ind).ge.(root_inc_min + leaf_inc_min) ) then !!AND NUTRIENTS
                     !print*, 'NPP < 0 but storage + NPP > minimum requirement' !ok
@@ -609,7 +613,9 @@ module alloc2
         !Calculo diameter (necessary to height)
 
         ! diameter = (sap_in_ind * klatosa / (leaf_in_ind * sla_allom * dwood))**(1.0 / k_allom3)
-        diameter = ((sap_in_ind)/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
+        ! diameter = ((sap_in_ind)/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
+        diameter = ((wood_in_ind)/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
+
         !print*, 'diameter', diameter
 
         ! sap_xsa = leaf_in_ind * sla_allom / klatosa

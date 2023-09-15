@@ -424,11 +424,14 @@ contains
       
          evap(p) = penman(p0, temp, rh, available_energy(temp), rc2(p)) !actual evapotranspiration (evap, mm/day)
 
-         call allocation2(p, dt1, ph(p), ar(p)&
+         call allocation2(p, dt1,nppa(p), ph(p), ar(p)&
             &,cleaf_pls(ri), cwood_pls(ri), croot_pls(ri), csap_pls(ri), cheart_pls(ri), csto_pls(ri)&
             &,cleaf_pls2(p), cwood_pls2(p), croot_pls2(p), csap_pls2(p), cheart_pls2(p), csto_pls2(p)&
             &,leaf_req(p), leaf_inc_min(p), root_inc_min(p))
-
+         
+         print*, 'wood', cwood_pls2(p), p
+         print*, 'sap', csap_pls2(p), p
+         print*, 'heart', cheart_pls2(p), p
          
 
             !Carbon use efficiency & Delta C
@@ -617,9 +620,9 @@ contains
          dsap_out(ri)   =  dsap_pls_aux(p)
          dwood_out(ri)  =  dheart_out(ri) + dsap_out(ri)
 
-         print*, 'LEAF', cleaf_out(ri), p
-         print*, 'ROOT', croot_out(ri), p
-         print*, 'WOOD', cwood_out(ri), p
+         ! print*, 'LEAF', cleaf_out(ri), p
+         ! print*, 'ROOT', croot_out(ri), p
+         ! print*, 'WOOD', cwood_out(ri), p
          
       enddo
 
