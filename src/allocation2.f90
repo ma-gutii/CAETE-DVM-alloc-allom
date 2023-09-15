@@ -63,7 +63,7 @@ module alloc2
         real(r_8), intent(in) :: heart_in
         real(r_8), intent(in) :: sto_in
         real(r_8), intent(in) :: wood_in
-        real(r_8), intent(in) :: npp
+        real(r_4), intent(in) :: npp
 
 
 
@@ -145,6 +145,9 @@ module alloc2
         real(r_8) :: awood
         real(r_8) :: height2
 
+        !internal
+        real(r_8) :: bminc_internal
+
         ! if (p.eq.1054) print*, 'entrando na alloc'
         
         !take the allocation proportion to wood (to identify) the grasses
@@ -192,6 +195,8 @@ module alloc2
         sap_turn = 0.0D0
         heart_turn = 0.0D0
         sto_turn = 0.0D0
+
+        bminc_internal = 0.0D0
 
         !wood/non wood strategies !provisory
         if (awood .le. 0.0D0) then
@@ -327,10 +332,15 @@ module alloc2
                     if ( (sto_in_ind + bminc_in_ind).ge.(root_inc_min + leaf_inc_min) ) then !!AND NUTRIENTS
                                 
                         ! print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc' !ok
+                        
 
-                        call reallocation(bminc_in_ind,leaf_inc_min, root_inc_min,leaf_inc_alloc, &
-                        root_inc_alloc, sap_inc_alloc,heart_inc_alloc, sto_inc_alloc)
+                        bminc_internal = sto_in_ind + bminc_in_ind
 
+                        call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, bminc_internal,p,&
+                        sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
+                        ! call reallocation(bminc_in_ind,leaf_inc_min, root_inc_min,leaf_inc_alloc, &
+                        ! root_inc_alloc, sap_inc_alloc,heart_inc_alloc, sto_inc_alloc)
+                        sto_inc_alloc = 0.0D0
                         ! print*, 'leaf reallocation_onNPP', leaf_inc_alloc
                         ! print*, 'root reallocation_onNPP', root_inc_alloc
                         ! print*, 'bminc', bminc_in_ind
@@ -353,8 +363,11 @@ module alloc2
 
             
 
-                if ( (sto_in_ind + bminc_in_ind).ge.(root_inc_min + leaf_inc_min) ) then !!AND NUTRIENTS
-                    !print*, 'NPP < 0 but storage + NPP > minimum requirement' !ok
+                if ( (sto_in_ind).ge.(root_inc_min + leaf_inc_min) ) then !!AND NUTRIENTS
+                    if (sto_in_ind.ge.(leaf_inc_min + root_inc_min) )then
+                        print*, 'sto ge leaf req + leaf_inc_min'
+                    endif
+                    !print*, 'NPP < 0 but storage > minimum requirement' !ok
 
                     ! print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc' !ok
 

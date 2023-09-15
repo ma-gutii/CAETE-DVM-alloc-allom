@@ -429,9 +429,9 @@ contains
             &,cleaf_pls2(p), cwood_pls2(p), croot_pls2(p), csap_pls2(p), cheart_pls2(p), csto_pls2(p)&
             &,leaf_req(p), leaf_inc_min(p), root_inc_min(p))
          
-         print*, 'wood', cwood_pls2(p), p
-         print*, 'sap', csap_pls2(p), p
-         print*, 'heart', cheart_pls2(p), p
+         ! print*, 'wood', cwood_pls2(p), p
+         ! print*, 'sap', csap_pls2(p), p
+         ! print*, 'heart', cheart_pls2(p), p
          
 
             !Carbon use efficiency & Delta C
