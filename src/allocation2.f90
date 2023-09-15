@@ -364,15 +364,21 @@ module alloc2
             
 
                 if ( (sto_in_ind).ge.(root_inc_min + leaf_inc_min) ) then !!AND NUTRIENTS
-                    if (sto_in_ind.ge.(leaf_inc_min + root_inc_min) )then
-                        print*, 'sto ge leaf req + leaf_inc_min'
-                    endif
-                    !print*, 'NPP < 0 but storage > minimum requirement' !ok
+                    
+                    ! print*, 'NPP < 0 but storage > minimum requirement' !ok
+                    call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, sto_in_ind,p,&
+                        sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc)
 
+                    sto_inc_alloc = 0.0D0
+                    
+                    ! print*,'l', leaf_inc_alloc
+                    ! print*, 'r', root_inc_alloc
+                    ! print*, 's', sap_inc_alloc
+                    ! print*, 'sto', sto_in_ind - leaf_inc_alloc - root_inc_alloc - sap_inc_alloc
                     ! print*, 'reallocation: use storage and discount minimum leaf inc and minimum root inc' !ok
 
-                    call reallocation(bminc_in_ind,leaf_inc_min, root_inc_min,leaf_inc_alloc, &
-                    root_inc_alloc, sap_inc_alloc,heart_inc_alloc, sto_inc_alloc)
+                    ! call reallocation(bminc_in_ind,leaf_inc_min, root_inc_min,leaf_inc_alloc, &
+                    ! root_inc_alloc, sap_inc_alloc,heart_inc_alloc, sto_inc_alloc)
 
                     ! print*, 'leaf reallocation_offNPP', leaf_inc_alloc
                     ! print*, 'root reallocation_offNPP', root_inc_alloc
@@ -536,13 +542,16 @@ module alloc2
         leaf_out = ((leaf_updt - leaf_turn)*dens_in)/1.D3
         root_out = ((root_updt - root_turn)*dens_in)/1.D3
 
-        if (sap_inc_alloc .gt. 0.0D0) then
-            sap_out  = ((sap_updt - sap_turn)*dens_in)/1.D3
-            heart_out = (((heart_updt - heart_turn) + sap_turn)*dens_in)/1.D3
-        else
-            sap_out  = ((sap_updt)*dens_in)/1.D3
-            heart_out = ((heart_updt)*dens_in)/1.D3
-        endif
+        sap_out  = ((sap_updt - sap_turn)*dens_in)/1.D3
+        heart_out = (((heart_updt - heart_turn) + sap_turn)*dens_in)/1.D3
+
+        ! if (sap_inc_alloc .gt. 0.0D0) then
+        !     sap_out  = ((sap_updt - sap_turn)*dens_in)/1.D3
+        !     heart_out = (((heart_updt - heart_turn) + sap_turn)*dens_in)/1.D3
+        ! else
+        !     sap_out  = ((sap_updt)*dens_in)/1.D3
+        !     heart_out = ((heart_updt)*dens_in)/1.D3
+        ! endif
         
         if (sap_out.ge.0.0) then
             heart_out = (((heart_updt - heart_turn) + sap_turn)*dens_in)/1.D3

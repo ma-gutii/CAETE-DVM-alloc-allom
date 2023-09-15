@@ -76,7 +76,7 @@ module global_par
    real(r_8), parameter, public :: r_turnover = 1./4. !Sitch et al 2003
    real(r_8), parameter, public :: s_turnover = 1./20. !0.05 !Sitch et al 2003
    real(r_8), parameter, public :: sto_turnover = 1./20. !Dietze et al 2014
-   real(r_8), parameter, public :: h_turnover = 1./200.!1/50. !Sitch et al 2003
+   real(r_8), parameter, public :: h_turnover = 1./100.!1/50. !Sitch et al 2003
 
 
 end module global_par
