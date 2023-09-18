@@ -336,7 +336,7 @@ def apply_spin(grid:grd)->grd:
 
 def apply_fun(grid:grd, allometry = allom)->grd:
     if allom:
-        grid.run_caete_allom('19790101','19891231', spinup=5, 
+        grid.run_caete_allom('19790101','19891231', spinup=1, 
                    fix_co2='1980', save=False, nutri_cycle=False)
     else:
         grid.run_caete('19790101', '19891231', spinup=5, 
@@ -346,7 +346,7 @@ def apply_fun(grid:grd, allometry = allom)->grd:
  
 def apply_fun0(grid:grd, allometry = allom)->grd:
     if allom:
-        grid.run_caete_allom('19790101', '19891231', spinup=35,
+        grid.run_caete_allom('19790101', '19891231', spinup=1,
                    fix_co2='1980', save=False, nutri_cycle=False)
     else:
         grid.run_caete('19790101', '19891231', spinup=35,

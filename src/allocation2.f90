@@ -148,7 +148,9 @@ module alloc2
         !internal
         real(r_8) :: bminc_internal
 
-        ! if (p.eq.1054) print*, 'entrando na alloc'
+        !array to store inc vars
+        real(r_8), dimension(5) :: incs
+        integer(i_4) :: i
         
         !take the allocation proportion to wood (to identify) the grasses
         awood = dt(7)
@@ -180,6 +182,8 @@ module alloc2
         sap_inc_alloc   = 0.0D0
         heart_inc_alloc = 0.0D0
         sto_inc_alloc   = 0.0D0
+
+        
 
         c_deficit = 0.0D0
 
@@ -245,7 +249,7 @@ module alloc2
 
         ! call functions to logic
         height = height_calc(wood_in_ind, sap_in_ind, leaf_in_ind)
-        !print*, 'height', height
+        ! print*, 'height', height
         ! print*, 'wood_in_ind', wood_in_ind
 
         ! if (height.le.0.0D0) then
@@ -454,7 +458,7 @@ module alloc2
                 sap_inc_alloc  = 0.0D0 
                 !
                 heart_inc_alloc = 0.0D0 
-                sto_inc_alloc = bminc_in_ind !incremento somente para o storage.
+                sto_inc_alloc = bminc_in_ind !increment goes to storage 
                 
                 !sto_inc_alloc = bminc_in_ind - (leaf_inc_alloc + root_inc_alloc)
 
@@ -511,16 +515,30 @@ module alloc2
             end if    
             
         endif
+
+        !identifyt vars in array incs
+        incs(1) = leaf_inc_alloc
+        incs(2) = root_inc_alloc
+        incs(3) = sap_inc_alloc
+        incs(4) = heart_inc_alloc
+        incs(5) = sto_inc_alloc
+        
+        !verify if inc is lt 0
+        do i = 1, 5
+            if (incs(i).lt.0.0D0) then
+                incs(i) = 0.0D0
+            endif
+        enddo
        
     !     !Update variable and add Increment to C compartments 
-        leaf_updt    = leaf_in_ind  + leaf_inc_alloc
-        sap_updt     = sap_in_ind + sap_inc_alloc
-        heart_updt   = heart_in_ind+ heart_inc_alloc
-        root_updt    = root_in_ind + root_inc_alloc
-        sto_updt     = sto_in_ind + sto_inc_alloc
+        leaf_updt    = leaf_in_ind  + incs(1)
+        root_updt    = root_in_ind  + incs(2)
+        sap_updt     = sap_in_ind   + incs(3)
+        heart_updt   = heart_in_ind + incs(4)
+        sto_updt     = sto_in_ind   + incs(5) 
         wood_updt    = sap_updt     + heart_updt
 
-        ! if (p.eq.154)then
+        ! 
         ! print*, '_______increment_allocation_________', p
         ! print*, 'leaf updt', leaf_updt
         ! print*, 'sap updt', sap_updt
@@ -529,9 +547,6 @@ module alloc2
         ! print*, 'sto updt', sto_updt
         ! print*, 'wood total updt', wood_updt
         ! print*, '____________________________________'
-        ! !endif
-
-
 
 
     !mortality through turnover
@@ -635,8 +650,8 @@ module alloc2
         !Calculo diameter (necessary to height)
 
         ! diameter = (sap_in_ind * klatosa / (leaf_in_ind * sla_allom * dwood))**(1.0 / k_allom3)
-        ! diameter = ((sap_in_ind)/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
-        diameter = ((wood_in_ind)/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
+        diameter = ((sap_in_ind)/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
+        ! diameter = ((wood_in_ind)/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
 
         !print*, 'diameter', diameter
 
