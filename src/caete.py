@@ -448,6 +448,7 @@ class grd:
 
         #vegetation pools for alloc allom
             #vars in grid cell scale (CWM computed inside budget)
+        #veg pools
         self.cleaf_allom  = None #leaf
         self.cwood_allom  = None #aboveground wood tissues (sap + heart)
         self.croot_allom  = None #fine roots
@@ -462,6 +463,17 @@ class grd:
         self.vp_dcs_allom  = None #heartwood
         self.vp_dch_allom  = None #sapwood
         self.vp_dcst_allom = None #storage
+
+        #processes
+        self.npp_allom = None
+        self.ph_allom  = None
+        self.ar_allom  = None
+        self.ep_allom  = None
+        self.ev_allom  = None
+        self.lai_allom  = None
+        self.rm_allom  = None
+        self.rg_allom  = None
+
 
 
     def _allocate_output_nosave(self, n):
@@ -547,7 +559,14 @@ class grd:
         self.dheart_allom = np.zeros(shape=(n,), order='F')
         self.dsto_allom   = np.zeros(shape=(n,), order='F')
         
-
+        self.npp_allom    = np.zeros(shape=(n,), order='F')
+        self.ph_allom     = np.zeros(shape=(n,), order='F')
+        self.ar_allom     = np.zeros(shape=(n,), order='F')
+        self.ep_allom     = np.zeros(shape=(n,), order='F')
+        self.ev_allom     = np.zeros(shape=(n,), order='F')
+        self.lai_allom    = np.zeros(shape=(n,), order='F')
+        self.rm_allom     = np.zeros(shape=(n,), order='F') 
+        self.rg_allom     = np.zeros(shape=(n,), order='F')
 
     def _flush_output(self, run_descr, index):
         """1 - Clean variables that receive outputs from the fortran subroutines
@@ -683,7 +702,15 @@ class grd:
                      'croot' : self.croot_allom,
                      'csap'  : self.csap_allom,
                      'cheart': self.cheart_allom,
-                     'csto'  : self.csto_allom,                                       
+                     'csto'  : self.csto_allom,
+                     'npp'   : self.npp_allom,
+                     'ph'    : self.ph_allom,
+                     'ar'    : self.ar_allom,
+                     'ep'    : self.ep_allom,     
+                     'ev'    : self.ev_allom,     
+                     'lai'   : self.lai_allom,    
+                     'rm'    : self.rm_allom,      
+                     'rg'    : self.rg_allom,  
                      'time_unit': self.time_unit,   # Time unit
                      'sind': index[0],
                      'eind': index[1]}
@@ -696,6 +723,14 @@ class grd:
         self.csap_allom   = None
         self.cheart_allom = None
         self.csto_allom   = None
+        self.npp_allom    = None
+        self.ph_allom     = None
+        self.ar_allom     = None
+        self.ep_allom     = None
+        self.ev_allom     = None
+        self.lai_allom    = None
+        self.rm_allom     = None 
+        self.rg_allom     = None
        
         return to_pickle
 
@@ -1577,6 +1612,14 @@ class grd:
                 dcs_allom    = np.zeros(npls, order='F')
                 dch_allom    = np.zeros(npls, order='F')
                 dcst_allom   = np.zeros(npls, order='F')
+                npp_allom    = np.zeros(npls, order='F')
+                ph_allom     = np.zeros(npls, order='F')
+                ar_allom     = np.zeros(npls, order='F')
+                ep_allom     = np.zeros(npls, order='F')
+                ev_allom     = np.zeros(npls, order='F')
+                lai_allom    = np.zeros(npls, order='F')
+                rm_allom     = np.zeros(npls, order='F') 
+                rg_allom     = np.zeros(npls, order='F')
 
 
                 # Check the integrity of the data
@@ -1627,13 +1670,21 @@ class grd:
                 if save:
                     assert self.save == True
 
-                    self.cleaf_allom[step]  = daily_output_allom['cleaf_grd']
+                    self.cleaf_allom[step]   = daily_output_allom['cleaf_grd']
                     self.cwood_allom[step]   = daily_output_allom['cwood_grd']
                     self.croot_allom[step]   = daily_output_allom['croot_grd']
-                    self.csap_allom[step]   = daily_output_allom['csap_grd']
-                    self.cheart_allom[step] = daily_output_allom['cheart_grd']
-                    self.csto_allom[step]   = daily_output_allom['csto_grd']
-                    
+                    self.csap_allom[step]    = daily_output_allom['csap_grd']
+                    self.cheart_allom[step]  = daily_output_allom['cheart_grd']
+                    self.csto_allom[step]    = daily_output_allom['csto_grd']
+                    self.npp_allom[step]     = daily_output_allom['nppavg']
+                    self.ph_allom[step]      = daily_output_allom['phavg']
+                    self.ar_allom[step]      = daily_output_allom['aravg']
+                    self.ep_allom[step]      = daily_output_allom['epavg']
+                    self.ev_allom[step]      = daily_output_allom['evavg']
+                    self.lai_allom[step]     = daily_output_allom['laiavg']
+                    self.rm_allom[step]      = daily_output_allom['rmavg']
+                    self.rg_allom[step]      = daily_output_allom['rgavg']
+
 
                 
                 if ABORT:

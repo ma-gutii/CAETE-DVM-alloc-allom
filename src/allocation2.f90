@@ -46,7 +46,7 @@ module alloc2
 
     contains
 
-    subroutine allocation2(p, dt, npp, photo, ar, leaf_in, wood_in, root_in, sap_in, heart_in, sto_in&
+    subroutine allocation2(p, dt, npp, leaf_in, wood_in, root_in, sap_in, heart_in, sto_in&
         &, leaf_out, wood_out, root_out, sap_out, heart_out, sto_out&
         &, leaf_req, leaf_inc_min, root_inc_min)
     
@@ -76,8 +76,7 @@ module alloc2
 
         !input of carbon available gc/m2/time_step
         real(r_4):: bminc_in ! carbon (NPP) available to be allocated
-        real(r_4), intent(in) :: photo                              
-        real(r_4), intent(in) :: ar
+        
 
         !VARIABLES OUTPUTS 
         !carbon outputs (kgC/m2)
@@ -213,7 +212,7 @@ module alloc2
         sto_in_ind = (sto_in/dens_in)*1.D3
         wood_in_ind = sap_in_ind + heart_in_ind
 
-        ! bminc_in = photo - ar
+
         bminc_in_ind = (npp/dens_in)*1.D3
         ! print*, 'initial bminc', bminc_in_ind
       
@@ -269,7 +268,8 @@ module alloc2
                         sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc)
                         
                         !all the C available in storage is used (it is a type of reallocation)
-                        sto_inc_alloc = 0.0D0
+                        sto_inc_alloc = -leaf_inc_alloc - root_inc_alloc - sap_inc_alloc +  bminc_in_ind
+                        ! print*,'sto inc negativo', sto_inc_alloc
                         
                     else
                         ! print*, 'storage + npp < inc min, non used npp goes to storage'
@@ -290,8 +290,9 @@ module alloc2
                         sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc)
 
                     !all the C available in storage is used (it is a type of reallocation)
-                    sto_inc_alloc = 0.0D0     
-             
+                    sto_inc_alloc = -leaf_inc_alloc - root_inc_alloc - sap_inc_alloc +  bminc_in_ind
+ 
+                    ! print*,'sto inc negativo', sto_inc_alloc
                 else
                     ! print*, 'NPP < 0 and storage < minimum requirement' !there is no allocation
                                         
@@ -339,13 +340,11 @@ module alloc2
         incs(2) = root_inc_alloc
         incs(3) = sap_inc_alloc
         incs(4) = heart_inc_alloc
-        incs(5) = sto_inc_alloc
+        ! incs(5) = sto_inc_alloc
         
-        !verify if inc is lt 0
-        do i = 1, 5
+        !verify if inc is lt 0 for the compartments except for storage (it can be negative)
+        do i = 1, 4
             if (incs(i).lt.0.0D0) then
-                ! print*, 'NEGATIVEEEEEEEEEEEEEEEEEEEE INCCCCCCCCCCCC', p
-                ! print*, incs(i), i
                 incs(i) = 0.0D0
             endif
         enddo
@@ -355,8 +354,12 @@ module alloc2
         root_updt    = root_in_ind  + incs(2)
         sap_updt     = sap_in_ind   + incs(3)
         heart_updt   = heart_in_ind + incs(4)
-        sto_updt     = sto_in_ind   + incs(5) 
         wood_updt    = sap_updt     + heart_updt
+
+        sto_updt     = sto_in_ind   + sto_inc_alloc
+        ! if(sto_inc_alloc.lt.0.0D0)then
+            ! print*, 'sto updt inc lt 0','updt', sto_updt,'in_ind', sto_in_ind, 'inc',sto_inc_alloc
+        ! endif
 
         ! 
         ! print*, '_______increment_allocation_________', p
@@ -528,15 +531,15 @@ module alloc2
         endif
 
         root_inc_alloc = (leaf_in_ind + leaf_inc_alloc) / ltor - root_in_ind
+       
 
         sap_inc_alloc = bminc_in_ind - leaf_inc_alloc - root_inc_alloc
         
 
-        if(sap_inc_alloc.lt.0.0D0) then
-           
-            heart_inc_alloc = abs(sap_inc_alloc)
-            sap_inc_alloc = sap_inc_alloc            
-        endif
+        ! if(sap_inc_alloc.lt.0.0D0) then           
+        !     heart_inc_alloc = abs(sap_inc_alloc)
+        !     sap_inc_alloc = sap_inc_alloc            
+        ! endif
         ! print*, 'sap inc alloc', sap_inc_alloc, 'npp', bminc_in_ind,p
         ! print*, 'l', leaf_inc_alloc, 'r', root_inc_alloc, 'h_inc_alloc', heart_inc_alloc, p
 

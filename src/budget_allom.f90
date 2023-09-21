@@ -424,7 +424,7 @@ contains
       
          evap(p) = penman(p0, temp, rh, available_energy(temp), rc2(p)) !actual evapotranspiration (evap, mm/day)
 
-         call allocation2(p, dt1,nppa(p), ph(p), ar(p)&
+         call allocation2(p, dt1,nppa(p)&
             &,cleaf_pls(ri), cwood_pls(ri), croot_pls(ri), csap_pls(ri), cheart_pls(ri), csto_pls(ri)&
             &,cleaf_pls2(p), cwood_pls2(p), croot_pls2(p), csap_pls2(p), cheart_pls2(p), csto_pls2(p)&
             &,leaf_req(p), leaf_inc_min(p), root_inc_min(p))
@@ -442,7 +442,7 @@ contains
          endif
 
 
-         !Carbon balance (c deficit)
+         !Mass balance (c deficit)
          c_def(p) = c_def(p)/2.73791 !/2.73791 transforms to year
 
          if (c_def(p).gt.0.0D0) then
@@ -486,19 +486,18 @@ contains
          if (csto_int(p).lt.0.0D0)   csto_int(p) = 0.0D0
          if (cwood_int(p).lt.0.0D0)  cwood_int(p) = 0.0D0
 
-         ! if (p.eq.105) then
-            ! print*, 'after allocation and c def inside bdgt',p
-            ! print*, 'l', cleaf_int(p)
-            ! print*, 'w', cwood_int(p)
-            ! print*, 'r', croot_int(p)
-            ! print*, 'sap', csap_int(p)
-            ! print*, 'h', cheart_int(p)
-            ! print*, 'sto', csto_int(p)
-            ! print*, 'ph', ph(p)
-            ! print*, 'c_def', c_def(p)
+         
+               ! print*, 'after allocation and c def inside bdgt',p
+               ! print*, 'l', cleaf_int(p)
+               ! print*, 'w', cwood_int(p)
+               ! print*, 'r', croot_int(p)
+               ! print*, 'sap', csap_int(p)
+               ! print*, 'h', cheart_int(p)
+               ! print*, 'sto', csto_int(p)
+               ! print*, 'ph', ph(p)
+               ! print*, 'c_def', c_def(p)
 
-         ! endif
-
+      
          !estimate growth of storage pool (acho que isso vai ser dentro da alloc)
          !calculate storage growth respi(onde isso?)
 
