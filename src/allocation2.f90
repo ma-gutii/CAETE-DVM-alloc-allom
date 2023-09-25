@@ -46,14 +46,14 @@ module alloc2
 
     contains
 
-    subroutine allocation2(p, dt, npp, leaf_in, wood_in, root_in, sap_in, heart_in, sto_in&
+    subroutine allocation2(step,ri, p, dt, npp, leaf_in, wood_in, root_in, sap_in, heart_in, sto_in&
         &, leaf_out, wood_out, root_out, sap_out, heart_out, sto_out&
         &, leaf_req, leaf_inc_min, root_inc_min)
     
         
         !VARIABLE INPUTS
         real(r_8), dimension(ntraits),intent(in) :: dt  ! PLS attributes
-        integer(i_4), intent(in) :: p  ! PLS 
+        integer(i_4), intent(in) :: p,ri,step  ! PLS 
 
 
         !carbon inputs (kgC/m2)
@@ -192,7 +192,7 @@ module alloc2
 
         !wood/non wood strategies !provisory
         if (awood .le. 0.0D0) then
-            print*, 'sou grama', p
+            ! print*, 'sou grama', p
             leaf_out = 0.3
             root_out = 0.2
             sap_out = 0.0
@@ -226,8 +226,11 @@ module alloc2
 
         ! !leaf requirement
         leaf_req = leaf_req_calc(sap_in_ind, height,p)
-        print*, 'leaf_req chamada função', sap_in_ind, leaf_req, p, leaf_in_ind
-        ! !minimum increment to leaf
+        ! if (p.eq.1460) then
+            ! print*, 'leaf_req função  ','s in:', sap_in_ind, leaf_req, p, 'l in:',leaf_in_ind, step
+        ! endif
+        ! print*,'leaf req id nan', leaf_req, p
+            ! !minimum increment to leaf
         leaf_inc_min = leaf_inc_min_calc(leaf_req, leaf_in_ind)    
         
         !minimum increment to root
@@ -333,14 +336,19 @@ module alloc2
             end if               
         endif
         ! print*, 'sap inc after alloc', sap_inc_alloc, p
-        ! print*, '' 
-
+        ! print*, ''
+        ! if (p.eq.1460) then 
+            ! print*, 'leaf inc alloc', leaf_inc_alloc, p
+            ! print*, 'sap inc alloc', sap_inc_alloc, p
+        ! endif
+        
         !identifyt vars in array incs
         incs(1) = leaf_inc_alloc
         incs(2) = root_inc_alloc
         incs(3) = sap_inc_alloc
         incs(4) = heart_inc_alloc
         ! incs(5) = sto_inc_alloc
+
         
         !verify if inc is lt 0 for the compartments except for storage (it can be negative)
         do i = 1, 4
@@ -356,6 +364,7 @@ module alloc2
         heart_updt   = heart_in_ind + incs(4)
         wood_updt    = sap_updt     + heart_updt
 
+        !here the sto inc alloc do not use the vars "incs" because there is situations where it needs to be negative
         sto_updt     = sto_in_ind   + sto_inc_alloc
         ! if(sto_inc_alloc.lt.0.0D0)then
             ! print*, 'sto updt inc lt 0','updt', sto_updt,'in_ind', sto_in_ind, 'inc',sto_inc_alloc
@@ -378,9 +387,18 @@ module alloc2
 
         !discout C due to turnover and transform variable in kgC/m2 to ouput
         leaf_out = ((leaf_updt - leaf_turn)*dens_in)/1.D3
+        ! ! if(p.eq.1460)then
+        !     print*, 'leaf out', leaf_out, 'leaf updt', leaf_updt, 'leaf turn', leaf_turn
+        ! ! endif 
         root_out = ((root_updt - root_turn)*dens_in)/1.D3
 
         sap_out  = ((sap_updt - sap_turn)*dens_in)/1.D3
+
+        ! if(p.eq.1460)then
+            ! print*, p,'sap out', sap_out, 'sap updt', sap_updt, 'sap turn', sap_turn
+            ! print*, ''
+        ! endif 
+
         heart_out = (((heart_updt - heart_turn) + sap_turn)*dens_in)/1.D3
         
         if (sap_out.ge.0.0) then
@@ -442,10 +460,11 @@ module alloc2
         ! leaf_req = (klatosa * (sap_in_ind/1000.) / ((0.74*1.D3) * height * sla_allom))*1000.
         ! print*, 'lef req, sla em m2/kg', leaf_req
         ! print*, ''
-
-        leaf_req = (klatosa * (sap_in_ind/1000.) / ((0.74*1.D3) * height * sla_allom*1000))*1000.
-        print*, 'leaf req, sla em m2/g', leaf_req, p, sap_in_ind, height, sla_allom
-        print*, ''
+        if (sap_in_ind.gt.0.0D0) then
+            leaf_req = (klatosa * (sap_in_ind/1000.) / ((0.74*1.D3) * height * sla_allom*1000))*1000.
+        else 
+            leaf_req = 0.0D0
+        endif
     end function leaf_req_calc
 
     function leaf_inc_min_calc (leaf_req, leaf_in_ind) result (leaf_inc_min)   
@@ -458,7 +477,11 @@ module alloc2
         !initializing variables
         leaf_inc_min = 0.0D0
 
-        leaf_inc_min = leaf_req - leaf_in_ind
+        if(leaf_req.gt.0.0D0) then
+            leaf_inc_min = leaf_req - leaf_in_ind
+        else 
+            leaf_inc_min = 0.0D0
+        endif
         ! print*,'leaf inc min', leaf_inc_min, 'leaf in', leaf_in_ind, 'leaf req', leaf_req
 
 

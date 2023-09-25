@@ -28,7 +28,7 @@ module budget_allom
  
 contains
  
-   subroutine daily_budget_allom(dt, w1, w2, wmax_in, ts, temp, p0, ipar, rh, catm&
+   subroutine daily_budget_allom(step, dt, w1, w2, wmax_in, ts, temp, p0, ipar, rh, catm&
       &, cleaf_in, cwood_in, croot_in, csap_in, cheart_in, csto_in&
       &, dleaf_in, dwood_in, droot_in, dsap_in, dheart_in, dsto_in&
       &, cleaf_out, cwood_out, croot_out, csap_out, cheart_out, csto_out& !outputs
@@ -155,7 +155,7 @@ contains
       integer(i_4) :: p
       integer(i_4) :: counter
       integer(i_4) :: ri
-
+      integer(i_4) :: step
 
       !PLSs
       real(r_8),dimension(ntraits) :: dt1 ! Store one PLS attributes array (1D)
@@ -421,14 +421,23 @@ contains
    
             ! print*,'_____________'
          ! endif
-      
+         
          evap(p) = penman(p0, temp, rh, available_energy(temp), rc2(p)) !actual evapotranspiration (evap, mm/day)
-
-         call allocation2(p, dt1,nppa(p)&
+         ! if (p.eq.1460)then
+            ! print*, ''
+            ! print*, 'csap in', csap_pls(ri), p, step
+         ! endif
+         
+         call allocation2(step, ri, p, dt1,nppa(p)&
             &,cleaf_pls(ri), cwood_pls(ri), croot_pls(ri), csap_pls(ri), cheart_pls(ri), csto_pls(ri)&
             &,cleaf_pls2(p), cwood_pls2(p), croot_pls2(p), csap_pls2(p), cheart_pls2(p), csto_pls2(p)&
             &,leaf_req(p), leaf_inc_min(p), root_inc_min(p))
-         
+         ! if (p.eq.1460) then
+         ! if(csap_pls2(p).eq.0.0D0)then
+         !    print*, 'leaf out alloc', cleaf_pls2(p), step,p
+         !    print*, 'sap out alloc', csap_pls2(p), step,p
+         ! endif
+         ! endif
          ! print*, 'wood', cwood_pls2(p), p
          ! print*, 'sap', csap_pls2(p), p
          ! print*, 'heart', cheart_pls2(p), p
@@ -453,6 +462,7 @@ contains
                cheart_int(p) = cheart_pls2(p) + (csap_pls2(p) - (c_def(p) * 0.15))
                csto_int(p) = csto_pls2(p) - (c_def(p)*0.55)
                cwood_int(p) = csap_int(p) + cheart_int(p)
+               if(p.eq.1975) print*, 'sap deficit', csap_int(p), p
             else
                cleaf_int(p) = cleaf_pls2(p) - (c_def(p) * 0.5)
                croot_int(p) = croot_pls2(p) - (c_def(p) * 0.5)
@@ -604,6 +614,7 @@ contains
       !daily output to carbon pools (not CWM)
       do p = 1, nlen
          ri = lp(p)
+         
 
          cleaf_out(ri)  =  cleaf_int(p) 
          croot_out(ri)  =  croot_int(p)
@@ -612,6 +623,7 @@ contains
          csto_out(ri)   =  csto_int(p)
          cwood_out(ri)  =  cheart_out(ri) + csap_out(ri)
 
+      
          !deltas
          dleaf_out(ri)  =  dleaf_pls_aux(p)
          droot_out(ri)  =  droot_pls_aux(p)

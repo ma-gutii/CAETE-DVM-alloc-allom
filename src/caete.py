@@ -1650,7 +1650,7 @@ class grd:
 
 
 
-                out_allom = model_allom.daily_budget_allom(self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm, self.wmax_mm,
+                out_allom = model_allom.daily_budget_allom(step, self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm, self.wmax_mm,
                                                      self.soil_temp, temp[step], p_atm[step], ipar[step], ru[step],co2,
                                                      cleaf_allom, cwood_allom, croot_allom,  csap_allom, cheart_allom, csto_allom, 
                                                      dcl_allom, dca_allom, dcf_allom, dcs_allom, dch_allom, dcst_allom)
