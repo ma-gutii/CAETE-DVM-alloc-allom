@@ -192,7 +192,7 @@ module alloc2
 
         !wood/non wood strategies !provisory
         if (awood .le. 0.0D0) then
-            ! print*, 'sou grama', p
+            print*, 'sou grama', p
             leaf_out = 0.3
             root_out = 0.2
             sap_out = 0.0
@@ -225,8 +225,8 @@ module alloc2
         ! endif
 
         ! !leaf requirement
-        leaf_req = leaf_req_calc(sap_in_ind, height)
-        
+        leaf_req = leaf_req_calc(sap_in_ind, height,p)
+        print*, 'leaf_req chamada função', sap_in_ind, leaf_req, p, leaf_in_ind
         ! !minimum increment to leaf
         leaf_inc_min = leaf_inc_min_calc(leaf_req, leaf_in_ind)    
         
@@ -423,10 +423,11 @@ module alloc2
 
     end function height_calc
 
-    function leaf_req_calc (sap_in_ind, height)  result (leaf_req)
+    function leaf_req_calc (sap_in_ind, height,p)  result (leaf_req)
     
         real(r_8), intent(in) :: sap_in_ind !gC - sapwood input
         real(r_8), intent(in) :: height !me
+        integer(i_4), intent(in) :: p
        
         real(r_8) :: leaf_req !gC - output- leaf mass requeriment to satisfy allometry
         
@@ -438,9 +439,13 @@ module alloc2
         leaf_req = 0.0D0
         
         !DWOOD = AQUI TEM QUE SER EM KG/M³ ENTÃO PEGA O VALOR EM G/CM³ E MULTIPLICA POR 1.D3
-        
+        ! leaf_req = (klatosa * (sap_in_ind/1000.) / ((0.74*1.D3) * height * sla_allom))*1000.
+        ! print*, 'lef req, sla em m2/kg', leaf_req
+        ! print*, ''
+
         leaf_req = (klatosa * (sap_in_ind/1000.) / ((0.74*1.D3) * height * sla_allom*1000))*1000.
- 
+        print*, 'leaf req, sla em m2/g', leaf_req, p, sap_in_ind, height, sla_allom
+        print*, ''
     end function leaf_req_calc
 
     function leaf_inc_min_calc (leaf_req, leaf_in_ind) result (leaf_inc_min)   
