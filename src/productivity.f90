@@ -70,6 +70,7 @@ contains
     real(r_8) :: tleaf,awood            !leaf/wood turnover time (yr)
     real(r_8) :: g1
     real(r_8) :: c4
+    real(r_8) :: sla_allom !variant sla values (m2/g)
 
     real(r_8) :: n2cl
     real(r_8) :: n2cl_resp
@@ -95,6 +96,7 @@ contains
     n2cw_resp = dt(11)
     n2cf_resp = dt(12)
     p2cl = dt(13)
+    sla_allom = dt(18)
 
     ! print*, 'n2cl', n2cl
 

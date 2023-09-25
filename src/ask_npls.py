@@ -68,7 +68,7 @@ module global_par
    real(r_8), parameter, public :: k_allom2 = 20.
    real(r_8), parameter, public :: k_allom3 = 0.8
    real(r_8), parameter, public :: klatosa =  10000.0
-   real(r_8), parameter, public :: sla_allom = 0.023 !provisory !m2/g
+   !# real(r_8), parameter, public :: sla_allom = 0.023 !provisory !m2/g
    real(r_8), parameter, public :: ltor = 0.77302587552347657
 
    !allocation parameters
