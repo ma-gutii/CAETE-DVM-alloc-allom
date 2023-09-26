@@ -462,7 +462,7 @@ contains
                cheart_int(p) = cheart_pls2(p) + (csap_pls2(p) - (c_def(p) * 0.15))
                csto_int(p) = csto_pls2(p) - (c_def(p)*0.55)
                cwood_int(p) = csap_int(p) + cheart_int(p)
-               if(p.eq.1975) print*, 'sap deficit', csap_int(p), p
+               
             else
                cleaf_int(p) = cleaf_pls2(p) - (c_def(p) * 0.5)
                croot_int(p) = croot_pls2(p) - (c_def(p) * 0.5)

@@ -384,7 +384,12 @@ def table_gen(NPLS, fpath=None):
     # g1 = vec_ranging(np.random.beta(1.2, 2, NPLS), 1.0, 15.0) # dimensionles
     # # vcmax = np.random.uniform(3e-5, 100e-5,N) # molCO2 m-2 s-1
     resorption = np.random.uniform(0.2, 0.7, NPLS)
-    sla_random = np.random.uniform(0.006, 0.026, NPLS)
+    sla_random = np.random.uniform(0.006, 0.050, NPLS)#m2/g : TRY (range original: 0.009, 0.040)
+                                                  #we increased the range (range original: 0.5,0.9)to increase
+                                                  #the probability of occurence inside the real range
+    wd_random = np.random.uniform(0.3, 1.0, NPLS) #g/cm3 : Global WD Database (Zanne et al., 2009).
+                                                  #we increased the range (range original: 0.5,0.9)to increase
+                                                  #the probability of occurence inside the real range
 
     # # C4 STYLE
     c4 = np.zeros((NPLS,), dtype=np.float64)
@@ -428,11 +433,11 @@ def table_gen(NPLS, fpath=None):
     stack = (pls_id, g1, resorption, alloc[:, 0], alloc[:, 1], alloc[:, 2],
              alloc[:, 3], alloc[:, 4], alloc[:, 5], c4, leaf_n2c,
              awood_n2c, froot_n2c, leaf_p2c, awood_p2c, froot_p2c,
-             amp, pdia, sla_random)
+             amp, pdia, sla_random, wd_random)
 
     head = ['PLS_id', 'g1', 'resopfrac', 'tleaf', 'twood', 'troot', 'aleaf', 'awood', 'aroot', 'c4',
             'leaf_n2c', 'awood_n2c', 'froot_n2c', 'leaf_p2c', 'awood_p2c', 'froot_p2c',
-            'amp', 'pdia', 'sla_random']
+            'amp', 'pdia', 'sla_random', 'wd_random']
 
     if fpath is not None:
 

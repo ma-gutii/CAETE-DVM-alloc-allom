@@ -1031,7 +1031,8 @@ contains
       real(r_8) :: rmf64, rms64
       real(r_8) :: t_resp !Temperature influence on respiration
       ! real(r_8), parameter :: a1 = 25.0D0, a2 = 0.04D0
-      real(r_8), parameter :: a1 = 10.0D0, a2 = 0.03D0
+      ! real(r_8), parameter :: a1 = 15.0D0, a2 = 0.04D0
+      real(r_8), parameter :: a1 = 15.0D0, a2 = 0.03D0
       !   Autothrophic respiration
       !   ========================
       !   Maintenance respiration (kgC/m2/yr) (based in Ryan 1991)

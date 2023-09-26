@@ -20,17 +20,6 @@ from caete_module import global_par as gp
 import tables as tb
 from caete import allom
 
-print('')
-print('')
-print('')
-
-print('')
-print('========================================')
-print('allom template tables', allom)
-print('=====================================')
-print('')
-print('')
-print('')
 
 __author__ = "JPDarela"
 
@@ -96,7 +85,7 @@ PLS_head = ['PLS_id', 'g1', 'resopfrac', 'tleaf', 'twood',
             'troot', 'aleaf', 'awood', 'aroot', 'c4',
             'leaf_n2c', 'awood_n2c', 'froot_n2c',
             'leaf_p2c', 'awood_p2c', 'froot_p2c',
-            'amp', 'pdia','sla_random']
+            'amp', 'pdia','sla_random', 'wd_random']
 
 
 class run_g1(tb.IsDescription):
@@ -210,6 +199,7 @@ class PLS_temp(tb.IsDescription):
     amp = tb.Float32Col(dflt=0.0, pos=16)
     pdia = tb.Float32Col(dflt=0.0, pos=17)
     sla_random = tb.Float32Col(dflt=0.0, pos=18)
+    wd_random = tb.Float32Col(dflt=0.0, pos=19)
 
 
 class spin_snapshots(tb.IsDescription):
