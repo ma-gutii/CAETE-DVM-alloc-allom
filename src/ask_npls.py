@@ -63,7 +63,7 @@ module global_par
    real(r_8),parameter, public :: ncs = (1.0/330.0)         !(gN/gC) from Smith et al 2001
 
    !allometric parameters
-   real(r_8), parameter, public :: dwood = 0.74*1.D6 !provisory
+   !real(r_8), parameter, public :: dwood = 0.74*1.D6 !provisory
    real(r_8), parameter, public :: pi = 3.1415926536
    real(r_8), parameter, public :: k_allom2 = 20.
    real(r_8), parameter, public :: k_allom3 = 0.8

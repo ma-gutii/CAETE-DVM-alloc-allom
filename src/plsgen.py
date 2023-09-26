@@ -387,6 +387,7 @@ def table_gen(NPLS, fpath=None):
     sla_random = np.random.uniform(0.006, 0.050, NPLS)#m2/g : TRY (range original: 0.009, 0.040)
                                                   #we increased the range (range original: 0.5,0.9)to increase
                                                   #the probability of occurence inside the real range
+                                                  
     wd_random = np.random.uniform(0.3, 1.0, NPLS) #g/cm3 : Global WD Database (Zanne et al., 2009).
                                                   #we increased the range (range original: 0.5,0.9)to increase
                                                   #the probability of occurence inside the real range

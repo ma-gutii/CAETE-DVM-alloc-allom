@@ -136,8 +136,11 @@ module alloc2
         !used to identify wood/non wood strategies
         real(r_8) :: awood
 
-        !variant trait(SLA - m2/g)
+        !variant trait
+        !(SLA - m2/g)
         real(r_8) :: sla_allom
+         !(WD - g/cm3)
+        real(r_8) :: wd_allom
 
         !internal
         real(r_8) :: bminc_internal
@@ -149,6 +152,7 @@ module alloc2
         !take the allocation proportion to wood (to identify) the grasses
         awood = dt(7)
         sla_allom = dt(18)
+        wd_allom = dt(19) !*1.D6
 
         !initializing variables
         leaf_in_ind  = 0.0D0
@@ -221,7 +225,7 @@ module alloc2
         ! print*, 'initial bminc', bminc_in_ind
       
         ! call functions to allocation logic
-        height = height_calc(wood_in_ind, sap_in_ind, leaf_in_ind)
+        height = height_calc(wood_in_ind, sap_in_ind, leaf_in_ind, wd_allom)
         ! print*, 'height', height
       
         ! if (height.le.0.0D0) then
@@ -229,7 +233,7 @@ module alloc2
         ! endif
 
         ! !leaf requirement
-        leaf_req = leaf_req_calc(sap_in_ind, height, p, sla_allom)
+        leaf_req = leaf_req_calc(sap_in_ind, height, p, sla_allom, wd_allom)
         ! if (p.eq.1460) then
             ! print*, 'leaf_req função  ','s in:', sap_in_ind, leaf_req, p, 'l in:',leaf_in_ind, step
         ! endif
@@ -260,7 +264,7 @@ module alloc2
                     ! print*, 'call normal alloc' 
 
                     call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind, sla_allom, p,&
-                    sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc)
+                    wd_allom, sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc)
 
                 else
                     ! print*, 'NPP < sum of root and leaf inc min' !ok
@@ -272,7 +276,7 @@ module alloc2
                         bminc_internal = sto_in_ind + bminc_in_ind
 
                         call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, bminc_internal, sla_allom, p,&
-                        sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc)
+                        wd_allom, sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc)
                         
                         !all the C available in storage is used (it is a type of reallocation)
                         sto_inc_alloc = -leaf_inc_alloc - root_inc_alloc - sap_inc_alloc +  bminc_in_ind
@@ -294,7 +298,7 @@ module alloc2
                     ! print*, 'NPP < 0 but storage > minimum requirement'
 
                     call normal_alloc(leaf_inc_min, leaf_in_ind, root_in_ind, sto_in_ind, sla_allom, p,&
-                        sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc)
+                        wd_allom, sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc)
 
                     !all the C available in storage is used (it is a type of reallocation)
                     sto_inc_alloc = -leaf_inc_alloc - root_inc_alloc - sap_inc_alloc +  bminc_in_ind
@@ -416,11 +420,12 @@ module alloc2
 
     end subroutine allocation2
 
-    function height_calc (wood_in_ind, sap_in_ind, leaf_in_ind) result (height)
+    function height_calc (wood_in_ind, sap_in_ind, leaf_in_ind, wd_allom) result (height)
         
         real(r_8), intent(in) :: wood_in_ind !gC/ind - total wood (sap + heart) carbon stock
         real(r_8), intent(in) :: sap_in_ind !gC/ind - sapwood
         real(r_8), intent(in) :: leaf_in_ind !gC/ind
+        real(r_8), intent(in) :: wd_allom
 
         real(r_8) :: sap_xsa !parameter to calculate height (comes from the LPJmlfire code)
         real(r_8) :: height !m - output
@@ -432,11 +437,10 @@ module alloc2
         diameter = 0.0D0
         height = 0.0D0
 
-        !DWOOD = VEM DA GLOBAL EM G/M3. (TRANSFORMAÇÃO: 0.74g/cm³ / 1.D6 = 0.74g/m3)
         
         !Calculating diameter (necessary to 'nppheight)
-
-        diameter = ((sap_in_ind)/(dwood)*pi*k_allom2)**(1/(2+k_allom3))
+        !WD *1D6 transforms from g/cm3 to g/m3
+        diameter = ((sap_in_ind)/(wd_allom*1.D6)*pi*k_allom2)**(1/(2+k_allom3))
         !print*, 'diameter', diameter
 
         !Height 
@@ -445,28 +449,23 @@ module alloc2
 
     end function height_calc
 
-    function leaf_req_calc (sap_in_ind, height, p, sla_allom)  result (leaf_req)
+    function leaf_req_calc (sap_in_ind, height, p, sla_allom, wd_allom)  result (leaf_req)
     
         real(r_8), intent(in) :: sap_in_ind !gC - sapwood input
         real(r_8), intent(in) :: height !me
         real(r_8), intent(in) :: sla_allom !variant trait m2/g
+        real(r_8), intent(in) :: wd_allom !variant trait g/cm3
+
         integer(i_4), intent(in) :: p
        
         real(r_8) :: leaf_req !gC - output- leaf mass requeriment to satisfy allometry
         
-        !Traits from constants.f90
-        !dwood - wood density (gc/m3) - already transformed in constants.f90
-        !sla - specific leaf area
-
         !initializing variables
         leaf_req = 0.0D0
         
         !DWOOD = AQUI TEM QUE SER EM KG/M³ ENTÃO PEGA O VALOR EM G/CM³ E MULTIPLICA POR 1.D3
-        ! leaf_req = (klatosa * (sap_in_ind/1000.) / ((0.74*1.D3) * height * sla_allom))*1000.
-        ! print*, 'lef req, sla em m2/kg', leaf_req
-        ! print*, ''
         if (sap_in_ind.gt.0.0D0) then
-            leaf_req = (klatosa * (sap_in_ind/1000.) / ((0.74*1.D3) * height * sla_allom*1000))*1000.
+            leaf_req = (klatosa * (sap_in_ind/1000.) / ((wd_allom*1.D3) * height * sla_allom*1000))*1000.
         else 
             leaf_req = 0.0D0
         endif
@@ -507,7 +506,7 @@ module alloc2
     end function root_inc_min_calc
 
     subroutine normal_alloc (leaf_inc_min, leaf_in_ind, root_in_ind, bminc_in_ind, sla_allom, p,&
-        sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc)
+        wd_allom, sap_in_ind, heart_in_ind, leaf_inc_alloc, root_inc_alloc, sap_inc_alloc, heart_inc_alloc)
 
         real(r_8), intent(in) :: leaf_inc_min 
         real(r_8), intent(in) :: leaf_in_ind  
@@ -516,6 +515,7 @@ module alloc2
         real(r_8), intent(in) :: heart_in_ind
         real(r_8), intent(in) :: bminc_in_ind
         real(r_8), intent(in) :: sla_allom
+        real(r_8), intent(in) :: wd_allom
         integer(i_4), intent(in) :: p
 
         real(r_8), intent(out) :: leaf_inc_alloc
@@ -560,7 +560,7 @@ module alloc2
             !There should be exactly one solution (no proof presented, but Steve has managed one).
 
             call positive_leaf_inc_min(leaf_in_ind, sap_in_ind, heart_in_ind,&
-            root_in_ind, bminc_in_ind, sla_allom, dx, x1, x2, leaf_inc_alloc)        
+            root_in_ind, bminc_in_ind, sla_allom, wd_allom, dx, x1, x2, leaf_inc_alloc)        
             
         endif
 
@@ -580,7 +580,7 @@ module alloc2
     end subroutine normal_alloc
 
     function root_bisec_calc (leaf_in_ind, sap_in_ind, heart_in_ind, root_in_ind,&
-        bminc_in_ind, x, sla_allom) result (fx1)
+        bminc_in_ind, x, sla_allom, wd_aux) result (fx1)
 
         real(r_8), intent(in) :: leaf_in_ind 
         real(r_8), intent(in) :: sap_in_ind
@@ -589,6 +589,7 @@ module alloc2
         real(r_8), intent(in) :: bminc_in_ind 
         real(r_8), intent(in) :: x
         real(r_8), intent(in) :: sla_allom
+        real(r_8), intent(in) :: wd_aux
         
         real(r_8) :: fx1 !output
         
@@ -597,19 +598,23 @@ module alloc2
         real(r_8), parameter :: a1 = 2./ k_allom3
         real(r_8), parameter :: a2 = 1. + a1 !Essa é a forma correta !!CONFERIR ...ESTÁ DIFERENTE ENTRE NOSSO CÓDIGO E O lpjmlFIRE
         real(r_8), parameter :: a3 = k_allom2**a1
+        real(r_8) :: wd_allom !var to transform wd unit
+        
+        !transforms WD from g/cm3 to g/m3
+        wd_allom = wd_aux*1.D6
         
         !initializing variables
         fx1 = 0.0D0
 
-        fx1 = a3 * ((sap_in_ind + bminc_in_ind - x - ((leaf_in_ind + x)/ltor) + root_in_ind + heart_in_ind) / dwood)/ pi4 - &
+        fx1 = a3 * ((sap_in_ind + bminc_in_ind - x - ((leaf_in_ind + x)/ltor) + root_in_ind + heart_in_ind) / wd_allom)/ pi4 - &
                     ((sap_in_ind + bminc_in_ind - x - ((leaf_in_ind + x)/ ltor) + root_in_ind) / ((leaf_in_ind + x)&
-                    * sla_allom * dwood / klatosa)) ** a2
+                    * sla_allom * wd_allom / klatosa)) ** a2
        
 
     end function root_bisec_calc
 
     subroutine positive_leaf_inc_min (leaf_in_ind, sap_in_ind, heart_in_ind,&
-        root_in_ind, bminc_in_ind, sla_allom, dx2, x1_aux, x2_aux, leaf_inc_alloc)
+        root_in_ind, bminc_in_ind, sla_allom, wd_allom, dx2, x1_aux, x2_aux, leaf_inc_alloc)
 
         real(r_8), intent(in) :: leaf_in_ind 
         real(r_8), intent(in) :: sap_in_ind
@@ -619,6 +624,7 @@ module alloc2
         real(r_8), intent(in) :: x1_aux, x2_aux 
         real(r_8), intent(in) :: dx2
         real(r_8), intent(in) :: sla_allom
+        real(r_8), intent(in) :: wd_allom
 
         real(r_8), intent(out) :: leaf_inc_alloc
 
@@ -643,7 +649,7 @@ module alloc2
         dx = dx2 / real(nseg)
             
         fx1 = root_bisec_calc(leaf_in_ind, sap_in_ind, heart_in_ind,&
-            root_in_ind, bminc_in_ind, x1, sla_allom)
+            root_in_ind, bminc_in_ind, x1, sla_allom, wd_allom)
 
         !Find approximate location of leftmost root on the interval (x1,x2).
         !Subdivide (x1,x2) into nseg equal segments seeking change in sign of f(xmid) relative to f(x1).
@@ -657,7 +663,7 @@ module alloc2
             xmid = xmid + dx
             
             fmid = root_bisec_calc(leaf_in_ind, sap_in_ind, heart_in_ind,&
-                root_in_ind, bminc_in_ind, xmid, sla_allom)
+                root_in_ind, bminc_in_ind, xmid, sla_allom, wd_allom)
 
             
             
@@ -676,7 +682,7 @@ module alloc2
 
         !Apply bisection method to find root on the new interval (x1,x2)
         fx1 = root_bisec_calc(leaf_in_ind, sap_in_ind, heart_in_ind,&
-        root_in_ind, bminc_in_ind, x1, sla_allom)
+        root_in_ind, bminc_in_ind, x1, sla_allom, wd_allom)
 
         if (fx1.ge.0.) then
             sign = -1
@@ -700,7 +706,7 @@ module alloc2
             !calculate fmid = f(xmid) [eqn (22)]
 
             fmid = root_bisec_calc(leaf_in_ind, sap_in_ind, heart_in_ind,&
-                root_in_ind, bminc_in_ind, xmid, sla_allom)
+                root_in_ind, bminc_in_ind, xmid, sla_allom, wd_allom)
 
             if (fmid * sign .le. 0.) rtbis = xmid
 
