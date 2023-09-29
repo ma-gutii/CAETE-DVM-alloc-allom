@@ -290,8 +290,8 @@ else:
 if sombrero:
     # Running in all gridcells of mask
     grid_mn = []
-    for Y in range(360):
-        for X in range(720):
+    for Y in range(y0, y1):
+        for X in range(x0, x1):
             if not mask[Y, X]:
                 grid_mn.append(grd(X, Y, outf))
 
