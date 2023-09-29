@@ -1145,11 +1145,11 @@ contains
       if(a2 .le. 0.0D0) a2 = 0.0D0
       if(a3 .le. 0.0D0) a3 = 0.0D0
 
-      rgl64 = 1.25D0 * a1
-      rgf64 = 1.25D0 * a2
+      rgl64 = 0.25D0 * a1
+      rgf64 = 0.25D0 * a2
 
       if(aawood_rg .gt. 0.0D0) then
-         rgs64 = 1.25D0 * a3
+         rgs64 = 0.25D0 * a3
       else
          rgs64 = 0.0D0
       endif

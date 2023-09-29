@@ -1665,7 +1665,8 @@ class grd:
                 self.vp_cheart_allom = daily_output_allom['dly_cheart'][self.vp_lsid]
                 self.vp_csto_allom   = daily_output_allom['dly_csto'][self.vp_lsid]
 
-                # self.vp_dcl_allom    = daily_output_allom['dly_dleaf'][self.vp_lsid]
+                self.vp_dcl_allom    = daily_output_allom['dly_dleaf'][self.vp_lsid]
+		self.vp_dcf_allom    = daily_output_allom['dly_droot'][self.vp_lsid]
 
                 if save:
                     assert self.save == True
