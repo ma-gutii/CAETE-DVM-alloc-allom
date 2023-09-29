@@ -282,7 +282,6 @@ contains
          dsap(i)   = dsap_in(i)
          dheart(i) = dheart_in(i)
          dsto(i)   = dsto_in(i)
-
          
 
          
@@ -399,11 +398,10 @@ contains
          !here ri is real index. The outputs use p to save memory, but at the end of the doc
          !it is transformed in p
 
-         !!!!!!INPUT OF CSAP ONCE IT IS IT THAT RESPIRE?
-
+         
          
          call prod(dt1, ocp_wood(ri), catm, temp, soil_temp, p0, w, ipar&
-            &, rh, emax, cleaf_pls(ri), csap_pls(ri), croot_pls(ri), dleaf(ri), dwood(ri), droot(ri)&
+            &, rh, emax, cleaf_pls(ri), csap_pls(ri), croot_pls(ri), dleaf(ri), dsap(ri), droot(ri)&
             &, soil_sat, ph(p), ar(p), nppa(p), laia(p), f5(p), vpd(p)&
             &, rm(p), rg(p), rc2(p), wue(p), c_def(p), vcmax(p), specific_la(p), tra(p))
 
@@ -518,27 +516,30 @@ contains
          
          
          !calculating deltas
-         dleaf_pls_aux(p)  = cleaf_pls2(p)  - cleaf_pls(p)
-         droot_pls_aux(p)  = croot_pls2(p)  - croot_pls(p)
-         dsap_pls_aux(p)   = csap_pls2(p)   - csap_pls(p)
-         dheart_pls_aux(p) = cheart_pls2(p) - cheart_pls(p)
-         dsto_pls_aux(p)   = csto_pls2(p)   - csto_pls(p)
+         if (dt1(7) .gt. 0.0D0)then
+            dleaf_pls_aux(p)  = cleaf_pls2(p)  - cleaf_pls(ri)
+            droot_pls_aux(p)  = croot_pls2(p)  - croot_pls(ri)
+            dsap_pls_aux(p)   = csap_pls2(p)   - csap_pls(ri)
+            dheart_pls_aux(p) = cheart_pls2(p) - cheart_pls(ri)
+            dsto_pls_aux(p)   = csto_pls2(p)   - csto_pls(ri)
+            dwood_pls_aux(p)  = cwood_pls2(p)  - cwood_pls2(ri)
+         else
+            dleaf_pls_aux(p)  = cleaf_pls2(p)  - cleaf_pls(ri)
+            droot_pls_aux(p)  = croot_pls2(p)  - croot_pls(ri)
+            dsap_pls_aux(p)   = 0.0D0
+            dheart_pls_aux(p) = 0.0D0
+            dsto_pls_aux(p)   = csto_pls2(p)   - csto_pls(ri)
+            dwood_pls_aux(p)  = 0.0D0
+         endif
 
 
-         ! if (p.eq.1000) then
-            ! print*, 'ph', ph(p), 'rm', rm(p), 'rg', rg(p), 'ar', ar(p), 'p', p
-            ! print*,'delta_leaf', dleaf_pls_aux(p)
-            ! print*, 'leaf req', leaf_req(p), 'leaf inc min', leaf_inc_min(p), 'root inc min', root_inc_min(p)
-! 
-         ! endif
-        
+         if(dleaf_pls_aux(p).lt.0.0D0)  dleaf_pls_aux(p) = 0.0D0
+         if(droot_pls_aux(p).lt.0.0D0)  droot_pls_aux(p) = 0.0D0
+         if(dsap_pls_aux(p).lt.0.0D0)   dsap_pls_aux(p) = 0.0D0
+         if(dheart_pls_aux(p).lt.0.0D0) dheart_pls_aux(p) = 0.0D0
+         if(dsto_pls_aux(p).lt.0.0D0)   dsto_pls_aux(p) = 0.0D0
+         if(dwood_pls_aux(p).lt.0.0D0)  dwood_pls_aux(p) = 0.0D0
 
-         ! cleaf_pls_aux(p)  = cleaf_int(p)
-         ! cwood_pls_aux(p)  = cwood_int(p)
-         ! croot_pls_aux(p)  = croot_int(p)
-         ! csap_pls_aux(p)   = csap_int(p)
-         ! cheart_pls_aux(p) = cheart_int(p)
-         ! csto_pls_aux(p)   = csto_int(p)
 
       enddo
       !$OMP END PARALLEL DO
@@ -629,11 +630,9 @@ contains
          droot_out(ri)  =  droot_pls_aux(p)
          dheart_out(ri) =  dheart_pls_aux(p)
          dsap_out(ri)   =  dsap_pls_aux(p)
+         dsto_out(ri)   =  dsto_pls_aux(p)
          dwood_out(ri)  =  dheart_out(ri) + dsap_out(ri)
 
-         ! print*, 'LEAF', cleaf_out(ri), p
-         ! print*, 'ROOT', croot_out(ri), p
-         ! print*, 'WOOD', cwood_out(ri), p
          
       enddo
 

@@ -458,8 +458,8 @@ class grd:
 
         #deltas for each veg pools (used to growth respiration)
         self.vp_dcl_allom  = None #leaf
-        self.vp_dca_allom  = None #aboveground wood tissues (sap + heart)
-        self.vp_dcf_allom  = None #fine roots
+        self.vp_dcw_allom  = None #aboveground wood tissues (sap + heart)
+        self.vp_dcr_allom  = None #fine roots
         self.vp_dcs_allom  = None #heartwood
         self.vp_dch_allom  = None #sapwood
         self.vp_dcst_allom = None #storage
@@ -875,8 +875,8 @@ class grd:
 
         #delta veg for alloc_allom
         self.vp_dcl_allom = np.zeros(shape=(npls,), order='F')
-        self.vp_dca_allom = np.zeros(shape=(npls,), order='F')
-        self.vp_dcf_allom = np.zeros(shape=(npls,), order='F')
+        self.vp_dcw_allom = np.zeros(shape=(npls,), order='F')
+        self.vp_dcr_allom = np.zeros(shape=(npls,), order='F')
         self.vp_dcs_allom = np.zeros(shape=(npls,), order='F')
         self.vp_dch_allom = np.zeros(shape=(npls,), order='F')
         self.vp_dcst_allom = np.zeros(shape=(npls,), order='F')
@@ -1607,8 +1607,8 @@ class grd:
                 csap_allom   = np.zeros(npls, order='F')
                 csto_allom   = np.zeros(npls, order='F')
                 dcl_allom    = np.zeros(npls, order='F')
-                dca_allom    = np.zeros(npls, order='F')
-                dcf_allom    = np.zeros(npls, order='F')
+                dcw_allom    = np.zeros(npls, order='F')
+                dcr_allom    = np.zeros(npls, order='F')
                 dcs_allom    = np.zeros(npls, order='F')
                 dch_allom    = np.zeros(npls, order='F')
                 dcst_allom   = np.zeros(npls, order='F')
@@ -1639,8 +1639,8 @@ class grd:
                     csap_allom[n]   = self.vp_csap_allom[c]
                     csto_allom[n]   = self.vp_csto_allom[c]
                     dcl_allom[n]  = self.vp_dcl_allom[c]
-                    dca_allom[n]  = self.vp_dca_allom[c]
-                    dcf_allom[n]  = self.vp_dcf_allom[c]
+                    dcw_allom[n]  = self.vp_dcw_allom[c]
+                    dcr_allom[n]  = self.vp_dcr_allom[c]
                     dcs_allom[n]  = self.vp_dcs_allom[c]
                     dch_allom[n]   = self.vp_dch_allom[c]
                     dcst_allom[n]  = self.vp_dcst_allom[c]
@@ -1653,8 +1653,8 @@ class grd:
                 out_allom = model_allom.daily_budget_allom(step, self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm, self.wmax_mm,
                                                      self.soil_temp, temp[step], p_atm[step], ipar[step], ru[step],co2,
                                                      cleaf_allom, cwood_allom, croot_allom,  csap_allom, cheart_allom, csto_allom, 
-                                                     dcl_allom, dca_allom, dcf_allom, dcs_allom, dch_allom, dcst_allom)
-
+                                                     dcl_allom, dcw_allom, dcr_allom, dcs_allom, dch_allom, dcst_allom)
+                
                 daily_output_allom = catch_out_budget_allom(out_allom)
                 
                 #Update vegetation pools
@@ -1666,7 +1666,12 @@ class grd:
                 self.vp_csto_allom   = daily_output_allom['dly_csto'][self.vp_lsid]
 
                 self.vp_dcl_allom    = daily_output_allom['dly_dleaf'][self.vp_lsid]
-		self.vp_dcf_allom    = daily_output_allom['dly_droot'][self.vp_lsid]
+                # self.vp_dcw_allom    = daily_output_allom['dly_dwood'][self.vp_lsid]
+                self.vp_dcr_allom    = daily_output_allom['dly_droot'][self.vp_lsid]
+                # self.vp_dcs_allom    = daily_output_allom['dly_dsap'][self.vp_lsid]
+                # self.vp_dch_allom    = daily_output_allom['dly_dheart'][self.vp_lsid]
+                # self.vp_dcst_allom   = daily_output_allom['dly_dsto'][self.vp_lsid]
+
 
                 if save:
                     assert self.save == True

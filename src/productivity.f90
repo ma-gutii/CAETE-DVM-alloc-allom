@@ -46,7 +46,7 @@ contains
     real(r_4), intent(in) :: rh,emax              !Relative humidity/MAXIMUM EVAPOTRANSPIRATION
     real(r_8), intent(in) :: catm, cl1_prod, cf1_prod, cs1_prod        !Carbon in plant tissues (kg/m2)
     real(r_8), intent(in) :: beta_leaf            !carbon deltas (kg/m2/day)
-    real(r_8), intent(in) :: beta_awood
+    real(r_8), intent(in) :: beta_awood !for the allometry is only the sapwood
     real(r_8), intent(in) :: beta_froot, wmax
     logical(l_1), intent(in) :: light_limit                !True for no ligth limitation
 
