@@ -1668,7 +1668,7 @@ class grd:
                 self.vp_dcl_allom    = daily_output_allom['dly_dleaf'][self.vp_lsid]
                 # self.vp_dcw_allom    = daily_output_allom['dly_dwood'][self.vp_lsid]
                 self.vp_dcr_allom    = daily_output_allom['dly_droot'][self.vp_lsid]
-                # self.vp_dcs_allom    = daily_output_allom['dly_dsap'][self.vp_lsid]
+                self.vp_dcs_allom    = daily_output_allom['dly_dsap'][self.vp_lsid]
                 # self.vp_dch_allom    = daily_output_allom['dly_dheart'][self.vp_lsid]
                 # self.vp_dcst_allom   = daily_output_allom['dly_dsto'][self.vp_lsid]
 

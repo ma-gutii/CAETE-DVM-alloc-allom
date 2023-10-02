@@ -290,8 +290,8 @@ else:
 if sombrero:
     # Running in all gridcells of mask
     grid_mn = []
-    for Y in range(y0, y1):
-        for X in range(x0, x1):
+    for Y in range(175, 176):
+        for X in range(235, 236):
             if not mask[Y, X]:
                 grid_mn.append(grd(X, Y, outf))
 
@@ -336,7 +336,7 @@ def apply_spin(grid:grd)->grd:
 
 def apply_fun(grid:grd, allometry = allom)->grd:
     if allom:
-        grid.run_caete_allom('19790101','19891231', spinup=1, 
+        grid.run_caete_allom('19790101','19891231', spinup=5, 
                    fix_co2='1980', save=False, nutri_cycle=False)
     else:
         grid.run_caete('19790101', '19891231', spinup=5, 
@@ -346,7 +346,7 @@ def apply_fun(grid:grd, allometry = allom)->grd:
  
 def apply_fun0(grid:grd, allometry = allom)->grd:
     if allom:
-        grid.run_caete_allom('19790101', '19891231', spinup=1,
+        grid.run_caete_allom('19790101', '19891231', spinup=35,
                    fix_co2='1980', save=False, nutri_cycle=False)
     else:
         grid.run_caete('19790101', '19891231', spinup=35,
