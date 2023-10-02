@@ -390,7 +390,7 @@ module alloc2
 
 
     !mortality through turnover
-        call mortality_turnover(leaf_updt, root_updt, sap_updt, heart_updt,sto_updt,&
+        call mortality_turnover(dt, leaf_updt, root_updt, sap_updt, heart_updt,sto_updt,&
             leaf_turn, root_turn, sap_turn, heart_turn, sto_turn)
 
         !discout C due to turnover and transform variable in kgC/m2 to ouput
@@ -725,10 +725,12 @@ module alloc2
         end subroutine
 
 
-    subroutine mortality_turnover (leaf_in_ind, root_in_ind, sap_in_ind, heart_in_ind,sto_in_ind,&
+    subroutine mortality_turnover (dt, leaf_in_ind, root_in_ind, sap_in_ind, heart_in_ind,sto_in_ind,&
         leaf_turn, root_turn, sap_turn, heart_turn, sto_turn)
         !ATENÇÃO: 1 ha
         
+        real(r_8), dimension(ntraits),intent(in) :: dt  ! PLS attributes
+
         !C in compartments previous the allocation
         real(r_8), intent(in) :: leaf_in_ind
         real(r_8), intent(in) :: sap_in_ind
@@ -743,7 +745,14 @@ module alloc2
         real(r_8), intent(out) :: heart_turn !amount of C to be lost by turnover
         real(r_8), intent(out) :: sto_turn !amount of C to be lost by turnover
 
-        leaf_turn = leaf_in_ind*l_turnover
+        !internal
+        real(r_8) :: leaf_turnover !variant leaf turnover (based on Darela's range)
+        
+        ! leaf_turn = leaf_in_ind*l_turnover !!fixed turnover (value in global.f90)
+
+        leaf_turnover = dt(3)
+        
+        leaf_turn = leaf_in_ind/leaf_turnover
 
         root_turn = root_in_ind*r_turnover
 
