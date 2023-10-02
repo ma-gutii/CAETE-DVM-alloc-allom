@@ -9,6 +9,7 @@ src/*.txt
 src/*.cfg
 src/RUN*
 outputs/*
+outputs_server/*
 nc_outputs/*
 h5/*
 src/.python-version
