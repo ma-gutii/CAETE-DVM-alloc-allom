@@ -747,10 +747,13 @@ module alloc2
 
         !internal
         real(r_8) :: leaf_turnover !variant leaf turnover (based on Darela's range)
+        real(r_8) :: root_turnover !variant root turnover (based on Darela's range)
+
         
         ! leaf_turn = leaf_in_ind*l_turnover !!fixed turnover (value in global.f90)
 
         leaf_turnover = dt(3)
+        root_turnover = dt(5)
         
         leaf_turn = leaf_in_ind/leaf_turnover
 
