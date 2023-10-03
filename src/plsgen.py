@@ -334,6 +334,7 @@ def table_gen(NPLS, fpath=None):
     index0 = 0
     # rtime = vec_ranging(np.random.beta(2, 4, r_ceil),
     #                     0.083333, 2)
+
     rtime_leaf = np.random.uniform(0.166, 8.3333, r_ceil)
     rtime_froot = np.random.uniform(0.08333, 8.3333, r_ceil)
     print("CREATE GRASSy STRATEGIES - Checking potential npp/alocation")
@@ -363,7 +364,7 @@ def table_gen(NPLS, fpath=None):
         allocatio = plsa_wood[np.random.randint(0, plsa_wood.shape[0])]
         restime[0] = rtime_leaf[np.random.randint(0, r_ceil)]
         restime[1] = rtime_wood[np.random.randint(0, r_ceil)]
-        restime[2] = rtime_froot[np.random.randint(0, r_ceil)]
+        restime[2] = rtime_froot[np.random.randint(0, r_ceil)] 
         data_to_test1 = np.concatenate((restime, allocatio), axis=0,)
         if check_viability(data_to_test1, True):
             alloc_w.append(data_to_test1)
@@ -391,6 +392,7 @@ def table_gen(NPLS, fpath=None):
     wd_random = np.random.uniform(0.3, 1.0, NPLS) #g/cm3 : Global WD Database (Zanne et al., 2009).
                                                   #we increased the range (range original: 0.5,0.9)to increase
                                                   #the probability of occurence inside the real range
+    restime_sap = np.random.uniform(1., 30., NPLS)
 
     # # C4 STYLE
     c4 = np.zeros((NPLS,), dtype=np.float64)
@@ -434,11 +436,11 @@ def table_gen(NPLS, fpath=None):
     stack = (pls_id, g1, resorption, alloc[:, 0], alloc[:, 1], alloc[:, 2],
              alloc[:, 3], alloc[:, 4], alloc[:, 5], c4, leaf_n2c,
              awood_n2c, froot_n2c, leaf_p2c, awood_p2c, froot_p2c,
-             amp, pdia, sla_random, wd_random)
+             amp, pdia, sla_random, wd_random, restime_sap)
 
     head = ['PLS_id', 'g1', 'resopfrac', 'tleaf', 'twood', 'troot', 'aleaf', 'awood', 'aroot', 'c4',
             'leaf_n2c', 'awood_n2c', 'froot_n2c', 'leaf_p2c', 'awood_p2c', 'froot_p2c',
-            'amp', 'pdia', 'sla_random', 'wd_random']
+            'amp', 'pdia', 'sla_random', 'wd_random', 'restime_sap']
 
     if fpath is not None:
 

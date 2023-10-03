@@ -57,7 +57,7 @@ module global_par
    real(r_8),parameter,public :: sapwood = 0.05D0                ! Fraction of wood tissues that are sapwood
    real(r_4),parameter,public :: ks = 0.25                       ! P Sorption
    integer(i_4),parameter,public :: npls = {s}                  ! Number of Plant Life Strategies-PLSs simulated (Defined at compile time)
-   integer(i_4),parameter,public :: ntraits = 19                 ! Number of traits for each PLS
+   integer(i_4),parameter,public :: ntraits = 20                 ! Number of traits for each PLS
    real(r_8),parameter, public :: ncl = (1.0/60.0)          !(gN/gC) used in maintenance respiration (from Scheiter & Higgins 2008)
    real(r_8),parameter, public :: ncf = (1.0/60.0)          !(gN/gC)
    real(r_8),parameter, public :: ncs = (1.0/330.0)         !(gN/gC) from Smith et al 2001
