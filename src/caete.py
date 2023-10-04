@@ -711,6 +711,7 @@ class grd:
                      'lai'   : self.lai_allom,    
                      'rm'    : self.rm_allom,      
                      'rg'    : self.rg_allom,  
+                     'calendar': self.calendar,
                      'time_unit': self.time_unit,   # Time unit
                      'sind': index[0],
                      'eind': index[1]}
