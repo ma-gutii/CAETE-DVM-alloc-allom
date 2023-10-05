@@ -754,8 +754,8 @@ module alloc2
 
         leaf_turnover = dt(3)
         root_turnover = dt(5)
-        print*, 'root turnover', root_turnover, p
-        print*, 'leaf turnover', leaf_turnover, p
+        ! print*, 'root turnover', root_turnover, p
+        ! print*, 'leaf turnover', leaf_turnover, p
         sap_turnover  = dt(19)
         
         leaf_turn = leaf_in_ind/leaf_turnover

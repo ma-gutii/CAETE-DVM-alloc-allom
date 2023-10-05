@@ -87,6 +87,16 @@ PLS_head = ['PLS_id', 'g1', 'resopfrac', 'tleaf', 'twood',
             'leaf_p2c', 'awood_p2c', 'froot_p2c',
             'amp', 'pdia','sla_random', 'wd_random', 'restime_sap']
 
+class run_g1_allom(tb.IsDescription):
+    """ Row template for CAETÊ output data"""
+    # ID
+    row_id = tb.Int64Col(dflt=0, pos=0)
+    date = tb.StringCol(itemsize=8, dflt="yyyymmdd", pos=1)
+    grid_y = tb.Int16Col(dflt=0, pos=2)
+    grid_x = tb.Int16Col(dflt=0, pos=3)
+    #Fluxes
+    emaxm = tb.Float32Col(dflt=0.0, pos=4)
+    photo = tb.Float32Col(dflt=0.0, pos=5)
 
 class run_g1(tb.IsDescription):
     """ Row template for CAETÊ output data"""

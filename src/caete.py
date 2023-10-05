@@ -545,6 +545,7 @@ class grd:
             allocate space for the outputs using allometric constraints
             n: int number of days being simulated
         """
+        self.emaxm = []
         self.cleaf_allom  = np.zeros(shape=(n,), order='F')
         self.cwood_allom  = np.zeros(shape=(n,), order='F')
         self.croot_allom  = np.zeros(shape=(n,), order='F')
@@ -697,7 +698,8 @@ class grd:
 
         self.outputs[spiname] = os.path.join(self.out_dir, spiname)
 
-        to_pickle = {'cleaf' : self.cleaf_allom,
+        to_pickle = {'emaxm': np.array(self.emaxm),
+                     'cleaf' : self.cleaf_allom,
                      'cwood' : self.cwood_allom,
                      'croot' : self.croot_allom,
                      'csap'  : self.csap_allom,
@@ -1676,7 +1678,7 @@ class grd:
 
                 if save:
                     assert self.save == True
-
+                    self.emaxm.append(daily_output_allom['epavg'])
                     self.cleaf_allom[step]   = daily_output_allom['cleaf_grd']
                     self.cwood_allom[step]   = daily_output_allom['cwood_grd']
                     self.croot_allom[step]   = daily_output_allom['croot_grd']
