@@ -149,8 +149,8 @@ if not sombrero:
     
 
 if zone == 'c':
-    y0, y1 = 175, 176
-    x0, x1 = 235, 236
+    y0, y1 = 175, 178
+    x0, x1 = 235, 238
     folder = "central"
 
 elif zone == 's':
@@ -389,7 +389,10 @@ if __name__ == "__main__":
     import time
 
     from post_processing import write_h5, write_h5_allom
-    from h52nc import h52nc, h52nc_allom
+    if allom:
+        from h52nc import h52nc_allom
+    else:
+        from h52nc import h52nc
 
     n_proc = mp.cpu_count()
 
@@ -473,11 +476,15 @@ if __name__ == "__main__":
     #save either h5 from allometry or without allometry
     if allom:
         write_h5_allom(dump_folder)
+        print("\n\nSaving netCDF4 files")
+        h5path = Path(os.path.join(dump_folder, Path('CAETE.h5'))).resolve()
+        h52nc_allom(h5path, nc_outputs)
+        print(time.ctime())
     else:
         write_h5(dump_folder)
+        print("\n\nSaving netCDF4 files")
+        h5path = Path(os.path.join(dump_folder, Path('CAETE.h5'))).resolve()
+        h52nc(h5path, nc_outputs)
+        print(time.ctime())
     
-    print("\n\nSaving netCDF4 files")
-    h5path = Path(os.path.join(dump_folder, Path('CAETE.h5'))).resolve()
-    h52nc(h5path, nc_outputs)
-    h52nc_allom(h5path, nc_outputs)
-    print(time.ctime())
+    

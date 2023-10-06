@@ -116,8 +116,8 @@ def get_var_metadata_allom(var):
     vunits = {'header': ['long_name', 'unit', 'standart_name'],
               
               'emaxm': ['potent. evapotrasnpiration', 'kg m-2 day-1', 'etpot'],
-              'photo': ['gross primary productivity', 'kg m-2 year-1', 'gpp'],
-              'npp': ['net primary productivity', 'kg m-2 year-1', 'npp']}
+              'tsoil': ['soil_temperature', 'celcius', 'soil_temp'],
+              'photo': ['gross primary productivity', 'kg m-2 year-1', 'gpp']}
 
 def get_var_metadata(var):
 
@@ -235,7 +235,7 @@ def create_lband(res=0.5):
 
     return lat, latbnd, lon, lonbnd
 
-def write_daily_output_allom(arr, var, flt_attrs, time_index, nc_out):
+def write_daily_output_allom(arr, var, var_attrs, time_index, nc_out):
     NO_DATA = [-9999.0, -9999.0]
 
     time_units = TIME_UNITS
@@ -279,13 +279,14 @@ def write_daily_output_allom(arr, var, flt_attrs, time_index, nc_out):
                 "latitude", lat.dtype, ("latitude",))
             longitude = rootgrp.createVariable(
                 "longitude", lon.dtype, ("longitude",))
-            var_ = rootgrp.createVariable(varname=flt_attrs[v][2], datatype=np.float32,
+            print('v2 ===========',var_attrs[v][2])
+            var_ = rootgrp.createVariable(varname=var_attrs[v][2], datatype=np.float32,
                                           dimensions=(
                                               "time", "latitude", "longitude",),
                                           zlib=True, fill_value=NO_DATA[0], fletcher32=True)
             # attributes
             # rootgrp
-            rootgrp.description = flt_attrs[v][0] + " from CAETÊ-ALLOMETRY OUTPUT"
+            rootgrp.description = var_attrs[v][0] + " from CAETÊ-ALLOMETRY OUTPUT"
             rootgrp.source = "CAETE model outputs "
             rootgrp.experiment = EXPERIMENT
 
@@ -312,9 +313,9 @@ def write_daily_output_allom(arr, var, flt_attrs, time_index, nc_out):
             longitude[...] = lon
             XB[...] = lon_bnds
             # var
-            var_.long_name = flt_attrs[v][0]
-            var_.units = flt_attrs[v][1]
-            var_.standard_name = flt_attrs[v][2]
+            var_.long_name = var_attrs[v][0]
+            var_.units = var_attrs[v][1]
+            var_.standard_name = var_attrs[v][2]
             var_.missing_value = NO_DATA[0]
 
             # WRITING DATA
@@ -646,7 +647,7 @@ def create_ncG1_allom(table, interval, nc_out):
     elif out_data:
         print(f"\n\nSaving outputs in {nc_out.resolve()}")
     
-    vars = ['emaxm','photo','npp']
+    vars = ['photo']
 
     dates = time_queries(interval)
     dm1 = len(dates)
@@ -664,7 +665,7 @@ def create_ncG1_allom(table, interval, nc_out):
     print('dayf = ', cftime.num2date(stop, time_units, calendar))
 
     photo = np.zeros(shape=(dm1, 61, 71), dtype=np.float32) - 9999.0
-    npp = np.zeros(shape=(dm1, 61, 71), dtype=np.float32) - 9999.0
+   
 
     print("\nQuerying data from file FOR", end=': ')
     for v in vars:
@@ -675,17 +676,16 @@ def create_ncG1_allom(table, interval, nc_out):
         out = table.read_where(day)
         photo[i, :, :] = assemble_layer(
             out['grid_y'], out['grid_x'], out['photo'])
-        npp[i, :, :] = assemble_layer(
-            out['grid_y'], out['grid_x'], out['npp'])
+      
 
         print_progress(i + 1,
                        len(dates),
                        prefix='Progress:',
                        suffix='Complete')
     
-    vars = ['photo','npp']
+    vars = ['photo']
 
-    arr = (photo, npp)
+    arr = (photo)
 
     var_attrs = get_var_metadata_allom(vars)
     write_daily_output_allom(arr, vars, var_attrs, time_index, nc_out)
@@ -1465,7 +1465,7 @@ def h52nc_allom(input_file, dump_nc_folder):
     h5f = tb.open_file(ip, mode=mod, driver=drv)
     print('Loaded')
 
-    g1_table = h5f.root.RUN0.Outputs_G1
+    g1_table = h5f.root.RUN0.Outputs_G1_allom
     print('Creating Sorted table for g1', time.ctime())
     index_dt1 = g1_table.cols.date.create_csindex()
     t1d = g1_table.copy(newname='indexedT1date', sortby=g1_table.cols.date)

@@ -708,7 +708,7 @@ class grd:
                      'cheart': self.cheart_allom,
                      'csto'  : self.csto_allom,
                      'npp'   : self.npp_allom,
-                     'ph'    : self.ph_allom,
+                     'photo'    : self.ph_allom,
                      'ar'    : self.ar_allom,
                      'ep'    : self.ep_allom,     
                      'ev'    : self.ev_allom,     
@@ -722,6 +722,8 @@ class grd:
             
             
         # Flush attrs (clear outputs)
+        self.emaxm = []
+        self.tsoil = []
         self.cleaf_allom  = None
         self.cwood_allom  = None
         self.croot_allom  = None
@@ -1681,6 +1683,7 @@ class grd:
                 if save:
                     assert self.save == True
                     self.emaxm.append(daily_output_allom['epavg'])
+                    self.tsoil.append(self.soil_temp)
                     self.cleaf_allom[step]   = daily_output_allom['cleaf_grd']
                     self.cwood_allom[step]   = daily_output_allom['cwood_grd']
                     self.croot_allom[step]   = daily_output_allom['croot_grd']

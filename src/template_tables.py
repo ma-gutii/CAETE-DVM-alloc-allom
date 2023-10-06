@@ -101,7 +101,8 @@ class run_g1_allom(tb.IsDescription):
     grid_x = tb.Int16Col(dflt=0, pos=3)
     #Fluxes
     emaxm = tb.Float32Col(dflt=0.0, pos=4)
-    photo = tb.Float32Col(dflt=0.0, pos=5)
+    tsoil = tb.Float32Col(dflt=0.0, pos=5)
+    photo = tb.Float32Col(dflt=0.0, pos=6)
 
 class run_g1(tb.IsDescription):
     """ Row template for CAETÊ output data"""

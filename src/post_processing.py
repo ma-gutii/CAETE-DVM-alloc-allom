@@ -240,8 +240,10 @@ def write_h5_allom(out_dir=Path('../outputs'), RUN=0, reclen=0):
         # Create filepaths to the raw output data
         cells = []
         grds = os.listdir(out_dir)
+        
         grds = [Path(os.path.join(out_dir, grd)).resolve()
                 for grd in grds if Path(os.path.join(out_dir, grd)).is_dir()]
+        
         for grd in grds:
             XY = str(grd).split(os.sep)[-1].split("_")[0][8:].split("-")
             Y = int(XY[0])
@@ -256,6 +258,7 @@ def write_h5_allom(out_dir=Path('../outputs'), RUN=0, reclen=0):
         rec = 0
         for fp, X, Y in cells:
             dt = open_fh(fp)
+            
             date_range = se_dates(dt)
             ndays = dt['emaxm'].size
             g1_row = table_g1.row
@@ -266,12 +269,15 @@ def write_h5_allom(out_dir=Path('../outputs'), RUN=0, reclen=0):
                 g1_row['date'] = cf_date2str(date_range[day].date())
                 g1_row['grid_y'] = Y
                 g1_row['grid_x'] = X
+                
                 # 1 D outputs
                 for key in tt.G1_1d_allom:
-                    g1_row[key] = dt[key][day]
                     
+                    g1_row[key] = dt[key][day]
+                                       
                 
-                g1_row['photo'] = dt['photo'][0, day]
+                g1_row['photo'] = dt['photo'][day]
+            
                 
                 rec += 1
                 g1_row.append()
@@ -355,6 +361,7 @@ def write_h5(out_dir=Path('../outputs'), RUN=0, reclen=0):
                 # 1 D outputs
                 for key in tt.G1_1d:
                     g1_row[key] = dt[key][day]
+                    
 
                 # nupt
                 g1_row['nupt1'] = dt['nupt'][0, day]
