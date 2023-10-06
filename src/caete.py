@@ -546,6 +546,7 @@ class grd:
             n: int number of days being simulated
         """
         self.emaxm = []
+        self.tsoil = []
         self.cleaf_allom  = np.zeros(shape=(n,), order='F')
         self.cwood_allom  = np.zeros(shape=(n,), order='F')
         self.croot_allom  = np.zeros(shape=(n,), order='F')
@@ -699,6 +700,7 @@ class grd:
         self.outputs[spiname] = os.path.join(self.out_dir, spiname)
 
         to_pickle = {'emaxm': np.array(self.emaxm),
+                     'tsoil': np.array(self.tsoil), 
                      'cleaf' : self.cleaf_allom,
                      'cwood' : self.cwood_allom,
                      'croot' : self.croot_allom,

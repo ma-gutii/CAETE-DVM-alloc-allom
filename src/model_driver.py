@@ -136,6 +136,7 @@ if not sombrero:
     print(
         f"The raw model results & the PLS table will be saved at: {dump_folder}\n")
     print(f"The final netCDF files will be stored at: {nc_outputs}\n")
+    print('nc outputs----------------->', nc_outputs)
 
 if not sombrero:
     zone = input("Select a zone [c: central, s: south, e: east, nw: NW]: ")
@@ -388,7 +389,7 @@ if __name__ == "__main__":
     import time
 
     from post_processing import write_h5, write_h5_allom
-    from h52nc import h52nc
+    from h52nc import h52nc, h52nc_allom
 
     n_proc = mp.cpu_count()
 
@@ -458,6 +459,7 @@ if __name__ == "__main__":
     # Save FINAL STATE (TO feed CMIP5 proj. experiments)
     g1_path = Path(os.path.join(
         dump_folder, Path(f"CAETE_STATE_END_{outf}_.pkz"))).resolve()
+    
     with open(g1_path, 'wb') as fh2:
         print(f"Saving gridcells with END state in: {g1_path}\n")
         joblib.dump(result, fh2, compress=('zlib', 1), protocol=4)
@@ -466,9 +468,16 @@ if __name__ == "__main__":
 
     print("\nEND OF MODEL EXECUTION ", time.ctime(), "\n\n")
     print("Saving db - This will take some hours\n")
-    write_h5(dump_folder)
-    write_h5_allom(dump_folder)
+
+
+    #save either h5 from allometry or without allometry
+    if allom:
+        write_h5_allom(dump_folder)
+    else:
+        write_h5(dump_folder)
+    
     print("\n\nSaving netCDF4 files")
     h5path = Path(os.path.join(dump_folder, Path('CAETE.h5'))).resolve()
     h52nc(h5path, nc_outputs)
+    h52nc_allom(h5path, nc_outputs)
     print(time.ctime())

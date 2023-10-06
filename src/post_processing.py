@@ -267,10 +267,12 @@ def write_h5_allom(out_dir=Path('../outputs'), RUN=0, reclen=0):
                 g1_row['grid_y'] = Y
                 g1_row['grid_x'] = X
                 # 1 D outputs
-                for key in tt.G1_1d:
+                for key in tt.G1_1d_allom:
                     g1_row[key] = dt[key][day]
+                    
                 
                 g1_row['photo'] = dt['photo'][0, day]
+                
                 rec += 1
                 g1_row.append()
         table_g1.flush()

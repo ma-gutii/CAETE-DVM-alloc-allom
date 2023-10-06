@@ -23,6 +23,11 @@ from caete import allom
 
 __author__ = "JPDarela"
 
+#Group 1 allometry
+G1_1d_allom = {'emaxm',
+               'tsoil',
+               'photo'}
+
 # Group 1
 G1_1d = ['emaxm',
          'tsoil',
