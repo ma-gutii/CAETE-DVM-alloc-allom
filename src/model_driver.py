@@ -388,10 +388,12 @@ if __name__ == "__main__":
 
     import time
 
-    from post_processing import write_h5, write_h5_allom
+    
     if allom:
+        from post_processing import write_h5_allom
         from h52nc import h52nc_allom
     else:
+        from post_processing import write_h5
         from h52nc import h52nc
 
     n_proc = mp.cpu_count()
@@ -476,7 +478,7 @@ if __name__ == "__main__":
     #save either h5 from allometry or without allometry
     if allom:
         write_h5_allom(dump_folder)
-        print("\n\nSaving netCDF4 files")
+        print("\n\nSaving netCDF4 files for allometry version")
         h5path = Path(os.path.join(dump_folder, Path('CAETE.h5'))).resolve()
         h52nc_allom(h5path, nc_outputs)
         print(time.ctime())

@@ -215,6 +215,8 @@ def process_ustrat(u_strat, area):
     ))
 
 def write_h5_allom(out_dir=Path('../outputs'), RUN=0, reclen=0):
+
+    print('INSIDE WRITE H5 ALLOM')
     h5_opt = tb.Filters(complevel=1, complib="blosc:blosclz")
     postp = os.path.join(Path(out_dir), Path("CAETE.h5"))
 
@@ -246,8 +248,11 @@ def write_h5_allom(out_dir=Path('../outputs'), RUN=0, reclen=0):
         
         for grd in grds:
             XY = str(grd).split(os.sep)[-1].split("_")[0][8:].split("-")
+            print('XY ---->', XY)
             Y = int(XY[0])
             X = int(XY[1])
+
+            
             files = sorted(os.listdir(grd))
             for f in files:
                 filepath = os.path.join(grd, f)

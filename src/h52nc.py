@@ -118,6 +118,7 @@ def get_var_metadata_allom(var):
               'emaxm': ['potent. evapotrasnpiration', 'kg m-2 day-1', 'etpot'],
               'tsoil': ['soil_temperature', 'celcius', 'soil_temp'],
               'photo': ['gross primary productivity', 'kg m-2 year-1', 'gpp']}
+    
 
 def get_var_metadata(var):
 
@@ -251,8 +252,12 @@ def write_daily_output_allom(arr, var, var_attrs, time_index, nc_out):
     t0 = cf_date2str(cftime.num2date(time_index[0], time_units, calendar))
     tf = cf_date2str(cftime.num2date(time_index[-1], time_units, calendar))
 
+    print('HEREEEEEEEEEEEEEEEEEEEEEEEEEEEE')
     print("\nSaving netCDF4 files - allometry version")
     print_progress(0, len(var), prefix='Progress:', suffix='Complete')
+
+   
+    
     for i, v in enumerate(var):
         nc_filename = os.path.join(nc_out, Path(
             f'{v}_{t0}-{tf}.nc4'))
@@ -279,51 +284,50 @@ def write_daily_output_allom(arr, var, var_attrs, time_index, nc_out):
                 "latitude", lat.dtype, ("latitude",))
             longitude = rootgrp.createVariable(
                 "longitude", lon.dtype, ("longitude",))
-            print('v2 ===========',var_attrs[v][2])
-            var_ = rootgrp.createVariable(varname=var_attrs[v][2], datatype=np.float32,
-                                          dimensions=(
-                                              "time", "latitude", "longitude",),
-                                          zlib=True, fill_value=NO_DATA[0], fletcher32=True)
+            # var_ = rootgrp.createVariable(varname=var_attrs[v][2], datatype=np.float32,
+            #                               dimensions=(
+            #                                   "time", "latitude", "longitude",),
+            #                               zlib=True, fill_value=NO_DATA[0], fletcher32=True)
             # attributes
             # rootgrp
-            rootgrp.description = var_attrs[v][0] + " from CAETÊ-ALLOMETRY OUTPUT"
-            rootgrp.source = "CAETE model outputs "
-            rootgrp.experiment = EXPERIMENT
+            # rootgrp.description = var_attrs[v][0] + " from CAETÊ-ALLOMETRY OUTPUT"
+            # rootgrp.source = "CAETE model outputs "
+            # rootgrp.experiment = EXPERIMENT
 
-            # time
-            time.units = time_units
-            time.calendar = calendar
-            time.axis = 'T'
-            time[...] = time_index
-            # TB[...] = tbnds
+            # # time
+            # time.units = time_units
+            # time.calendar = calendar
+            # time.axis = 'T'
+            # time[...] = time_index
+            # # TB[...] = tbnds
 
-            # lat
-            latitude.units = u"degrees_north"
-            latitude.long_name = u"latitude"
-            latitude.standart_name = u"latitude"
-            latitude.axis = u'Y'
-            latitude[...] = lat
-            YB[...] = lat_bnds
+            # # lat
+            # latitude.units = u"degrees_north"
+            # latitude.long_name = u"latitude"
+            # latitude.standart_name = u"latitude"
+            # latitude.axis = u'Y'
+            # latitude[...] = lat
+            # YB[...] = lat_bnds
 
-            # lon
-            longitude.units = "degrees_east"
-            longitude.long_name = "longitude"
-            longitude.standart_name = "longitude"
-            longitude.axis = u'X'
-            longitude[...] = lon
-            XB[...] = lon_bnds
-            # var
-            var_.long_name = var_attrs[v][0]
-            var_.units = var_attrs[v][1]
-            var_.standard_name = var_attrs[v][2]
-            var_.missing_value = NO_DATA[0]
+            # # lon
+            # longitude.units = "degrees_east"
+            # longitude.long_name = "longitude"
+            # longitude.standart_name = "longitude"
+            # longitude.axis = u'X'
+            # longitude[...] = lon
+            # XB[...] = lon_bnds
+            # # var
+            # var_.long_name = var_attrs[v][0]
+            # var_.units = var_attrs[v][1]
+            # var_.standard_name = var_attrs[v][2]
+            # var_.missing_value = NO_DATA[0]
 
-            # WRITING DATA
-            out_arr = np.fliplr(arr[i])
-            var_[:, :, :] = np.ma.masked_array(
-                out_arr, mask=out_arr == NO_DATA[0])
-            print_progress(i + 1, len(var), prefix='Progress:',
-                           suffix='Complete')
+            # # WRITING DATA
+            # out_arr = np.fliplr(arr[i])
+            # var_[:, :, :] = np.ma.masked_array(
+            #     out_arr, mask=out_arr == NO_DATA[0])
+            # print_progress(i + 1, len(var), prefix='Progress:',
+            #                suffix='Complete')
 
 def write_daily_output(arr, var, flt_attrs, time_index, nc_out):
 
@@ -684,10 +688,13 @@ def create_ncG1_allom(table, interval, nc_out):
                        suffix='Complete')
     
     vars = ['photo']
-
+    print('VAR ATTRS ===-', vars)
+    print('TYPE ATTRS', type(vars))
     arr = (photo)
 
     var_attrs = get_var_metadata_allom(vars)
+    print('VAR ATTRS ===-', var_attrs)
+    print('TYPE ATTRS', type(var_attrs))
     write_daily_output_allom(arr, vars, var_attrs, time_index, nc_out)
 
 def create_ncG1(table, interval, nc_out):
@@ -1466,7 +1473,7 @@ def h52nc_allom(input_file, dump_nc_folder):
     print('Loaded')
 
     g1_table = h5f.root.RUN0.Outputs_G1_allom
-    print('Creating Sorted table for g1', time.ctime())
+    print('Creating Sorted table for g1 allom', time.ctime())
     index_dt1 = g1_table.cols.date.create_csindex()
     t1d = g1_table.copy(newname='indexedT1date', sortby=g1_table.cols.date)
     g1_table.close()

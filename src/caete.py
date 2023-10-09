@@ -708,7 +708,7 @@ class grd:
                      'cheart': self.cheart_allom,
                      'csto'  : self.csto_allom,
                      'npp'   : self.npp_allom,
-                     'photo'    : self.ph_allom,
+                     'photo' : self.ph_allom,
                      'ar'    : self.ar_allom,
                      'ep'    : self.ep_allom,     
                      'ev'    : self.ev_allom,     
