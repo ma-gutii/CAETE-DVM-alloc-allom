@@ -400,6 +400,8 @@ module alloc2
         call mortality_turnover(p, dt, leaf_updt, root_updt, sap_updt, heart_updt,sto_updt,&
             leaf_turn, root_turn, sap_turn, heart_turn, sto_turn)
 
+        call mortality_greff(total_inc,sla_allom,leaf_in_ind)
+
         !discout C due to turnover and transform variable in kgC/m2 to ouput
         leaf_out = ((leaf_updt - leaf_turn)*dens_in)/1.D3
         ! ! if(p.eq.1460)then
@@ -839,8 +841,36 @@ module alloc2
         
     end subroutine
 
-    subroutine mortality_greff()
-    
+    subroutine mortality_greff(total_inc, sla_allom, leaf_in_ind)
+        !!Calculate growth efficiency (net biomass increment per unit leaf area)
+        !Mortality by growth efficiency, based on Sitch et al 2003
+        
+        !inputs
+        real(r_8), intent(in) :: total_inc
+        real(r_8), intent(in) :: sla_allom
+        real(r_8), intent(in) :: leaf_in_ind
+
+        real(r_8):: greff !growth efficiency
+        real(r_8):: mort_greff !mortality through growth efficiency
+
+        greff = total_inc/leaf_in_ind/sla_allom
+
+        ! print*, 'GREFF LPJ ========', greff, total_inc, leaf_in_ind, sla_allom 
+
+        greff = total_inc/leaf_in_ind * sla_allom
+
+        print*, 'GREFF CAETE=======', greff, total_inc, leaf_in_ind, sla_allom
+
+        if (greff.le.0.0D0) then
+            mort_greff = 1.0D0
+        else    
+            mort_greff = 1.0D0 - (0.01/1+0.3*greff)
+        endif
+
+        print*, 'MORT GREFF', mort_greff
+
+
+
     end subroutine
     
 
