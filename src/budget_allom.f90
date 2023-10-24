@@ -300,6 +300,8 @@ contains
       nlen = sum(run)    ! New length for the arrays in the main loop
                          ! get the total number of alives
 
+      print*, 'nlen ====>', nlen
+
       allocate(lp(nlen))
       allocate(ocp_coeffs(nlen))
       allocate(idx_grasses(nlen))
@@ -389,6 +391,8 @@ contains
       !$OMP PARALLEL DO &
       !$OMP SCHEDULE(AUTO) &
       !$OMP DEFAULT(SHARED)
+
+
 
       do p = 1,nlen
          

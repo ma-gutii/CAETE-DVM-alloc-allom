@@ -335,8 +335,8 @@ def table_gen(NPLS, fpath=None):
     # rtime = vec_ranging(np.random.beta(2, 4, r_ceil),
     #                     0.083333, 2)
 
-    rtime_leaf = np.random.uniform(0.166, 8.3333, r_ceil)
-    rtime_froot = np.random.uniform(0.08333, 8.3333, r_ceil)
+    rtime_leaf = np.random.uniform(0.166, 8.3333, r_ceil) #8.33 anos = 100 meses (reference: Pavlick et al 2013)
+    rtime_froot = np.random.uniform(0.08333, 8.3333, r_ceil) # 0.08333 anos = 1mês e 8.33 = 100 meses (reference: Pavlick et al 2013)
     print("CREATE GRASSy STRATEGIES - Checking potential npp/alocation")
     while index0 < diffg:
         restime = np.zeros(shape=(3,), dtype=np.float64)
@@ -392,7 +392,7 @@ def table_gen(NPLS, fpath=None):
     wd_random = np.random.uniform(0.3, 1.0, NPLS) #g/cm3 : Global WD Database (Zanne et al., 2009).
                                                   #we increased the range (range original: 0.5,0.9)to increase
                                                   #the probability of occurence inside the real range
-    restime_sap = np.random.uniform(1., 30., NPLS)
+    restime_sap = np.random.uniform(20., 50., NPLS)
 
     # # C4 STYLE
     c4 = np.zeros((NPLS,), dtype=np.float64)

@@ -42,7 +42,8 @@ module alloc2
              positive_leaf_inc_min,&
              mortality_turnover,& !(s) accounts for mortality through turnover
              storage_accumulation,& !allocation for storage compartment when normal allocation is not possible
-             reallocation !use of storage when normal allocation is not possible
+             reallocation,& !use of storage when normal allocation is not possible
+             mortality_greff
 
     contains
 
@@ -114,6 +115,7 @@ module alloc2
         real(r_8) :: sap_inc_alloc
         real(r_8) :: heart_inc_alloc
         real(r_8) :: sto_inc_alloc
+        real(r_8) :: total_inc !sum all the increments (it is the deltaC)
 
         !C deficit (when NPP < 0)
         real(r_8) :: c_deficit
@@ -364,7 +366,12 @@ module alloc2
                 incs(i) = 0.0D0
             endif
         enddo
-       
+
+        total_inc = incs(1) + incs(2) + incs(3) + incs(4)
+
+        ! print*, 'TOTAL INC ==== ', total_inc
+
+        
     !     !Update variable and add Increment to C compartments 
         leaf_updt    = leaf_in_ind  + incs(1)
         root_updt    = root_in_ind  + incs(2)
@@ -750,24 +757,29 @@ module alloc2
         real(r_8) :: root_turnover !variant root turnover (based on Darela's range)
         real(r_8) :: sap_turnover
         
-        ! leaf_turn = leaf_in_ind*l_turnover !!fixed turnover (value in global.f90)
-
-        leaf_turnover = dt(3)
-        root_turnover = dt(5)
-        ! print*, 'root turnover', root_turnover, p
-        ! print*, 'leaf turnover', leaf_turnover, p
-        sap_turnover  = dt(19)
-        
-        leaf_turn = leaf_in_ind/leaf_turnover
-
-        root_turn = root_in_ind/root_turnover
-
+        !!Fixed turnover
+        leaf_turn = leaf_in_ind*l_turnover 
+        root_turn = root_in_ind*r_turnover
         sap_turn = sap_in_ind*s_turnover
 
         sto_turn = sto_in_ind*sto_turnover
 
         !heartwood incorporates the dead tissue from sapwood
         heart_turn = (heart_in_ind*h_turnover) + sap_turn
+
+        !Variant turnover
+        ! leaf_turnover = dt(3)
+        ! root_turnover = dt(5)
+        ! sap_turnover  = dt(19)
+        
+        ! leaf_turn = leaf_in_ind/leaf_turnover
+
+        ! root_turn = root_in_ind/root_turnover
+
+        ! sap_turn = sap_in_ind/sap_turnover
+        ! sap_turn = sap_in_ind*s_turnover
+
+       
         
     end subroutine
 
@@ -825,6 +837,10 @@ module alloc2
         ! print*, 'bminc_in_ind', bminc_in_ind
         ! print*, 'sum leaf root inc min', leaf_inc_alloc + root_inc_alloc
         
+    end subroutine
+
+    subroutine mortality_greff()
+    
     end subroutine
     
 
