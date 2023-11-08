@@ -859,7 +859,7 @@ module alloc2
 
         greff = total_inc/leaf_in_ind * sla_allom
 
-        print*, 'GREFF CAETE=======', greff, total_inc, leaf_in_ind, sla_allom
+        ! print*, 'GREFF CAETE=======', greff, total_inc, leaf_in_ind, sla_allom
 
         if (greff.le.0.0D0) then
             mort_greff = 1.0D0
@@ -867,7 +867,7 @@ module alloc2
             mort_greff = 1.0D0 - (0.01/1+0.3*greff)
         endif
 
-        print*, 'MORT GREFF', mort_greff
+        ! print*, 'MORT GREFF', mort_greff
 
 
 

@@ -207,7 +207,7 @@ contains
       call pft_area_frac(cl1_pft, cf1_pft, ca1_pft, awood_aux,&
       &                  ocpavg, ocp_wood, run, ocp_mm)
 
-      ! print*, 'ocpavg', ocpavg
+     
       nlen = sum(run)    ! New length for the arrays in the main loop
       ! print*, 'NLEN',  nlen
       allocate(lp(nlen))
@@ -227,6 +227,7 @@ contains
             ocp_coeffs(counter) = ocpavg(p)
             counter = counter + 1
          endif
+         ! print*, ocp_coeffs(p)
       enddo
 
       ! Identify grasses
@@ -448,7 +449,7 @@ contains
       do p = 1, nlen
          if(isnan(ocp_coeffs(p))) ocp_coeffs(p) = 0.0D0
       enddo
-
+      
       evavg = sum(real(evap, kind=r_8) * ocp_coeffs, mask= .not. isnan(evap))
       phavg = sum(real(ph, kind=r_8) * ocp_coeffs, mask= .not. isnan(ph))
       aravg = sum(real(ar, kind=r_8) * ocp_coeffs, mask= .not. isnan(ar))

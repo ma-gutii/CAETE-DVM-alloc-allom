@@ -296,11 +296,11 @@ contains
 
       call pft_area_frac(cleaf_pls, croot_pls, cwood_pls, awood_aux,&
       &                 ocpavg, ocp_wood, run, ocp_mm)
-
+      
       nlen = sum(run)    ! New length for the arrays in the main loop
                          ! get the total number of alives
 
-      print*, 'nlen ====>', nlen
+      ! print*, 'nlen ====>', nlen
 
       allocate(lp(nlen))
       allocate(ocp_coeffs(nlen))
@@ -409,7 +409,7 @@ contains
             &, soil_sat, ph(p), ar(p), nppa(p), laia(p), f5(p), vpd(p)&
             &, rm(p), rg(p), rc2(p), wue(p), c_def(p), vcmax(p), specific_la(p), tra(p))
 
-
+         ! print*, ocp_wood(ri), ri
          ! if (p.eq.1259)then
             ! print*,'_____________'
             ! print*, 'cleaf_pls',cleaf_pls(p), p
@@ -594,7 +594,7 @@ contains
       do p = 1, nlen
          if(isnan(ocp_coeffs(p))) ocp_coeffs(p) = 0.0D0
       enddo
-
+      
       evavg         = sum(real(evap, kind=r_8) * ocp_coeffs, mask= .not. isnan(evap))
       phavg         = sum(real(ph, kind=r_8) * ocp_coeffs, mask= .not. isnan(ph))
       aravg         = sum(real(ar, kind=r_8) * ocp_coeffs, mask= .not. isnan(ar))
