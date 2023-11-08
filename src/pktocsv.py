@@ -51,39 +51,107 @@ def read_pkz(spin):
 file = read_pkz(spin)
 
 
-def pkz2csv(file, path, grd_name)-> pd.DataFrame:
+# def pkz2csv(file, path, grd_name)-> pd.DataFrame:
+#     print(grd_name)
+
+#     CT1 = pd.read_csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/code_table_allom.csv")
+    
+#     MICV = ['year','pid','ocp']
+
+#     area = file['area']
+
+#     idx1 = np.where(area[:,0] > 0.0)[0]
+#     cols = CT1.VariableCode.__array__()
+
+#         # LOOP over living strategies in the simulation start
+#     idxT1 = pd.date_range("2015-01-01", "2016-12-31", freq='D')
+#     fname = f"{run_name}_spin{spin}"
+#     folder_path = f"./{fname}"
+#     if not os.path.exists(folder_path):
+#     # Create the folder
+#         os.makedirs(folder_path)
+    
+#     for lev in idx1:
+#         area_TS = area[lev,:]
+#         area_TS = pd.Series(area_TS, index=idxT1)
+#         print(area_TS)
+#         idxT2 = pd.date_range("2015-12-31", "2016-12-31", freq='Y')
+#         YEAR = []
+#         PID = []
+#         OCP = []
+#         for i in idxT2:
+#             date_to_check = i.date()
+#             YEAR.append(i.year)
+#             PID.append(int(lev))
+#             if date_to_check in area_TS.index:
+#                 OCP.append(float(area_TS.loc[date_to_check]))
+#             else:
+#                 OCP.append(np.nan) 
+#         print(area_TS.index)
+#         print(date_to_check)
+           
+    
+
+def pkz2csv(file, path, grd_name) -> pd.DataFrame:
     print(grd_name)
 
     CT1 = pd.read_csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/code_table_allom.csv")
-    
-    MICV = ['year','pid','ocp']
+
+    MICV = ['year', 'pid', 'ocp']
 
     area = file['area']
 
-    idx1 = np.where(area[:,0] > 0.0)[0]
+    idx1 = np.where(area[:, 0] > 0.0)[0]
     cols = CT1.VariableCode.__array__()
 
-        # LOOP over living strategies in the simulation start
+    # LOOP over living strategies in the simulation start
     idxT1 = pd.date_range("2015-01-01", "2016-12-31", freq='D')
     fname = f"{run_name}_spin{spin}"
     folder_path = f"./{fname}"
     if not os.path.exists(folder_path):
-    # Create the folder
+        # Create the folder
         os.makedirs(folder_path)
-    
+
     for lev in idx1:
-        area_TS = area[lev,:]
+        # print(lev)
+        area_TS = area[lev, :]
+        # print(area_TS)
         area_TS = pd.Series(area_TS, index=idxT1)
+        print(area_TS)
+
         idxT2 = pd.date_range("2015-12-31", "2016-12-31", freq='Y')
         YEAR = []
         PID = []
         OCP = []
         for i in idxT2:
+            date_to_check = i.date()
             YEAR.append(i.year)
             PID.append(int(lev))
-            OCP.append(float(area_TS.loc[i.date()].iloc[0]))
-    
+            if date_to_check in area_TS.index:
+                OCP.append(float(area_TS.loc[date_to_check]))
+            else:
+                OCP.append(np.nan)
+        ocp_ts = pd.Series(OCP, index=idxT2)
+        print(ocp_ts)
+        pid_ts = pd.Series(PID, index=idxT2)
+        y_ts = pd.Series(YEAR, index=idxT2)
+        # return ocp_ts, pid_ts, y_ts
+        series = []
+        for i, var in enumerate(MICV):
+            if var == 'year':
+                series.append(y_ts)
+            elif var == 'pid':
+                series.append(pid_ts)
+            elif var is None:
+                series.append(pd.Series(np.zeros(idxT2.size,) - 9999.0, index=idxT2))
+            elif var == 'ocp':
+                series.append(ocp_ts)
+            else:
+                pass
+        dt1 = pd.DataFrame(dict(list(zip(cols, series))))
 
+        dt1.to_csv(f"./{fname}/AmzFACE_Y_CAETE_spin{spin}_EV_{int(lev)}.csv", index=False)
+        
 
 
     
