@@ -100,9 +100,15 @@ def pkz2csv(file, path, grd_name) -> pd.DataFrame:
     MICV = ['year', 'pid', 'ocp']
 
     area = file['area']
-
+    area_dim=area.shape
+    # print( "area dim", area_dim, area)
+    
+    
     idx1 = np.where(area[:, 0] > 0.0)[0]
     cols = CT1.VariableCode.__array__()
+    dim = idx1.shape
+    print('dim', dim, idx1)
+    
 
     # LOOP over living strategies in the simulation start
     idxT1 = pd.date_range("2015-01-01", "2016-12-31", freq='D')
@@ -115,7 +121,7 @@ def pkz2csv(file, path, grd_name) -> pd.DataFrame:
     for lev in idx1:
         # print(lev)
         area_TS = area[lev, :]
-        # print(area_TS)
+        # print('shape area ts',area_TS.shape)
         area_TS = pd.Series(area_TS, index=idxT1)
         print(area_TS)
 
@@ -132,7 +138,7 @@ def pkz2csv(file, path, grd_name) -> pd.DataFrame:
             else:
                 OCP.append(np.nan)
         ocp_ts = pd.Series(OCP, index=idxT2)
-        print(ocp_ts)
+        # print(ocp_ts)
         pid_ts = pd.Series(PID, index=idxT2)
         y_ts = pd.Series(YEAR, index=idxT2)
         # return ocp_ts, pid_ts, y_ts
