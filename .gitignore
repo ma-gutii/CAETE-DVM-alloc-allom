@@ -8,7 +8,13 @@ src/*.csv
 src/*.txt
 src/*.cfg
 src/RUN*
+
 outputs/*
+!outputs/*.py
+!outputs/*.csv
+
+
+Essas regras dizem para ignorar todos os arquivos dentro do diretório `outputs`, mas fazer exceções para os arquivos com extensão `.py` e `.csv`. Certifique-se de que este arquivo `.gitignore` esteja na raiz do seu repositório Git.
 outputs_server/*
 nc_outputs/*
 h5/*
@@ -25,3 +31,5 @@ k34/CO2_AMB_AmzFACE2000_2100.csv
 k34/CO2_ELE_AmzFACE2000_2100.csv
 k34/MetData_AmzFACE2000_2015_CAETE.csv
 CAETE_PRE_IMERSAO/
+
+k34/
