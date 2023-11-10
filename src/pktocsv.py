@@ -16,102 +16,55 @@ import cftime as cf
 import plsgen as pls
 from aux_plot import get_var
 
-#get the number of PLSs
-# npls = input('how many PLSs?')
-npls = '10'
+# Get the number of PLSs from user input
+npls = input('How many PLSs? ')
 
-#get pls table
+# Get PLS table from CSV file
 pls_table = pd.read_csv("../outputs/pls_attrs-{}.csv".format(npls))
 
-#get the run name
-# run_name = input('run name: ')
-run_name = 'k'
-
-# grd = input("Which gridcell (lat-long)")
-grd = '175-235'
-#get the run path
+# Get the run name, gridcell, and spin from user input
+run_name = input('Run name: ')
+grd = input('Which gridcell (lat-long): ')
 path = f"../outputs/{run_name}/gridcell{grd}"
-
 grd_name = f"gridcell{grd}"
 
 # Navigate to the folder
 os.chdir(path)
 
-#get the spin
-# spin = input('which spin?')
-spin = '19'
+spin = input('Which spin? ')
 
-# #get the pkz file
+# Function to read the pickled file
 def read_pkz(spin):
     with open("spin{}.pkz".format(spin), 'rb') as fh:
         dt = joblib.load(fh)
-    print(dt.keys()) # list the available keys for the ouputs
+    print(dt.keys())  # List the available keys for the outputs
     return dt
 
 file = read_pkz(spin)
 
-
-# def pkz2csv(file, path, grd_name)-> pd.DataFrame:
-#     print(grd_name)
-
-#     CT1 = pd.read_csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/code_table_allom.csv")
-    
-#     MICV = ['year','pid','ocp']
-
-#     area = file['area']
-
-#     idx1 = np.where(area[:,0] > 0.0)[0]
-#     cols = CT1.VariableCode.__array__()
-
-#         # LOOP over living strategies in the simulation start
-#     idxT1 = pd.date_range("2015-01-01", "2016-12-31", freq='D')
-#     fname = f"{run_name}_spin{spin}"
-#     folder_path = f"./{fname}"
-#     if not os.path.exists(folder_path):
-#     # Create the folder
-#         os.makedirs(folder_path)
-    
-#     for lev in idx1:
-#         area_TS = area[lev,:]
-#         area_TS = pd.Series(area_TS, index=idxT1)
-#         print(area_TS)
-#         idxT2 = pd.date_range("2015-12-31", "2016-12-31", freq='Y')
-#         YEAR = []
-#         PID = []
-#         OCP = []
-#         for i in idxT2:
-#             date_to_check = i.date()
-#             YEAR.append(i.year)
-#             PID.append(int(lev))
-#             if date_to_check in area_TS.index:
-#                 OCP.append(float(area_TS.loc[date_to_check]))
-#             else:
-#                 OCP.append(np.nan) 
-#         print(area_TS.index)
-#         print(date_to_check)
-           
-    
-
+# Function to convert pickled file to CSV
 def pkz2csv(file, path, grd_name) -> pd.DataFrame:
     print(grd_name)
 
+    # Read code table from CSV
     CT1 = pd.read_csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/code_table_allom.csv")
 
     MICV = ['year', 'pid', 'ocp']
 
     area = file['area']
-    area_dim=area.shape
-    # print( "area dim", area_dim, area)
-    
-    
-    idx1 = np.where(area[:, 0] > 0.0)[0]
-    cols = CT1.VariableCode.__array__()
-    dim = idx1.shape
-    print('dim', dim, idx1)
-    
+    area_dim = area.shape
 
-    # LOOP over living strategies in the simulation start
+    # Find indices where the first column of area is greater than 0.0
+    idx1 = np.where(area[:, 0] > 0.0)[0]
+
+    # Get VariableCode column from code table
+    cols = CT1.VariableCode.__array__()
+
+    # Loop over living strategies in the simulation
     idxT1 = pd.date_range("2015-01-01", "2016-12-31", freq='D')
+    print('Shape idxT1', idxT1.shape)
+
+    # Create a folder for the output files
     fname = f"{run_name}_spin{spin}"
     folder_path = f"./{fname}"
     if not os.path.exists(folder_path):
@@ -119,154 +72,45 @@ def pkz2csv(file, path, grd_name) -> pd.DataFrame:
         os.makedirs(folder_path)
 
     for lev in idx1:
-        # print(lev)
         area_TS = area[lev, :]
-        # print('shape area ts',area_TS.shape)
         area_TS = pd.Series(area_TS, index=idxT1)
-        print(area_TS)
 
+        # Create an annual date range
         idxT2 = pd.date_range("2015-12-31", "2016-12-31", freq='Y')
         YEAR = []
         PID = []
         OCP = []
+
         for i in idxT2:
-            date_to_check = i.date()
+            # Append the year to the YEAR list
             YEAR.append(i.year)
+
+            # Append the index of the living PLS
             PID.append(int(lev))
-            if date_to_check in area_TS.index:
-                OCP.append(float(area_TS.loc[date_to_check]))
-            else:
-                OCP.append(np.nan)
+
+            # Append the occupancy value for the corresponding date
+            OCP.append(float(area_TS.loc[[i.date()]].iloc[0]))
+
+        # Create pandas Series for each variable
         ocp_ts = pd.Series(OCP, index=idxT2)
-        # print(ocp_ts)
         pid_ts = pd.Series(PID, index=idxT2)
         y_ts = pd.Series(YEAR, index=idxT2)
-        # return ocp_ts, pid_ts, y_ts
+
+        # Create a DataFrame with the specified columns
         series = []
         for i, var in enumerate(MICV):
             if var == 'year':
                 series.append(y_ts)
             elif var == 'pid':
                 series.append(pid_ts)
-            elif var is None:
-                series.append(pd.Series(np.zeros(idxT2.size,) - 9999.0, index=idxT2))
             elif var == 'ocp':
                 series.append(ocp_ts)
             else:
                 pass
         dt1 = pd.DataFrame(dict(list(zip(cols, series))))
 
+        # Save the DataFrame to a CSV file
         dt1.to_csv(f"./{fname}/AmzFACE_Y_CAETE_spin{spin}_EV_{int(lev)}.csv", index=False)
-        
 
-
-    
-    
-    
-
+# Call the function to convert the pickled file to CSV
 pkz2csv(file, path, grd_name)
-
-
-
-# def apply_spin(grid):
-#     """pre-spinup use some outputs of daily budget (water, litter C, N and P) to start soil organic pools"""
-#     w, ll, cwd, rl, lnc = grid.bdg_spinup(
-#         start_date="20000102", end_date="20050102")
-#     grid.sdc_spinup(w, ll, cwd, rl, lnc)
-#     return grid
-
-
-def get_spin(grd, spin) -> dict:
-    import joblib
-    if spin < 10:
-        name = f'spin0{spin}.pkz'
-    else:
-        name = f'spin{spin}.pkz'
-    with open(grd.outputs[name], 'rb') as fh:
-        spin_dt = joblib.load(fh)
-    return spin_dt
-
-# spin_dt = get_spin(grd, spin)
-# Get the number of PLSs
-
-
-# pkz = '/home/bianca/bianca/CAETE-DVM-alloc-allom/outputs/t1_0510/gridcell175-235/spin19.pkz'
-# output_folder = '/home/bianca/bianca/CAETE-alloc-allom/outputs/t1_0510/gridcell175-235/'
-
-# def pkz2csv(file_path, csv_file):
-    # Criar o diretório se não existir
-    # os.makedirs(Path(output_folder), exist_ok=True)
-
-    # with open(file_path, 'rb') as fh:
-        # dt = joblib.load(fh)
-    
-    # df = pd.DataFrame(dt)
-
-    # Construir o caminho para o arquivo CSV no diretório especificado
-    # csv_path = Path(output_folder) / csv_file
-    # df.to_csv(csv_path, index=False)
-
-# Usar a função
-# pkz2csv(pkz, 't.csv')
-
-# import os
-# import joblib
-# import pickle as pkl
-# import copy
-# import bz2
-# from pathlib import Path
-# import multiprocessing as mp
-# import pandas as pd
-# import numpy as np 
-# import joblib
-# from caete_module import global_par as gp
-# import caete_module as mod
-
-# #get the number of PLSs
-# npls = gp.npls
-
-# pkz = '/home/bianca/bianca/CAETE-DVM-alloc-allom/outputs/t1_0510/gridcell175-235/spin19.pkz'
-# output_folder = '/home/bianca/bianca/CAETE-alloc-allom/outputs/t1_0510/gridcell175-235/output_folder/'
-
-# def pkz2csv(file_path, csv_file):
-
-#     # Criar o diretório se não existir
-#     os.makedirs(Path(file_path).parent, exist_ok=True)
-
-#     with open(pkz, 'rb') as fh:
-#        dt = joblib.load(fh)
-    
-#     df = pd.DataFrame(dt)
-
-#     csv_path = output_folder + csv_file
-#     df.to_csv(csv_path, index=False)
-
-
-# t = pkz2csv(pkz, 't.csv')
-
-
-    
-#     #    print(dt.keys()) # list the available keys for the ouputs
-#     #    # 'calendar', 'time_unit', 'sind', 'eind'
-#     #    print(dt['calendar'])
-#     #    print(dt['time_unit'])
-#     #    print(dt['sind'])
-#     #    print(dt['eind'])
-
-# # pkz_folder = '/home/bianca/bianca/CAETE-DVM-alloc-allom/outputs/t1_0510/gridcell175-235/'
-# # output_folder = '/home/bianca/bianca/CAETE-alloc-allom/outputs/t1_0510/gridcell175-235/output_folder'
-
-# def pkz2csv(pkz, rpath, mod, scen):
-
-#     from cftime import num2pydate
-#     spin_dt = read_pkz(pkz)
-#     s = num2pydate(spin_dt['sind'], spin_dt['time_unit'], spin_dt['calendar'])
-#     e = num2pydate(spin_dt['eind'], spin_dt['time_unit'], spin_dt['calendar'])
-#     start = s.strftime("%Y%m%d")
-#     end   = e.strftime("%Y%m%d") 
-#     idxT1 = pd.date_range(start, end, freq='D', closed=None)
-#     idx = idxT1.to_series()
-
-
- 
-
