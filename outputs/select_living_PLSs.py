@@ -6,18 +6,22 @@ import re
 run_name = "tresmil"#input("What is the run name? ")
 grd_name = "175-235"#input("The grid cell?lat-long ")
 path_csv = f"/home/bianca/bianca/CAETE-DVM-alloc-allom/outputs/{run_name}/gridcell{grd_name}/csv"
+start_year = "1979" #input("what is the start year? ")
+end_year = "2017" #input("what is the start year? + 1")
+start_year = int(start_year)
+end_year = int(end_year)
 
-# Get a list of all files with .csv extension in the directory
+# Get a list of all files with .csv extension in the directory(there is one csv for each alive PLS)
 list_files = [file for file in os.listdir(path_csv) if file.endswith(".csv")]
    
 
-# # # Extract the final group of numbers from the file names
+# # # Extract the final group of numbers from the file names(get the PLS id)
 s = [re.search(r"_([0-9]+)\.csv", file).group(1) for file in list_files if re.search(r"_([0-9]+)\.csv", file)]
 
 # Create an empty DataFrame to store the merged and sorted data
 final_merged_df = pd.DataFrame()
 
-# Extract the final group of numbers from the file names and group the files
+# Extract the final group of numbers from the file names and group the files (group each PLS considering all spins)
 for file in list_files:
     match = re.search(r"EV_([0-9]+)\.csv", file)
     if match:
@@ -30,15 +34,24 @@ for file in list_files:
         final_merged_df = pd.concat([final_merged_df, df], ignore_index=True)
 
 # Create a DataFrame with all combinations of years and group numbers
-all_years = range(1979, 2017)
+all_years = range(start_year, end_year)
+
+#Select the PLS ID for the alives
 all_group_numbers = final_merged_df['GroupNumber'].unique()
+
+
+
 all_combinations = pd.DataFrame([(year, group_number) for year in all_years for group_number in all_group_numbers],
                                  columns=['YEAR', 'GroupNumber'])
-# Merge the all_combinations DataFrame with the final DataFrame to fill gaps
+
+
+
+# Merge all_combinations with final_merged_df to fill gaps
 final_merged_df = pd.merge(all_combinations, final_merged_df, on=['YEAR', 'GroupNumber'], how='left')
 
-# Fill NaN values in columns other than 'YEAR' and 'GroupNumber'
-final_merged_df['PID'] = final_merged_df['PID'].fillna(final_merged_df['GroupNumber'])
+# Fill NaN values in 'PID' with 'GroupNumber' and convert back to int
+final_merged_df['PID'] = final_merged_df['PID'].fillna(final_merged_df['GroupNumber']).astype(int)
+
 final_merged_df['OC'] = final_merged_df['OC'].fillna(0.0)  # Fill NaN values in 'OC' with 0
 
 # Sort the final DataFrame by the "YEAR" column in ascending order
@@ -54,12 +67,30 @@ final_merged_df.to_csv(final_file_path, index=False)
 # Get a list of all files with .csv extension in the directory
 list_files = [file for file in os.listdir(path_csv) if file.startswith("sorted_merged_") and file.endswith(".csv")]
 
-# Delete each file
+# Delete temporary files
 for file in list_files:
     file_path = os.path.join(path_csv, file)
     os.remove(file_path)
+
+print("Your file has been created! Find it in:", path_csv)
+
+#Now get the trait values from attrs (without considering the occupation)
+# Read file with all pls traits
+pls_traits = pd.read_csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/outputs/pls_attrs-3000.csv")
+
+# Get the PIDs, that is, the alive PLSs
+pids_to_select = final_merged_df['PID'].unique()
+
+# Filtrar pls_traits com base nos PIDs em pids_to_select
+selected_traits = pls_traits[pls_traits['PLS_id'].isin(pids_to_select)]
+
+print(selected_traits)
+
+
+
+# # # # Select only data from living pls (those in the list of files)
+# # new_pls_traits = pls_traits[pls_traits['PLS_id'].isin(pls_id['pls_id'])]
     
-print(f"Deleting sorted_merged_group files.")
 
 # # Merge the all_combinations DataFrame with the final DataFrame to fill gaps
 # final_merged_df = pd.merge(all_combinations, final_merged_df, on=['YEAR', 'GroupNumber'], how='left')

@@ -19,6 +19,8 @@ def pkz2csv(file, path, grd_name, spin_id, date_range) -> pd.DataFrame:
 
     area = file['area']
     area_dim = area.shape
+
+    
     
     idx1 = np.where(area[:, 0] > 0.0)[0]
     cols = CT1.VariableCode.__array__()
@@ -49,6 +51,7 @@ def pkz2csv(file, path, grd_name, spin_id, date_range) -> pd.DataFrame:
             YEAR.append(i.year)
             PID.append(int(lev))
             OCP.append(float(area_TS.loc[[i.date()]].iloc[0]))
+            print(f"lev: {lev}, PID: {int(lev)}")
 
         ocp_ts = pd.Series(OCP, index=idxT2)
         pid_ts = pd.Series(PID, index=idxT2)
