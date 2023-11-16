@@ -60,9 +60,12 @@ final_merged_df.sort_values(by=["GroupNumber", "YEAR"], inplace=True)
 # Drop the temporary group number column
 final_merged_df.drop(columns=['GroupNumber'], inplace=True)
 
-# Save the final merged and sorted DataFrame to a new CSV file
+# Save the final merged and sorted DataFra  prinme to a new CSV file
 final_file_path = os.path.join(path_csv, "final_merged_sorted_data.csv")
 final_merged_df.to_csv(final_file_path, index=False)
+
+#PLS id, year and occupation
+PLS_ocp_year = final_merged_df
 
 # Get a list of all files with .csv extension in the directory
 list_files = [file for file in os.listdir(path_csv) if file.startswith("sorted_merged_") and file.endswith(".csv")]
@@ -82,9 +85,23 @@ pls_traits = pd.read_csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/outputs/pls_
 pids_to_select = final_merged_df['PID'].unique()
 
 # Filtrar pls_traits com base nos PIDs em pids_to_select
-selected_traits = pls_traits[pls_traits['PLS_id'].isin(pids_to_select)]
+selected_PLS_traits = pls_traits[pls_traits['PLS_id'].isin(pids_to_select)]
 
-print(selected_traits)
+# Realiza a agregação
+ocp_traits = pd.merge(PLS_ocp_year, selected_PLS_traits[['PLS_id', 'sla_random']], left_on='PID', right_on='PLS_id', how='left')
+# Remove a coluna 'PLS_id' da nova tabela
+ocp_traits = ocp_traits.drop('PLS_id', axis=1)
+
+
+#Calculates the value for a trait multiplying it by the PLS occupation
+ocp_traits['sla_ocp'] = ocp_traits['OC']*ocp_traits['sla_random']
+
+# Save the final merged and sorted DataFra  prinme to a new CSV file
+final_merged_path = os.path.join(path_csv, "PLS_alive_traits.csv")
+ocp_traits.to_csv(final_merged_path, index=False)
+
+
+
 
 
 
