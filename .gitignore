@@ -8,7 +8,7 @@ src/*.csv
 src/*.txt
 src/*.cfg
 src/RUN*
-
+!src/code_table_allom.csv
 outputs/*
 !outputs/*.py
 !outputs/*.csv
