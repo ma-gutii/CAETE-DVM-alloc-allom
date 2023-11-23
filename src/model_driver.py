@@ -149,8 +149,8 @@ if not sombrero:
     
 
 if zone == 'c':
-    y0, y1 = 175, 178
-    x0, x1 = 235, 238
+    y0, y1 = 175, 176
+    x0, x1 = 235, 236
     folder = "central"
 
 elif zone == 's':
@@ -364,9 +364,6 @@ def zip_gridtime(grd_pool, interval):
 
 def apply_funX(grid:grd, brk:list, allometry = allom)->grd:
     if allom:
-        # if brk[0] == '20150101':
-        #     print('BREAK 2015',brk[0])
-        #     grid.pr *= 0.5
         grid.run_caete_allom(brk[0], brk[1], nutri_cycle=False)
     else:
         grid.run_caete(brk[0], brk[1])

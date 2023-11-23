@@ -29,9 +29,6 @@ from pathlib import Path
 import warnings
 import bz2
 import gc
-import datetime
-import netCDF4 as nc
-
 
 from joblib import load, dump
 import cftime
@@ -448,7 +445,6 @@ class grd:
         self.vp_cheart_allom = None #heartwood
         self.vp_csap_allom   = None #sapwood
         self.vp_csto_alom    = None #storage
-        self.vp_ocp_allom    = None #coefficient occupation
 
         #vegetation pools for alloc allom
             #vars in grid cell scale (CWM computed inside budget)
@@ -573,9 +569,6 @@ class grd:
         self.lai_allom    = np.zeros(shape=(n,), order='F')
         self.rm_allom     = np.zeros(shape=(n,), order='F') 
         self.rg_allom     = np.zeros(shape=(n,), order='F')
-
-        self.area_allom = np.zeros(shape=(npls, n), order='F')
-
 
     def _flush_output(self, run_descr, index):
         """1 - Clean variables that receive outputs from the fortran subroutines
@@ -721,8 +714,7 @@ class grd:
                      'ev'    : self.ev_allom,     
                      'lai'   : self.lai_allom,    
                      'rm'    : self.rm_allom,      
-                     'rg'    : self.rg_allom,
-                     'area'  : self.area_allom,  
+                     'rg'    : self.rg_allom,  
                      'calendar': self.calendar,
                      'time_unit': self.time_unit,   # Time unit
                      'sind': index[0],
@@ -746,8 +738,7 @@ class grd:
         self.lai_allom    = None
         self.rm_allom     = None 
         self.rg_allom     = None
-        self.area_allom   = None       
-        
+       
         return to_pickle
 
     def _save_output(self, data_obj):
@@ -760,8 +751,6 @@ class grd:
         with open(self.outputs[fpath], 'wb') as fh:
             dump(data_obj, fh, compress=('zlib', 3), protocol=4)
         self.flush_data = 0
-
-
 
     def init_caete_dyn(self, input_fpath, stime_i, co2, pls_table, tsoil, ssoil, hsoil):
         """ PREPARE A GRIDCELL TO RUN
@@ -898,7 +887,6 @@ class grd:
         self.vp_dcs_allom = np.zeros(shape=(npls,), order='F')
         self.vp_dch_allom = np.zeros(shape=(npls,), order='F')
         self.vp_dcst_allom = np.zeros(shape=(npls,), order='F')
-        self.vp_ocp_allom = np.zeros(shape=(npls,), order='F')
 
 
 
@@ -1036,15 +1024,10 @@ class grd:
         # Define time index
         start_index = int(cftime.date2num(
             start, self.time_unit, self.calendar))
-        
         end_index = int(cftime.date2num(end, self.time_unit, self.calendar))
-        
-
-
+    
         lb, hb = find_index(start_index, end_index)
-        
         steps = np.arange(lb, hb + 1)
-        print('',)
         day_indexes = np.arange(start_index, end_index + 1)
         spin = 1 if spinup == 0 else spinup
    
@@ -1499,8 +1482,6 @@ class grd:
             This function is analogous to run_caete but this one considers allocation
             constrained by allometry relationships and do not consider nutri cycle
         """
-        # print('start date', start_date,'end date', end_date)
-        
         #verify if the gridcell has input data
         assert self.filled, "The gridcell has no input data"
 
@@ -1535,13 +1516,8 @@ class grd:
         # Define start and end dates (read actual arguments)
         start = cftime.real_datetime(int(start_date[:4]), int(
             start_date[4:6]), int(start_date[6:]))
-        
-        # print('s', start)
         end = cftime.real_datetime(int(end_date[:4]), int(
             end_date[4:6]), int(end_date[6:]))
-        # print('e', end)
-
-
         # Check dates sanity
         assert start < end, "start > end"
         assert start >= self.start_date
@@ -1550,79 +1526,21 @@ class grd:
         # Define time index
         start_index = int(cftime.date2num(
             start, self.time_unit, self.calendar))
-        # print('s index', start_index)
-
         end_index = int(cftime.date2num(end, self.time_unit, self.calendar))
-        # print('e index', end_index)
 
-        
         lb, hb = find_index(start_index, end_index)
-        # print('lb',lb,'hb', hb, 'sindex',start_index, 'e index', end_index)
         steps = np.arange(lb, hb + 1)
-        # print('steps', steps.size)
         day_indexes = np.arange(start_index, end_index + 1)
         spin = 1 if spinup == 0 else spinup
-        # print('day_indexes', day_indexes)
 
-
-        tm = nc.Dataset("./time_ISIMIP_hist_obs.nc4", 'r')
-        tm1 = tm.variables["time"]
-       
-
-        t1 = datetime.datetime(year=1979,month=1,day=1,hour=0,minute=0,second=0)
-        t2 = datetime.datetime(year=1980,month=12,day=31,hour=0,minute=0,second=0)
-
-         # Find the index of the input data array for required dates
-         # Will use this to manipulate the input data in sensitivity experiments  
-        idx0 = int(nc.date2index(t1, tm1, calendar="proleptic_gregorian", select='nearest'))
-        idx1 = int(nc.date2index(t2, tm1, calendar="proleptic_gregorian", select='nearest'))
-
-        # Supondo que 'target_date' seja a data que você deseja converter para um índice
-        target_date = cftime.real_datetime(2000, 1, 1)  # Substitua isso pela data real
-
-        # Usa cftime.date2num para converter a data em um índice
-        target_index = int(cftime.date2num(target_date, units=self.time_unit, calendar=self.calendar))
-
-       
         # Catch climatic input and make conversions
-        temp = (self.tas[lb: hb + 1] - 273.15) # ! K to °C
-        prec = (self.pr[lb: hb + 1] * 86400)  # kg m-2 s-1 to  mm/day
+        temp = self.tas[lb: hb + 1] - 273.15  # ! K to °C
+        prec = self.pr[lb: hb + 1] * 86400  # kg m-2 s-1 to  mm/day
         # transforamando de Pascal pra mbar (hPa)
-        p_atm = (self.ps[lb: hb + 1] * 0.01)
+        p_atm = self.ps[lb: hb + 1] * 0.01
         # W m-2 to mol m-2 s-1 ! 0.5 converts RSDS to PAR
-        ipar = (self.rsds[lb: hb + 1] * 0.5 / 2.18e5)
+        ipar = self.rsds[lb: hb + 1] * 0.5 / 2.18e5
         ru = self.rhs[lb: hb + 1] / 100.0
-        
-        # Supondo que 'target_year' seja o ano específico que você deseja imprimir
-        target_year = 2005  # Substitua isso pelo ano real
-
-        # Supondo que 'prec' seja o array que armazena os valores de precipitação
-        # Usa cftime.date2num para obter o índice correspondente ao início do ano
-        target_index_start = int(cftime.date2num(cftime.real_datetime(target_year, 1, 1), units=self.time_unit, calendar=self.calendar))
-
-        # Usa cftime.date2num para obter o índice correspondente ao final do ano
-        target_index_end = int(cftime.date2num(cftime.real_datetime(target_year, 12, 31), units=self.time_unit, calendar=self.calendar))
-
-        # Itera por todos os dias do ano e imprime os valores de prec
-        # for day_index in range(target_index_start, target_index_end + 1):
-            # print("Data: {}, Precipitação: {}".format(cftime.num2date(day_index, units=self.time_unit, calendar=self.calendar), prec[day_index]))
-       
-
-        # Supondo que 'prec' seja o array que armazena os valores de precipitação
-        # Usa cftime.date2num para obter o índice correspondente ao início do ano
-        target_index_start = int(cftime.date2num(cftime.real_datetime(target_year, 1, 1), units=self.time_unit, calendar=self.calendar))
-        
-        # Usa cftime.date2num para obter o índice correspondente ao final do ano
-        target_index_end = int(cftime.date2num(cftime.real_datetime(target_year, 12, 31), units=self.time_unit, calendar=self.calendar))
-
-        # Multiplica por 0.5 os valores correspondentes ao ano alvo
-        prec[target_index_start:target_index_end + 1] *= 0.01
-        # Itera por todos os dias do ano e imprime os valores de prec
-        # print(prec)
-        
-            # print("Data: {}, Precipitação: {}".format(cftime.num2date(day_index, units=self.time_unit, calendar=self.calendar), prec[day_index]))
-        # print("Precipitação para o ano {}: {}".format(target_year, prec[target_index_start:target_index_end + 1]))
-        
 
         year0 = start.year
         co2 = find_co2(year0)
@@ -1743,20 +1661,9 @@ class grd:
                                                      self.soil_temp, temp[step], p_atm[step], ipar[step], ru[step],co2,
                                                      cleaf_allom, cwood_allom, croot_allom,  csap_allom, cheart_allom, csto_allom, 
                                                      dcl_allom, dcw_allom, dcr_allom, dcs_allom, dch_allom, dcst_allom)
-                 # Create a dict with the function output
+                
                 daily_output_allom = catch_out_budget_allom(out_allom)
                 
-                self.vp_lsid = np.where(daily_output_allom['ocpavg'] > 0.0)[0]
-                self.vp_ocp_allom = daily_output_allom['ocpavg'][self.vp_lsid]
-                self.ls[step] = self.vp_lsid.size
-
-                                #when there is no living PLSs ABORT
-                if self.vp_lsid.size < 1:
-                    ABORT = 1
-                    rwarn(f"Gridcell {self.xyname} has"  + \
-                           " no living Plant Life Strategies")
-
-                #when there is living PLS
                 #Update vegetation pools
                 self.vp_cleaf_allom  = daily_output_allom['dly_cleaf'][self.vp_lsid]
                 self.vp_cwood_allom  = daily_output_allom['dly_cwood'][self.vp_lsid]
@@ -1771,8 +1678,6 @@ class grd:
                 self.vp_dcs_allom    = daily_output_allom['dly_dsap'][self.vp_lsid]
                 # self.vp_dch_allom    = daily_output_allom['dly_dheart'][self.vp_lsid]
                 # self.vp_dcst_allom   = daily_output_allom['dly_dsto'][self.vp_lsid]
-                
-               
 
 
                 if save:
@@ -1793,7 +1698,7 @@ class grd:
                     self.lai_allom[step]     = daily_output_allom['laiavg']
                     self.rm_allom[step]      = daily_output_allom['rmavg']
                     self.rg_allom[step]      = daily_output_allom['rgavg']
-                    self.area_allom[self.vp_lsid, step] = self.vp_ocp_allom
+
 
                 
                 if ABORT:
@@ -1865,7 +1770,6 @@ class grd:
         end_index = int(cftime.date2num(end, self.time_unit, self.calendar))
 
         lb, hb = find_index(start_index, end_index)
-        
         steps = np.arange(lb, hb + 1)
         day_indexes = np.arange(start_index, end_index + 1)
 
