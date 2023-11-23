@@ -445,6 +445,7 @@ class grd:
         self.vp_cheart_allom = None #heartwood
         self.vp_csap_allom   = None #sapwood
         self.vp_csto_alom    = None #storage
+        self.vp_ocp_allom    = None #coefficient occupation
 
         #vegetation pools for alloc allom
             #vars in grid cell scale (CWM computed inside budget)
@@ -569,6 +570,7 @@ class grd:
         self.lai_allom    = np.zeros(shape=(n,), order='F')
         self.rm_allom     = np.zeros(shape=(n,), order='F') 
         self.rg_allom     = np.zeros(shape=(n,), order='F')
+        self.area_allom = np.zeros(shape=(npls, n), order='F')
 
     def _flush_output(self, run_descr, index):
         """1 - Clean variables that receive outputs from the fortran subroutines
@@ -714,7 +716,8 @@ class grd:
                      'ev'    : self.ev_allom,     
                      'lai'   : self.lai_allom,    
                      'rm'    : self.rm_allom,      
-                     'rg'    : self.rg_allom,  
+                     'rg'    : self.rg_allom,
+                     'area'  : self.area_allom,  
                      'calendar': self.calendar,
                      'time_unit': self.time_unit,   # Time unit
                      'sind': index[0],
@@ -738,6 +741,7 @@ class grd:
         self.lai_allom    = None
         self.rm_allom     = None 
         self.rg_allom     = None
+        self.area_allom   = None    
        
         return to_pickle
 
@@ -887,6 +891,7 @@ class grd:
         self.vp_dcs_allom = np.zeros(shape=(npls,), order='F')
         self.vp_dch_allom = np.zeros(shape=(npls,), order='F')
         self.vp_dcst_allom = np.zeros(shape=(npls,), order='F')
+        self.vp_ocp_allom = np.zeros(shape=(npls,), order='F')
 
 
 
@@ -1662,7 +1667,20 @@ class grd:
                                                      cleaf_allom, cwood_allom, croot_allom,  csap_allom, cheart_allom, csto_allom, 
                                                      dcl_allom, dcw_allom, dcr_allom, dcs_allom, dch_allom, dcst_allom)
                 
+                # Create a dict with the function output
                 daily_output_allom = catch_out_budget_allom(out_allom)
+
+                self.vp_lsid = np.where(daily_output_allom['ocpavg'] > 0.0)[0]
+                self.vp_ocp_allom = daily_output_allom['ocpavg'][self.vp_lsid]
+                self.ls[step] = self.vp_lsid.size
+
+                                #when there is no living PLSs ABORT
+                if self.vp_lsid.size < 1:
+                    ABORT = 1
+                    rwarn(f"Gridcell {self.xyname} has"  + \
+                           " no living Plant Life Strategies")
+
+                #when there is living PLS
                 
                 #Update vegetation pools
                 self.vp_cleaf_allom  = daily_output_allom['dly_cleaf'][self.vp_lsid]
@@ -1698,6 +1716,7 @@ class grd:
                     self.lai_allom[step]     = daily_output_allom['laiavg']
                     self.rm_allom[step]      = daily_output_allom['rmavg']
                     self.rg_allom[step]      = daily_output_allom['rgavg']
+                    self.area_allom[self.vp_lsid, step] = self.vp_ocp_allom
 
 
                 
@@ -1775,7 +1794,7 @@ class grd:
 
         # Catch climatic input and make conversions
         temp = self.tas[lb: hb + 1] - 273.15  # ! K to °C
-        prec = self.pr[lb: hb + 1] * 86400  # kg m-2 s-1 to  mm/day
+        prec = (self.pr[lb: hb + 1] * 86400)  # kg m-2 s-1 to  mm/day
         # transforamando de Pascal pra mbar (hPa)
         p_atm = self.ps[lb: hb + 1] * 0.01
         # W m-2 to mol m-2 s-1 ! 0.5 converts RSDS to PAR

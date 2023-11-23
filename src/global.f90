@@ -48,7 +48,7 @@ module global_par
    real(r_8),parameter,public :: gm = 3.26D0 * 86400D0           ! (*86400 transform s/mm to dia/mm)
    real(r_8),parameter,public :: sapwood = 0.05D0                ! Fraction of wood tissues that are sapwood
    real(r_4),parameter,public :: ks = 0.25                       ! P Sorption
-   integer(i_4),parameter,public :: npls = 10                  ! Number of Plant Life Strategies-PLSs simulated (Defined at compile time)
+   integer(i_4),parameter,public :: npls = 3000                  ! Number of Plant Life Strategies-PLSs simulated (Defined at compile time)
    integer(i_4),parameter,public :: ntraits = 20                 ! Number of traits for each PLS
    real(r_8),parameter, public :: ncl = (1.0/60.0)          !(gN/gC) used in maintenance respiration (from Scheiter & Higgins 2008)
    real(r_8),parameter, public :: ncf = (1.0/60.0)          !(gN/gC)
@@ -75,7 +75,7 @@ module global_par
    real(r_8), parameter, public :: l_turnover = 1./4. !Sitch et al 2003
    real(r_8), parameter, public :: r_turnover = 1./4. !Sitch et al 2003
    real(r_8), parameter, public :: s_turnover = 1./20. !0.05 !Sitch et al 2003
-   real(r_8), parameter, public :: sto_turnover = 1./20. !Dietze et al 2014
+   real(r_8), parameter, public :: sto_turnover = 1./50. !Dietze et al 2014
    real(r_8), parameter, public :: h_turnover = 1./150.!1/50. !Sitch et al 2003
 
 
