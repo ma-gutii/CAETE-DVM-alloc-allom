@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 def read_pkz(spin):
-    with open(f"/home/bianca/bianca/CAETE-DVM-alloc-allom/outputs/{run_name}/{grd_name}/spin{spin:02d}.pkz", 'rb') as fh:
+    with open(f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{run_name}/{grd_name}/spin{spin:02d}.pkz", 'rb') as fh:
         dt = joblib.load(fh)
     print(f"Loaded data for spin {spin:02d}")
     return dt
