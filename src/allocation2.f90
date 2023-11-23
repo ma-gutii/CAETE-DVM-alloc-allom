@@ -761,7 +761,7 @@ module alloc2
         !!Fixed turnover
         ! leaf_turn = leaf_in_ind*l_tmurnover 
         ! root_turn = root_in_ind*r_turnover
-        sap_turn = sap_in_ind*s_turnover
+        ! sap_turn = sap_in_ind*s_turnover
 
         ! sto_turn = sto_in_ind*sto_turnover
 
@@ -780,7 +780,7 @@ module alloc2
 
         root_turn = root_in_ind/root_turnover
 
-        ! sap_turn = sap_in_ind/sap_turnover
+        sap_turn = sap_in_ind/sap_turnover
         
         !heartwood incorporates the dead tissue from sapwood
         heart_turn = (heart_in_ind/heart_turnover) + sap_turn

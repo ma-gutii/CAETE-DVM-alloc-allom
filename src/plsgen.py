@@ -392,7 +392,7 @@ def table_gen(NPLS, fpath=None):
     wd_random = np.random.uniform(0.3, 1.0, NPLS) #g/cm3 : Global WD Database (Zanne et al., 2009).
                                                   #we increased the range (range original: 0.5,0.9)to increase
                                                   #the probability of occurence inside the real range
-    restime_sap = np.random.uniform(20., 50., NPLS)
+    restime_sap = np.random.uniform(10., 20., NPLS)
 
     # # C4 STYLE
     c4 = np.zeros((NPLS,), dtype=np.float64)
