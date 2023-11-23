@@ -29,6 +29,9 @@ from pathlib import Path
 import warnings
 import bz2
 import gc
+import datetime
+import netCDF4 as nc
+
 
 from joblib import load, dump
 import cftime
@@ -1033,10 +1036,15 @@ class grd:
         # Define time index
         start_index = int(cftime.date2num(
             start, self.time_unit, self.calendar))
+        
         end_index = int(cftime.date2num(end, self.time_unit, self.calendar))
-    
+        
+
+
         lb, hb = find_index(start_index, end_index)
+        
         steps = np.arange(lb, hb + 1)
+        print('',)
         day_indexes = np.arange(start_index, end_index + 1)
         spin = 1 if spinup == 0 else spinup
    
@@ -1491,6 +1499,8 @@ class grd:
             This function is analogous to run_caete but this one considers allocation
             constrained by allometry relationships and do not consider nutri cycle
         """
+        # print('start date', start_date,'end date', end_date)
+        
         #verify if the gridcell has input data
         assert self.filled, "The gridcell has no input data"
 
@@ -1525,8 +1535,13 @@ class grd:
         # Define start and end dates (read actual arguments)
         start = cftime.real_datetime(int(start_date[:4]), int(
             start_date[4:6]), int(start_date[6:]))
+        
+        # print('s', start)
         end = cftime.real_datetime(int(end_date[:4]), int(
             end_date[4:6]), int(end_date[6:]))
+        # print('e', end)
+
+
         # Check dates sanity
         assert start < end, "start > end"
         assert start >= self.start_date
@@ -1535,21 +1550,79 @@ class grd:
         # Define time index
         start_index = int(cftime.date2num(
             start, self.time_unit, self.calendar))
-        end_index = int(cftime.date2num(end, self.time_unit, self.calendar))
+        # print('s index', start_index)
 
+        end_index = int(cftime.date2num(end, self.time_unit, self.calendar))
+        # print('e index', end_index)
+
+        
         lb, hb = find_index(start_index, end_index)
+        # print('lb',lb,'hb', hb, 'sindex',start_index, 'e index', end_index)
         steps = np.arange(lb, hb + 1)
+        # print('steps', steps.size)
         day_indexes = np.arange(start_index, end_index + 1)
         spin = 1 if spinup == 0 else spinup
+        # print('day_indexes', day_indexes)
 
+
+        tm = nc.Dataset("./time_ISIMIP_hist_obs.nc4", 'r')
+        tm1 = tm.variables["time"]
+       
+
+        t1 = datetime.datetime(year=1979,month=1,day=1,hour=0,minute=0,second=0)
+        t2 = datetime.datetime(year=1980,month=12,day=31,hour=0,minute=0,second=0)
+
+         # Find the index of the input data array for required dates
+         # Will use this to manipulate the input data in sensitivity experiments  
+        idx0 = int(nc.date2index(t1, tm1, calendar="proleptic_gregorian", select='nearest'))
+        idx1 = int(nc.date2index(t2, tm1, calendar="proleptic_gregorian", select='nearest'))
+
+        # Supondo que 'target_date' seja a data que você deseja converter para um índice
+        target_date = cftime.real_datetime(2000, 1, 1)  # Substitua isso pela data real
+
+        # Usa cftime.date2num para converter a data em um índice
+        target_index = int(cftime.date2num(target_date, units=self.time_unit, calendar=self.calendar))
+
+       
         # Catch climatic input and make conversions
-        temp = self.tas[lb: hb + 1] - 273.15  # ! K to °C
-        prec = self.pr[lb: hb + 1] * 86400  # kg m-2 s-1 to  mm/day
+        temp = (self.tas[lb: hb + 1] - 273.15) # ! K to °C
+        prec = (self.pr[lb: hb + 1] * 86400)  # kg m-2 s-1 to  mm/day
         # transforamando de Pascal pra mbar (hPa)
-        p_atm = self.ps[lb: hb + 1] * 0.01
+        p_atm = (self.ps[lb: hb + 1] * 0.01)
         # W m-2 to mol m-2 s-1 ! 0.5 converts RSDS to PAR
-        ipar = self.rsds[lb: hb + 1] * 0.5 / 2.18e5
+        ipar = (self.rsds[lb: hb + 1] * 0.5 / 2.18e5)
         ru = self.rhs[lb: hb + 1] / 100.0
+        
+        # Supondo que 'target_year' seja o ano específico que você deseja imprimir
+        target_year = 2005  # Substitua isso pelo ano real
+
+        # Supondo que 'prec' seja o array que armazena os valores de precipitação
+        # Usa cftime.date2num para obter o índice correspondente ao início do ano
+        target_index_start = int(cftime.date2num(cftime.real_datetime(target_year, 1, 1), units=self.time_unit, calendar=self.calendar))
+
+        # Usa cftime.date2num para obter o índice correspondente ao final do ano
+        target_index_end = int(cftime.date2num(cftime.real_datetime(target_year, 12, 31), units=self.time_unit, calendar=self.calendar))
+
+        # Itera por todos os dias do ano e imprime os valores de prec
+        # for day_index in range(target_index_start, target_index_end + 1):
+            # print("Data: {}, Precipitação: {}".format(cftime.num2date(day_index, units=self.time_unit, calendar=self.calendar), prec[day_index]))
+       
+
+        # Supondo que 'prec' seja o array que armazena os valores de precipitação
+        # Usa cftime.date2num para obter o índice correspondente ao início do ano
+        target_index_start = int(cftime.date2num(cftime.real_datetime(target_year, 1, 1), units=self.time_unit, calendar=self.calendar))
+        
+        # Usa cftime.date2num para obter o índice correspondente ao final do ano
+        target_index_end = int(cftime.date2num(cftime.real_datetime(target_year, 12, 31), units=self.time_unit, calendar=self.calendar))
+
+        # Multiplica por 0.5 os valores correspondentes ao ano alvo
+        prec[target_index_start:target_index_end + 1] *= 0.01
+        # Itera por todos os dias do ano e imprime os valores de prec
+        # print(prec)
+        
+            # print("Data: {}, Precipitação: {}".format(cftime.num2date(day_index, units=self.time_unit, calendar=self.calendar), prec[day_index]))
+        # print("Precipitação para o ano {}: {}".format(target_year, prec[target_index_start:target_index_end + 1]))
+        
 
         year0 = start.year
         co2 = find_co2(year0)
@@ -1792,6 +1865,7 @@ class grd:
         end_index = int(cftime.date2num(end, self.time_unit, self.calendar))
 
         lb, hb = find_index(start_index, end_index)
+        
         steps = np.arange(lb, hb + 1)
         day_indexes = np.arange(start_index, end_index + 1)
 

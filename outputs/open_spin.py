@@ -143,6 +143,9 @@ plt.plot(dt['rg'])
 plt.title('rg')  # Adicione um título para o gráfico npp
 plt.show()
 
+plt.plot(dt['area'])
+plt.title('Gráfico de Area')  # Adicione um título para o gráfico cleaf
+plt.show()
 
 plt.plot(dt['cleaf'])
 plt.title('Gráfico de Cleaf')  # Adicione um título para o gráfico cleaf

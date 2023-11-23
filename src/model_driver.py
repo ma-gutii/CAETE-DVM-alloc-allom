@@ -364,6 +364,9 @@ def zip_gridtime(grd_pool, interval):
 
 def apply_funX(grid:grd, brk:list, allometry = allom)->grd:
     if allom:
+        # if brk[0] == '20150101':
+        #     print('BREAK 2015',brk[0])
+        #     grid.pr *= 0.5
         grid.run_caete_allom(brk[0], brk[1], nutri_cycle=False)
     else:
         grid.run_caete(brk[0], brk[1])

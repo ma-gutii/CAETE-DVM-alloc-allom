@@ -3,7 +3,7 @@ import pandas as pd
 import re
 
 
-run_name = "tresmil"#input("What is the run name? ")
+run_name = "t1_231123"#input("What is the run name? ")
 grd_name = "175-235"#input("The grid cell?lat-long ")
 path_csv = f"/home/bianca/bianca/CAETE-DVM-alloc-allom/outputs/{run_name}/gridcell{grd_name}/csv"
 start_year = "1979" #input("what is the start year? ")

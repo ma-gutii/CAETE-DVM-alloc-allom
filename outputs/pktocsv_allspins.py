@@ -29,7 +29,7 @@ def pkz2csv(file, path, grd_name, spin_id, date_range) -> pd.DataFrame:
     idxT1 = pd.date_range(date_range[0], date_range[1], freq='D')
 
     fname = f"{run_name}_spin{spin_id:02d}"
-    folder_path = f"./{fname}"
+    folder_path = f"./csv/{fname}"
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
