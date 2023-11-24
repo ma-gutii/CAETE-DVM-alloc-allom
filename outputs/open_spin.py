@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 
 # Get user input for the run name
 run_name = input('run name: ')
+# Get user input for the spin
+spin = input('which spin?')
+
 
 # Set the path to the data directory
 path = '/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{}/gridcell175-235'.format(run_name)
@@ -16,8 +19,7 @@ contents = os.listdir()
 for item in contents:
     print(item)
 
-# Get user input for the spin
-spin = input('which spin?')
+
 
 # Load data for the specified spin
 with open("spin{}.pkz".format(spin), 'rb') as fh:
@@ -44,7 +46,7 @@ for i, key in enumerate(variables_to_plot):
 plt.tight_layout()
 
 # Save the plot as a PNG file
-plt.savefig('subplots_{}.png'.format(run_name))
+plt.savefig('subplots_{}_{}.png'.format(run_name, spin))
 
 # Display the subplots
 plt.show()

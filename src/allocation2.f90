@@ -759,35 +759,35 @@ module alloc2
         real(r_8) :: heart_turnover
 
         !!Fixed turnover
-        ! leaf_turn = leaf_in_ind*l_tmurnover 
-        ! root_turn = root_in_ind*r_turnover
-        ! sap_turn = sap_in_ind*s_turnover
+        leaf_turn = leaf_in_ind*l_turnover 
+        root_turn = root_in_ind*r_turnover
+        sap_turn = sap_in_ind*s_turnover
 
-        ! sto_turn = sto_in_ind*sto_turnover
+        sto_turn = sto_in_ind*sto_turnover
 
         ! !heartwood incorporates the dead tissue from sapwood
-        ! heart_turn = (heart_in_ind*h_turnover) + sap_turn
+        heart_turn = (heart_in_ind*h_turnover) + sap_turn
 
         !Variant turnover
-        leaf_turnover = dt(3)
-        root_turnover = dt(5)
-        heart_turnover = dt(4)
-        sap_turnover  = dt(20)
+        ! leaf_turnover = dt(3)
+        ! root_turnover = dt(5)
+        ! heart_turnover = dt(4)
+        ! sap_turnover  = dt(20)
         
         ! print*,'sap turnover', sap_turnover
 
-        leaf_turn = leaf_in_ind/leaf_turnover
+        ! leaf_turn = leaf_in_ind/leaf_turnover
 
-        root_turn = root_in_ind/root_turnover
+        ! root_turn = root_in_ind/root_turnover
 
-        sap_turn = sap_in_ind/sap_turnover
+        ! sap_turn = sap_in_ind/sap_turnover
         
         !heartwood incorporates the dead tissue from sapwood
-        heart_turn = (heart_in_ind/heart_turnover) + sap_turn
+        ! heart_turn = (heart_in_ind/heart_turnover) + sap_turn
         ! heart_turn = (heart_in_ind*h_turnover) + sap_turn
 
         
-        sto_turn = sto_in_ind*sto_turnover
+        ! sto_turn = sto_in_ind*sto_turnover
 
        
         

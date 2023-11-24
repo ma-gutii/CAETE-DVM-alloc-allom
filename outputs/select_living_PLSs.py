@@ -3,9 +3,9 @@ import pandas as pd
 import re
 
 
-run_name = "t1_231123"#input("What is the run name? ")
+run_name = input("What is the run name? ")
 grd_name = "175-235"#input("The grid cell?lat-long ")
-path_csv = f"/home/bianca/bianca/CAETE-DVM-alloc-allom/outputs/{run_name}/gridcell{grd_name}/csv"
+path_csv = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{run_name}/gridcell{grd_name}/csv"
 start_year = "1979" #input("what is the start year? ")
 end_year = "2017" #input("what is the start year? + 1")
 start_year = int(start_year)
@@ -79,7 +79,7 @@ print("Your file has been created! Find it in:", path_csv)
 
 #Now get the trait values from attrs (without considering the occupation)
 # Read file with all pls traits
-pls_traits = pd.read_csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/outputs/pls_attrs-3000.csv")
+pls_traits = pd.read_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/pls_attrs-3000.csv")
 
 # Get the PIDs, that is, the alive PLSs
 pids_to_select = final_merged_df['PID'].unique()
