@@ -27,10 +27,10 @@ with open("spin{}.pkz".format(spin), 'rb') as fh:
 print(dt.keys())  # List the available keys for the outputs
 
 # Specify the variables to be plotted
-variables_to_plot = ['emaxm', 'tsoil', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto', 'npp', 'photo', 'ar', 'ep', 'ev', 'lai', 'rm', 'rg']
+variables_to_plot = ['emaxm', 'tsoil', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto', 'npp', 'photo', 'ar', 'ep', 'ev', 'lai', 'rm', 'rg', 'ls']
 
 # Plot the specified variables in a 4x4 grid
-fig, axs = plt.subplots(nrows=4, ncols=4, figsize=(16, 16))
+fig, axs = plt.subplots(nrows=5, ncols=4, figsize=(20, 16))
 
 for i, key in enumerate(variables_to_plot):
     values = dt[key]

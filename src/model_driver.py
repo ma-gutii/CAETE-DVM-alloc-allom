@@ -217,6 +217,7 @@ if sombrero:
         rbrk_index = 0
         # save the attributes table to the HISTORICAL OBSERVED RUN - It will be used in all other experiments
         pls_table = pls.table_gen(npls, dump_folder)
+       
 
     else:
         clim_and_soil_data = Path(os.path.join(model_root, Path("historical")))
@@ -283,8 +284,15 @@ else:
                        f"{stime['calendar']}\n",
                        f"historical-ISIMIP2b-TEST-{folder}\n",
                        f"{rbrk_index}\n"])
+    
     # FUNCTIONAL TRAITS DATA
-    pls_table = pls.table_gen(npls, dump_folder)
+    # pls_table = pls.table_gen(npls, dump_folder)
+    from parameters import pls_path, ATTR_FILENAME
+    if pls_path.exists():
+        from caete_utils import read_pls_table
+        print("Using PLS TABLE from BASE_RUN")
+        os.makedirs(dump_folder, exist_ok=True)
+        pls_table = read_pls_table(out=Path(os.path.join(dump_folder, ATTR_FILENAME)))
 
 
 # # Create the gridcell objects

@@ -572,6 +572,8 @@ class grd:
         self.rg_allom     = np.zeros(shape=(n,), order='F')
         self.area_allom = np.zeros(shape=(npls, n), order='F')
 
+        self.ls = np.zeros(shape=(n,), order='F')
+
     def _flush_output(self, run_descr, index):
         """1 - Clean variables that receive outputs from the fortran subroutines
            2 - Fill self.outputs dict with filepaths of output data
@@ -717,7 +719,8 @@ class grd:
                      'lai'   : self.lai_allom,    
                      'rm'    : self.rm_allom,      
                      'rg'    : self.rg_allom,
-                     'area'  : self.area_allom,  
+                     'area'  : self.area_allom,
+                     'ls': self.ls,  
                      'calendar': self.calendar,
                      'time_unit': self.time_unit,   # Time unit
                      'sind': index[0],
@@ -741,7 +744,8 @@ class grd:
         self.lai_allom    = None
         self.rm_allom     = None 
         self.rg_allom     = None
-        self.area_allom   = None    
+        self.area_allom   = None
+        self.ls           = None    
        
         return to_pickle
 
