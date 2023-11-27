@@ -252,7 +252,6 @@ def write_daily_output_allom(arr, var, var_attrs, time_index, nc_out):
     t0 = cf_date2str(cftime.num2date(time_index[0], time_units, calendar))
     tf = cf_date2str(cftime.num2date(time_index[-1], time_units, calendar))
 
-    print('HEREEEEEEEEEEEEEEEEEEEEEEEEEEEE')
     print("\nSaving netCDF4 files - allometry version")
     print_progress(0, len(var), prefix='Progress:', suffix='Complete')
 

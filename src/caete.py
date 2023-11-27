@@ -1523,6 +1523,7 @@ class grd:
             start_date[4:6]), int(start_date[6:]))
         end = cftime.real_datetime(int(end_date[:4]), int(
             end_date[4:6]), int(end_date[6:]))
+
         # Check dates sanity
         assert start < end, "start > end"
         assert start >= self.start_date
@@ -1538,14 +1539,7 @@ class grd:
         day_indexes = np.arange(start_index, end_index + 1)
         spin = 1 if spinup == 0 else spinup
 
-        # Suponha que 'target_date' seja a data específica para a qual você deseja multiplicar por 0.5
-        target_date = cftime.real_datetime(2000,1, 1)  # Substitua isso pela data real
-
-        # Usa cftime.date2num para obter o índice correspondente à data
-        target_index = int(cftime.date2num(target_date, units=self.time_unit, calendar=self.calendar))
-        
-
-        
+ 
         # Catch climatic input and make conversions
         temp = self.tas[lb: hb + 1] - 273.15  # ! K to °C
         prec = self.pr[lb: hb + 1] * 86400  # kg m-2 s-1 to  mm/day
@@ -1555,7 +1549,7 @@ class grd:
         ipar = self.rsds[lb: hb + 1] * 0.5 / 2.18e5
         ru = self.rhs[lb: hb + 1] / 100.0
 
-        # if lb>= 35794:
+        # # if lb>= i1:
         #     print('========TARGET INDEX===========', lb)
         # prec = (self.pr[35794: 41638 + 1] * 86400)/10000  # kg m-2 s-1 to  mm/day
 
