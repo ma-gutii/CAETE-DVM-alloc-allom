@@ -1557,7 +1557,7 @@ class grd:
 
         # if lb>= 35794:
         #     print('========TARGET INDEX===========', lb)
-        prec = (self.pr[35794: 41638 + 1] * 86400)/10000  # kg m-2 s-1 to  mm/day
+        # prec = (self.pr[35794: 41638 + 1] * 86400)/10000  # kg m-2 s-1 to  mm/day
 
         year0 = start.year
         co2 = find_co2(year0)
