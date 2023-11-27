@@ -4,7 +4,7 @@ import os
 import pandas as pd
 
 run_name = input('run name: ')
-path = '/home/bianca/bianca/CAETE-DVM-alloc-allom/outputs/{}/gridcell175-235'.format(run_name)
+path = '/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{}/gridcell175-235'.format(run_name)
 
 # Navegue para a pasta
 os.chdir(path)

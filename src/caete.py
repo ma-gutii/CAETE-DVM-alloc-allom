@@ -1543,7 +1543,7 @@ class grd:
 
         # Usa cftime.date2num para obter o índice correspondente à data
         target_index = int(cftime.date2num(target_date, units=self.time_unit, calendar=self.calendar))
-        print('target_index', target_index)
+        
 
         
         # Catch climatic input and make conversions
@@ -1554,6 +1554,10 @@ class grd:
         # W m-2 to mol m-2 s-1 ! 0.5 converts RSDS to PAR
         ipar = self.rsds[lb: hb + 1] * 0.5 / 2.18e5
         ru = self.rhs[lb: hb + 1] / 100.0
+
+        # if lb>= 35794:
+        #     print('========TARGET INDEX===========', lb)
+        prec = (self.pr[35794: 41638 + 1] * 86400)/10000  # kg m-2 s-1 to  mm/day
 
         year0 = start.year
         co2 = find_co2(year0)
