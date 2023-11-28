@@ -423,7 +423,7 @@ def table_gen(NPLS, fpath=None):
     pdia = np.random.uniform(0.01, 0.10, NPLS)
     np.place(pdia, test, 0.0)
     woods = np.where(alloc[:, 4] > 0.0)[0]
-    # return woods
+    # return woods 
 
     for i in woods:
         if np.random.normal() > 0:
