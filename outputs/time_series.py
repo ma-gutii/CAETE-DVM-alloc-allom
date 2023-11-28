@@ -49,6 +49,7 @@ os.chdir(f'{main_path}outputs/{run_name}/gridcell175-235/')
 
 # Initialize lists to store all time series, dates, and spins
 all_series = []
+all_series_ls = []
 all_dates = []
 all_spins = []
 
@@ -81,15 +82,18 @@ for spin, (start_date, end_date) in enumerate(run_breaks_hist, start=1):
 
     # Get the NPP time series for the current spin and its dates
     npp_series = dt.get('npp', [])
+    ls_series  = dt.get('ls', [])
     date_index = pd.date_range(start=start_date, end=end_date, freq='D')
 
     # Add the time series, dates, and spin number to the lists
     all_series.extend(npp_series)
+    all_series_ls.extend(ls_series)
+
     all_dates.extend(date_index)
     all_spins.extend([spin] * len(date_index))
 
 # Create a DataFrame with time series, dates, and spin numbers
-df = pd.DataFrame({'Spin': all_spins, 'Date': all_dates, 'NPP': all_series})
+df = pd.DataFrame({'Spin': all_spins, 'Date': all_dates, 'NPP': all_series, 'ls': all_series_ls})
 
 # Save the DataFrame to a CSV file
 df.to_csv('concatenated_series_all_spins.csv', index=False)
@@ -105,6 +109,12 @@ plt.plot(df['Date'], df['NPP'])
 plt.xlabel('Date')
 plt.ylabel('NPP')
 plt.title('Time Series of NPP')
+
+# Plot the time series for 'NPP' against the 'Date' column
+plt.plot(df['Date'], df['ls'])
+plt.xlabel('Date')
+plt.ylabel('ls')
+plt.title('Time Series of ls')
 
 # Save the plot as an image
 plt.savefig(os.path.join(f'{main_path}/outputs/{run_name}/gridcell175-235/', f'timeseries_{run_name}.png'))
