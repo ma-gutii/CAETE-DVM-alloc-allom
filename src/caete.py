@@ -1042,7 +1042,7 @@ class grd:
    
         # Catch climatic input and make conversions
         temp = self.tas[lb: hb + 1] - 273.15  # ! K to °C
-        prec = (self.pr[lb: hb + 1] * 86400)/2  # kg m-2 s-1 to  mm/day
+        prec = self.pr[lb: hb + 1] * 86400  # kg m-2 s-1 to  mm/day
         # transforamando de Pascal pra mbar (hPa)
         p_atm = self.ps[lb: hb + 1] * 0.01
         # W m-2 to mol m-2 s-1 ! 0.5 converts RSDS to PAR
@@ -1546,8 +1546,8 @@ class grd:
         day_indexes = np.arange(start_index, end_index + 1)
         spin = 1 if spinup == 0 else spinup
 
-        interest_date1 = '20001101'
-        interest_date2 = '20141231'
+        interest_date1 = start
+        interest_date2 = end 
 
         ti1 = cftime.real_datetime(int(interest_date1[:4]), int(
             interest_date1[4:6]), int(interest_date1[6:]))
@@ -1559,10 +1559,15 @@ class grd:
             ti1, self.time_unit, self.calendar))
         ti2_index = int(cftime.date2num(ti2, self.time_unit, self.calendar))
         
-        t1, t2 = find_index(ti1_index, ti2_index)
+        t1, t2 = find_index(ti1_index, ti2_index + 3 * 365)
 
-        print(start, end, start_index, end_index )
-        print(ti1, ti2, ti1_index, ti2_index )
+        # print(start, end, start_index, end_index )
+        # print(ti1, ti2, ti1_index, ti2_index )
+
+        data_t1 = cftime.num2date(t1, self.time_unit, self.calendar)
+        data_t2 = cftime.num2date(t2, self.time_unit, self.calendar)
+
+        print('data t1: ', data_t1, 'data t2: ',data_t2 )
 
 
         # Catch climatic input and make conversions
@@ -1574,10 +1579,10 @@ class grd:
         ipar = self.rsds[lb: hb + 1] * 0.5 / 2.18e5
         ru = self.rhs[lb: hb + 1] / 100.0
 
-        if lb >= t1:
-            print('t1 lb', t1, lb)
-            prec = (self.pr[lb: hb + 1] * 86400)/1000000
-            ipar = (self.rsds[lb: hb + 1] * 0.5 / 2.18e5)/10
+        # if lb >= t1:
+        #     print('t1 lb', t1, lb)
+        #     prec = (self.pr[lb: hb + 1] * 86400)/1000000
+        #     ipar = (self.rsds[lb: hb + 1] * 0.5 / 2.18e5)/10
 
         year0 = start.year
         co2 = find_co2(year0)
@@ -1826,7 +1831,7 @@ class grd:
 
         # Catch climatic input and make conversions
         temp = self.tas[lb: hb + 1] - 273.15  # ! K to °C
-        prec = (self.pr[lb: hb + 1] * 86400)/2 # kg m-2 s-1 to  mm/day
+        prec = self.pr[lb: hb + 1] * 86400 # kg m-2 s-1 to  mm/day
         # transforamando de Pascal pra mbar (hPa)
         p_atm = self.ps[lb: hb + 1] * 0.01
         # W m-2 to mol m-2 s-1 ! 0.5 converts RSDS to PAR
