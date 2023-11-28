@@ -12,7 +12,7 @@ src/RUN*
 outputs/*
 !outputs/*.py
 !outputs/*.csv
-!outputs/base_run
+!outputs/base_run/
 outputs/base_run/gridcell175-235/csv/*csv
 
 
