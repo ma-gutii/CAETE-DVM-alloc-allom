@@ -1546,29 +1546,24 @@ class grd:
         day_indexes = np.arange(start_index, end_index + 1)
         spin = 1 if spinup == 0 else spinup
 
-        # interest_date1 = start
-        # interest_date2 = end 
+        interest_date1 = '19790101'
+        interest_date2 = '20161231' 
 
-        # ti1 = cftime.real_datetime(int(interest_date1[:4]), int(
-        #     interest_date1[4:6]), int(interest_date1[6:]))
-        # ti2 = cftime.real_datetime(int(interest_date2[:4]), int(
-        #     interest_date2[4:6]), int(interest_date2[6:]))
+        ti1 = cftime.real_datetime(int(interest_date1[:4]), int(
+            interest_date1[4:6]), int(interest_date1[6:]))
+        ti2 = cftime.real_datetime(int(interest_date2[:4]), int(
+            interest_date2[4:6]), int(interest_date2[6:]))
 
-        # # Define time index
-        # ti1_index = int(cftime.date2num(
-        #     ti1, self.time_unit, self.calendar))
-        # ti2_index = int(cftime.date2num(ti2, self.time_unit, self.calendar))
+        # Define time index
+        ti1_index = int(cftime.date2num(
+            ti1, self.time_unit, self.calendar))
+        ti2_index = int(cftime.date2num(ti2, self.time_unit, self.calendar))
         
-        # t1, t2 = find_index(ti1_index, ti2_index + 3 * 365)
+        t1, t2 = find_index(ti1_index, ti2_index)
 
-        # # print(start, end, start_index, end_index )
-        # # print(ti1, ti2, ti1_index, ti2_index )
-
-        # data_t1 = cftime.num2date(t1, self.time_unit, self.calendar)
-        # data_t2 = cftime.num2date(t2, self.time_unit, self.calendar)
-
-        # print('data t1: ', data_t1, 'data t2: ',data_t2 )
-
+        # print(start, end, start_index, end_index )
+        print(t1, t2, lb, hb )
+      
 
         # Catch climatic input and make conversions
         temp = self.tas[lb: hb + 1] - 273.15  # ! K to °C
@@ -1579,10 +1574,22 @@ class grd:
         ipar = self.rsds[lb: hb + 1] * 0.5 / 2.18e5
         ru = self.rhs[lb: hb + 1] / 100.0
 
-        # if lb >= t1:
-        #     print('t1 lb', t1, lb)
-        #     prec = (self.pr[lb: hb + 1] * 86400)/1000000
-        #     ipar = (self.rsds[lb: hb + 1] * 0.5 / 2.18e5)/10
+                # Iterate a cada 3 anos dentro do intervalo
+        for year in range(ti1.year, ti2.year + 1, 3):
+            current_date = cftime.real_datetime(year, ti1.month, ti1.day)
+            current_index = int(cftime.date2num(current_date, self.time_unit, self.calendar))
+            print('current date', current_date, 'current index', current_index, lb)
+    # # Se a data estiver dentro do intervalo desejado
+    #         # if ti1_index <= current_index <= ti2_index:
+    #             # print('Ano:', current_date.year, 'Índice:', current_index)
+    #     if lb >= current_index:
+    #             print('Ano:', current_date.year, 'Índice:', current_index, 'lb', lb)
+
+
+    #     if lb >= t1:
+    #         print('t1 lb', t1, lb)
+            # prec = (self.pr[lb: hb + 1] * 86400)/1000000
+            # ipar = (self.rsds[lb: hb + 1] * 0.5 / 2.18e5)/10
 
         year0 = start.year
         co2 = find_co2(year0)
