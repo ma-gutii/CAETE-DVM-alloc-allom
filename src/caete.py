@@ -1528,9 +1528,6 @@ class grd:
         end = cftime.real_datetime(int(end_date[:4]), int(
             end_date[4:6]), int(end_date[6:]))
 
-        
-        # print('START', start, 'END', end, start_date)
-
         # Check dates sanity
         assert start < end, "start > end"
         assert start >= self.start_date
@@ -1546,7 +1543,18 @@ class grd:
         day_indexes = np.arange(start_index, end_index + 1)
         spin = 1 if spinup == 0 else spinup
 
-        print('lb', lb, steps.size)
+        
+        # Catch climatic input and make conversions
+        temp = self.tas[lb: hb + 1] - 273.15  # ! K to °C
+        prec = self.pr[lb: hb + 1] * 86400 # kg m-2 s-1 to  mm/day
+        # transforamando de Pascal pra mbar (hPa)
+        p_atm = self.ps[lb: hb + 1] * 0.01
+        # W m-2 to mol m-2 s-1 ! 0.5 converts RSDS to PAR
+        ipar = self.rsds[lb: hb + 1] * 0.5 / 2.18e5
+        ru = self.rhs[lb: hb + 1] / 100.0
+
+#============================================================================
+        #Finding index to change precipitation in virtual experiment
         interest_date1 = '19790101'
         interest_date2 = '20161231' 
 
@@ -1564,17 +1572,6 @@ class grd:
 
         # print(start, end, start_index, end_index )
         # print(t1, t2, lb, hb )
-      
-
-        # Catch climatic input and make conversions
-        temp = self.tas[lb: hb + 1] - 273.15  # ! K to °C
-        prec = self.pr[lb: hb + 1] * 86400 # kg m-2 s-1 to  mm/day
-        # transforamando de Pascal pra mbar (hPa)
-        p_atm = self.ps[lb: hb + 1] * 0.01
-        # W m-2 to mol m-2 s-1 ! 0.5 converts RSDS to PAR
-        ipar = self.rsds[lb: hb + 1] * 0.5 / 2.18e5
-        ru = self.rhs[lb: hb + 1] / 100.0
-
                 # Iterate a cada 3 anos dentro do intervalo
         for year in range(ti1.year, ti2.year + 1, 3):
             # print('year', year)
@@ -1595,12 +1592,16 @@ class grd:
             # prec = (self.pr[lb: hb + 1] * 86400)/1000000
             # ipar = (self.rsds[lb: hb + 1] * 0.5 / 2.18e5)/10
 
+#============================================================================
+
+
         year0 = start.year
         co2 = find_co2(year0)
         count_days = start.dayofyr - 2
         loop = 0
         next_year = 0.0
 
+        fix_co2_p = False
         if fix_co2 is None:
             fix_co2_p = False
         elif type(fix_co2) == int or type(fix_co2) == float:
@@ -1627,10 +1628,7 @@ class grd:
                 self.save = False
 
             for step in range(steps.size): #make the loop for the size of array (number of years to be simulated)
-                # if step == 2:
-                    # break
-                # print('STEP', step)
-                #both
+              
                 if fix_co2_p:
                     pass
                 else:
@@ -1658,7 +1656,7 @@ class grd:
                 self.soil_temp = st.soil_temp(self.soil_temp, temp[step])
 
                 #Inflate Vars
-                    #Initialize with zero to be fullfilled with data when the running occurs
+                #Initialize with zero to be fullfilled with data when the running occurs
 
                 cleaf_allom  = np.zeros(npls, order='F')
                 croot_allom  = np.zeros(npls, order='F')
@@ -1705,11 +1703,9 @@ class grd:
                     dch_allom[n]   = self.vp_dch_allom[c]
                     dcst_allom[n]  = self.vp_dcst_allom[c]
 
-
                     c += 1
 
-
-
+                #call budget
                 out_allom = model_allom.daily_budget_allom(step, self.pls_table, self.wp_water_upper_mm, self.wp_water_lower_mm, self.wmax_mm,
                                                      self.soil_temp, temp[step], p_atm[step], ipar[step], ru[step],co2,
                                                      cleaf_allom, cwood_allom, croot_allom,  csap_allom, cheart_allom, csto_allom, 
@@ -1722,28 +1718,33 @@ class grd:
                 self.vp_ocp_allom = daily_output_allom['ocpavg'][self.vp_lsid]
                 self.ls[step] = self.vp_lsid.size
 
-                                #when there is no living PLSs ABORT
-                if self.vp_lsid.size < 1:
-                    ABORT = 1
-                    rwarn(f"Gridcell {self.xyname} has"  + \
-                           " no living Plant Life Strategies")
+                if self.vp_lsid.size < 1 and not save:
 
-                #when there is living PLS
+                    print('no living PLS and not save')
                 
-                #Update vegetation pools
-                self.vp_cleaf_allom  = daily_output_allom['dly_cleaf'][self.vp_lsid]
-                self.vp_cwood_allom  = daily_output_allom['dly_cwood'][self.vp_lsid]
-                self.vp_croot_allom  = daily_output_allom['dly_croot'][self.vp_lsid]
-                self.vp_csap_allom   = daily_output_allom['dly_csap'][self.vp_lsid]
-                self.vp_cheart_allom = daily_output_allom['dly_cheart'][self.vp_lsid]
-                self.vp_csto_allom   = daily_output_allom['dly_csto'][self.vp_lsid]
+                else:
+                    #when there is no living PLSs ABORT
+                    if self.vp_lsid.size < 1:
+                        ABORT = 1
+                        rwarn(f"Gridcell {self.xyname} has"  + \
+                               " no living Plant Life Strategies")
 
-                self.vp_dcl_allom    = daily_output_allom['dly_dleaf'][self.vp_lsid]
-                # self.vp_dcw_allom    = daily_output_allom['dly_dwood'][self.vp_lsid]
-                self.vp_dcr_allom    = daily_output_allom['dly_droot'][self.vp_lsid]
-                self.vp_dcs_allom    = daily_output_allom['dly_dsap'][self.vp_lsid]
-                # self.vp_dch_allom    = daily_output_allom['dly_dheart'][self.vp_lsid]
-                # self.vp_dcst_allom   = daily_output_allom['dly_dsto'][self.vp_lsid]
+                    #when there is living PLS
+
+                    #Update vegetation pools
+                    self.vp_cleaf_allom  = daily_output_allom['dly_cleaf'][self.vp_lsid]
+                    self.vp_cwood_allom  = daily_output_allom['dly_cwood'][self.vp_lsid]
+                    self.vp_croot_allom  = daily_output_allom['dly_croot'][self.vp_lsid]
+                    self.vp_csap_allom   = daily_output_allom['dly_csap'][self.vp_lsid]
+                    self.vp_cheart_allom = daily_output_allom['dly_cheart'][self.vp_lsid]
+                    self.vp_csto_allom   = daily_output_allom['dly_csto'][self.vp_lsid]
+
+                    self.vp_dcl_allom    = daily_output_allom['dly_dleaf'][self.vp_lsid]
+                    # self.vp_dcw_allom    = daily_output_allom['dly_dwood'][self.vp_lsid]
+                    self.vp_dcr_allom    = daily_output_allom['dly_droot'][self.vp_lsid]
+                    self.vp_dcs_allom    = daily_output_allom['dly_dsap'][self.vp_lsid]
+                    # self.vp_dch_allom    = daily_output_allom['dly_dheart'][self.vp_lsid]
+                    # self.vp_dcst_allom   = daily_output_allom['dly_dsto'][self.vp_lsid]
 
 
                 if save:
