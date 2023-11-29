@@ -1719,9 +1719,45 @@ class grd:
                 self.ls[step] = self.vp_lsid.size
 
                 if self.vp_lsid.size < 1 and not save:
-
+                    self.vp_lsid = np.sort(
+                        np.array(
+                            rd.sample(list(np.arange(gp.npls)), int(gp.npls - 5))))
+                    rwarn(
+                        f"Gridcell {self.xyname} has no living Plant Life Strategies - Re-populating")
                     print('no living PLS and not save')
-                
+
+                    # REPOPULATE
+                    # UPDATE vegetation pools
+                    self.vp_cleaf_allom = np.zeros(shape=(npls,), order='F') + 1.0
+                    self.vp_croot_allom = np.zeros(shape=(npls,), order='F') + 0.8
+                    self.vp_csto_allom = np.zeros(shape=(npls,), order='F') + 15.0
+                    
+                    #wood tissues = 0 when grass
+                    self.vp_cheart_allom = np.zeros(shape=(npls,), order='F')
+                    self.vp_csap_allom = np.zeros(shape=(npls,), order='F')
+                    self.vp_cwood_allom = np.zeros(shape=(npls,), order='F')
+
+
+                    #identify if no grass
+                    awood = self.pls_table[6, :]
+                    for i0, i in enumerate(self.vp_lsid):
+                        if awood[i] > 0.0:
+                            self.vp_cheart_allom = np.zeros(shape=(npls,), order='F')+ 80.#0.85*(self.vp_cwood_allom)
+                            self.vp_csap_allom = np.zeros(shape=(npls,), order='F') + 20. #0.15*(self.vp_cwood_allom)
+                            self.vp_cwood_allom = np.zeros(shape=(npls,), order='F') + self.vp_csap_allom + self.vp_cheart_allom
+                            self.vp_dcl_allom = np.zeros(shape=(npls,), order='F')
+
+                    self.vp_dcw_allom = np.zeros(shape=(self.vp_lsid.size,))
+                    self.vp_dcr_allom = np.zeros(shape=(self.vp_lsid.size,))
+                    self.vp_dcs_allom = np.zeros(shape=(self.vp_lsid.size,))
+                    self.vp_dch_allom = np.zeros(shape=(self.vp_lsid.size,))
+                    self.vp_dcst_allom = np.zeros(shape=(self.vp_lsid.size,))
+
+                    self.vp_ocp_allom = np.zeros(shape=(self.vp_lsid.size,))
+                    del awood
+                    self.ls[step] = self.vp_lsid.size
+
+                #when save is true
                 else:
                     #when there is no living PLSs ABORT
                     if self.vp_lsid.size < 1:
@@ -1730,7 +1766,6 @@ class grd:
                                " no living Plant Life Strategies")
 
                     #when there is living PLS
-
                     #Update vegetation pools
                     self.vp_cleaf_allom  = daily_output_allom['dly_cleaf'][self.vp_lsid]
                     self.vp_cwood_allom  = daily_output_allom['dly_cwood'][self.vp_lsid]
