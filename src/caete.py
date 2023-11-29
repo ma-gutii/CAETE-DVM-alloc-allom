@@ -1529,7 +1529,7 @@ class grd:
             end_date[4:6]), int(end_date[6:]))
 
         
-        print('START', start, 'END', end, start_date)
+        # print('START', start, 'END', end, start_date)
 
         # Check dates sanity
         assert start < end, "start > end"
@@ -1546,6 +1546,7 @@ class grd:
         day_indexes = np.arange(start_index, end_index + 1)
         spin = 1 if spinup == 0 else spinup
 
+        print('lb', lb, steps.size)
         interest_date1 = '19790101'
         interest_date2 = '20161231' 
 
@@ -1553,7 +1554,7 @@ class grd:
             interest_date1[4:6]), int(interest_date1[6:]))
         ti2 = cftime.real_datetime(int(interest_date2[:4]), int(
             interest_date2[4:6]), int(interest_date2[6:]))
-
+        
         # Define time index
         ti1_index = int(cftime.date2num(
             ti1, self.time_unit, self.calendar))
@@ -1562,7 +1563,7 @@ class grd:
         t1, t2 = find_index(ti1_index, ti2_index)
 
         # print(start, end, start_index, end_index )
-        print(t1, t2, lb, hb )
+        # print(t1, t2, lb, hb )
       
 
         # Catch climatic input and make conversions
@@ -1576,9 +1577,12 @@ class grd:
 
                 # Iterate a cada 3 anos dentro do intervalo
         for year in range(ti1.year, ti2.year + 1, 3):
+            # print('year', year)
             current_date = cftime.real_datetime(year, ti1.month, ti1.day)
-            current_index = int(cftime.date2num(current_date, self.time_unit, self.calendar))
-            print('current date', current_date, 'current index', current_index, lb)
+            ti1_index = int(cftime.date2num(current_date, self.time_unit, self.calendar))
+            t1 = find_index(ti1_index, ti1_index)[0]
+            
+            # print('t1', t1, 'lb', lb, 'current date', current_date)
     # # Se a data estiver dentro do intervalo desejado
     #         # if ti1_index <= current_index <= ti2_index:
     #             # print('Ano:', current_date.year, 'Índice:', current_index)
