@@ -1545,7 +1545,7 @@ class grd:
 
         
         # Catch climatic input and make conversions
-        temp = self.tas[lb: hb + 1] - 273.15  # ! K to °C
+        temp = self.tas[lb: hb + 1] - 273.15    # ! K to °C
         prec = self.pr[lb: hb + 1] * 86400 # kg m-2 s-1 to  mm/day
         # transforamando de Pascal pra mbar (hPa)
         p_atm = self.ps[lb: hb + 1] * 0.01
