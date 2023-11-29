@@ -1775,12 +1775,22 @@ class grd:
                     self.vp_csto_allom   = daily_output_allom['dly_csto'][self.vp_lsid]
 
                     self.vp_dcl_allom    = daily_output_allom['dly_dleaf'][self.vp_lsid]
-                    # self.vp_dcw_allom    = daily_output_allom['dly_dwood'][self.vp_lsid]
+                    self.vp_dcw_allom    = daily_output_allom['dly_dwood'][self.vp_lsid]
                     self.vp_dcr_allom    = daily_output_allom['dly_droot'][self.vp_lsid]
                     self.vp_dcs_allom    = daily_output_allom['dly_dsap'][self.vp_lsid]
-                    # self.vp_dch_allom    = daily_output_allom['dly_dheart'][self.vp_lsid]
-                    # self.vp_dcst_allom   = daily_output_allom['dly_dsto'][self.vp_lsid]
+                    self.vp_dch_allom    = daily_output_allom['dly_dheart'][self.vp_lsid]
+                    self.vp_dcst_allom   = daily_output_allom['dly_dsto'][self.vp_lsid]
 
+                # UPDATE STATE VARIABLES
+                # WATER CWM
+                self.runom[step] = self.swp._update_pool(
+                    prec[step], daily_output_allom['evavg'])
+                self.swp.w1 = np.float64(
+                    0.0) if self.swp.w1 < 0.0 else self.swp.w1
+                self.swp.w2 = np.float64(
+                    0.0) if self.swp.w2 < 0.0 else self.swp.w2
+                self.wp_water_upper_mm = self.swp.w1
+                self.wp_water_lower_mm = self.swp.w2
 
                 if save:
                     assert self.save == True
