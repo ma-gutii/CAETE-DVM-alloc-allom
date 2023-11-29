@@ -374,7 +374,7 @@ contains
       !     Maximum evapotranspiration (emax)
       !     =================================
       emax = evpot2(p0,temp,rh,available_energy(temp))
-
+      soil_temp = ts
 
       ! FAZER NUmthreads função de nlen pra otimizar a criação de trheads
       if (nlen .le. 20) then
