@@ -139,10 +139,14 @@ if not sombrero:
     print('nc outputs----------------->', nc_outputs)
 
 if not sombrero:
-    zone = input("Select a zone [c: central, s: south, e: east, nw: NW]: ")
+    zone = input("Select a zone [c: central, s: south, e: east, nw: NW] or an unique gridcell [u: gridcell] ")
     if zone in ['c', 's', 'e', 'nw']:
         print("Running in the zone:", zone)
         pass
+    elif zone == 'u':
+        print("The model will be run in an unique gridcell")
+        y_grd = int(input("Choose the y: "))
+        x_grd = int(input("Choose the x: "))
     else:
         print("Running in the zone: c")
         zone = 'c'
@@ -167,6 +171,15 @@ elif zone == 'e':
     y0, y1 = 190, 201
     x0, x1 = 255, 261
     folder = "east"
+
+elif zone == 'u':
+    y = y_grd
+    x = x_grd
+    folder = "gridcell"
+    # y0, y1 = 175, 176
+    # x0, x1 = 235, 236
+    # folder = "central"
+
 else:
     assert sombrero
 
@@ -305,11 +318,22 @@ if sombrero:
                 grid_mn.append(grd(X, Y, outf))
 
 else:
-    grid_mn = []
-    for Y in range(y0, y1):
-        for X in range(x0, x1):
-            if not mask[Y, X]:
-                grid_mn.append(grd(X, Y, outf))
+    if zone == 'u':
+        print('')
+        print('====================zone u===============')
+        print('')
+        Y = y_grd
+        X = x_grd
+        grid_mn = []
+        if not mask[Y, X]:
+            grid_mn.append(grd(X, Y, outf))
+    else:
+        grid_mn = []
+        for Y in range(y0, y1):
+            for X in range(x0, x1):
+                if not mask[Y, X]:
+                    grid_mn.append(grd(X, Y, outf))
+
 
 
 def apply_init(grid:grd)->grd: 
@@ -376,6 +400,8 @@ def apply_funX(grid:grd, brk:list, allometry = allom)->grd:
     else:
         grid.run_caete(brk[0], brk[1])
     return grid
+
+
 
 # Garbage collection
 #
