@@ -83,7 +83,7 @@ def run_experiment(pls_table):
 #     print(idx0, idx1)
 #     # # Create the plot object
     sdata = Path("../grd").resolve()
-    grd = mod.grd(175, 235, 'GRD-ISIMIP')
+    grd = mod.grd(235, 175, 'GRD-ISIMIP') #sequence to identify the grid: X-Y (lon-lat)
 
 #     # Fill the plot object with input data
     grd.init_caete_dyn(sdata, stime_i=stime, co2=co2_data,
@@ -96,7 +96,7 @@ def run_experiment(pls_table):
     grd.run_caete_allom('19790101','19891231', spinup=5, 
                    fix_co2='1999', save=False, nutri_cycle=False)
 
-    grd.run_caete_allom('19790101', '19911231', spinup=35,
+    grd.run_caete_allom('19790101', '19991231', spinup=35,
                    fix_co2='1999', save=False, nutri_cycle=False)
 
 #         # Run the experiment!
