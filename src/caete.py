@@ -469,8 +469,6 @@ class grd:
         self.npp_allom = None
         self.ph_allom  = None
         self.ar_allom  = None
-        self.ep_allom  = None
-        self.ev_allom  = None
         self.lai_allom  = None
         self.rm_allom  = None
         self.rg_allom  = None
@@ -548,12 +546,30 @@ class grd:
         """
         self.emaxm = []
         self.tsoil = []
+
+        self.ph_allom     = np.zeros(shape=(n,), order='F')
+        self.ar_allom     = np.zeros(shape=(n,), order='F')
+        self.npp_allom    = np.zeros(shape=(n,), order='F')
+        self.lai_allom    = np.zeros(shape=(n,), order='F')
+
+        self.rcm          = np.zeros(shape=(n,), order='F')
+        self.f5           = np.zeros(shape=(n,), order='F')
+        self.runom        = np.zeros(shape=(n,), order='F')
+        self.evapm        = np.zeros(shape=(n,), order='F')
+        self.wsoil        = np.zeros(shape=(n,), order='F')
+        self.swsoil       = np.zeros(shape=(n,), order='F')
+
+        self.rm_allom     = np.zeros(shape=(n,), order='F') 
+        self.rg_allom     = np.zeros(shape=(n,), order='F')
+
         self.cleaf_allom  = np.zeros(shape=(n,), order='F')
         self.cwood_allom  = np.zeros(shape=(n,), order='F')
         self.croot_allom  = np.zeros(shape=(n,), order='F')
         self.csap_allom   = np.zeros(shape=(n,), order='F')
         self.cheart_allom = np.zeros(shape=(n,), order='F')
         self.csto_allom   = np.zeros(shape=(n,), order='F')
+
+        self.wue = np.zeros(shape=(n,), order='F')
 
         self.dleaf_allom  = np.zeros(shape=(n,), order='F')
         self.dwood_allom  = np.zeros(shape=(n,), order='F')
@@ -562,17 +578,10 @@ class grd:
         self.dheart_allom = np.zeros(shape=(n,), order='F')
         self.dsto_allom   = np.zeros(shape=(n,), order='F')
         
-        self.npp_allom    = np.zeros(shape=(n,), order='F')
-        self.ph_allom     = np.zeros(shape=(n,), order='F')
-        self.ar_allom     = np.zeros(shape=(n,), order='F')
-        self.ep_allom     = np.zeros(shape=(n,), order='F')
-        self.ev_allom     = np.zeros(shape=(n,), order='F')
-        self.lai_allom    = np.zeros(shape=(n,), order='F')
-        self.rm_allom     = np.zeros(shape=(n,), order='F') 
-        self.rg_allom     = np.zeros(shape=(n,), order='F')
+        self.ls = np.zeros(shape=(n,), order='F')       
+        
         self.area_allom = np.zeros(shape=(npls, n), order='F')
 
-        self.ls = np.zeros(shape=(n,), order='F')
 
     def _flush_output(self, run_descr, index):
         """1 - Clean variables that receive outputs from the fortran subroutines
@@ -704,23 +713,28 @@ class grd:
         self.outputs[spiname] = os.path.join(self.out_dir, spiname)
 
         to_pickle = {'emaxm': np.array(self.emaxm),
-                     'tsoil': np.array(self.tsoil), 
+                     'tsoil': np.array(self.tsoil),
+                     'photo' : self.ph_allom,
+                     'ar'    : self.ar_allom,
+                     'npp'   : self.npp_allom,
+                     'lai'   : self.lai_allom,
+                     'rcm'   : self.rcm,
+                     'f5'    : self.f5,
+                     'runom' : self.runom,
+                     'evapm' : self.evapm,
+                     'wsoil' : self.wsoil,
+                     'swsoil': self.swsoil,
+                     'rm'    : self.rm_allom,      
+                     'rg'    : self.rg_allom,
                      'cleaf' : self.cleaf_allom,
                      'cwood' : self.cwood_allom,
                      'croot' : self.croot_allom,
                      'csap'  : self.csap_allom,
                      'cheart': self.cheart_allom,
                      'csto'  : self.csto_allom,
-                     'npp'   : self.npp_allom,
-                     'photo' : self.ph_allom,
-                     'ar'    : self.ar_allom,
-                     'ep'    : self.ep_allom,     
-                     'ev'    : self.ev_allom,     
-                     'lai'   : self.lai_allom,    
-                     'rm'    : self.rm_allom,      
-                     'rg'    : self.rg_allom,
+                     'wue'   : self.wue,
                      'area'  : self.area_allom,
-                     'ls': self.ls,  
+                     'ls'    : self.ls,  
                      'calendar': self.calendar,
                      'time_unit': self.time_unit,   # Time unit
                      'sind': index[0],
@@ -730,22 +744,27 @@ class grd:
         # Flush attrs (clear outputs)
         self.emaxm = []
         self.tsoil = []
+        self.ph_allom     = None
+        self.ar_allom     = None
+        self.npp_allom    = None
+        self.lai_allom    = None
+        self.rcm          = None
+        self.f5           = None
+        self.runom        = None
+        self.evapm        = None
+        self.wsoil        = None
+        self.swsoil       = None
+        self.rm_allom     = None 
+        self.rg_allom     = None
         self.cleaf_allom  = None
         self.cwood_allom  = None
         self.croot_allom  = None
         self.csap_allom   = None
         self.cheart_allom = None
         self.csto_allom   = None
-        self.npp_allom    = None
-        self.ph_allom     = None
-        self.ar_allom     = None
-        self.ep_allom     = None
-        self.ev_allom     = None
-        self.lai_allom    = None
-        self.rm_allom     = None 
-        self.rg_allom     = None
+        self.wue          = None
         self.area_allom   = None
-        self.ls           = None    
+        self.ls           = None 
        
         return to_pickle
 
@@ -1553,48 +1572,6 @@ class grd:
         ipar = self.rsds[lb: hb + 1] * 0.5 / 2.18e5
         ru = self.rhs[lb: hb + 1] / 100.0
 
-#============================================================================
-        #Finding index to change precipitation in virtual experiment
-        interest_date1 = '19790101'
-        interest_date2 = '20161231' 
-
-        ti1 = cftime.real_datetime(int(interest_date1[:4]), int(
-            interest_date1[4:6]), int(interest_date1[6:]))
-        ti2 = cftime.real_datetime(int(interest_date2[:4]), int(
-            interest_date2[4:6]), int(interest_date2[6:]))
-        
-        # Define time index
-        ti1_index = int(cftime.date2num(
-            ti1, self.time_unit, self.calendar))
-        ti2_index = int(cftime.date2num(ti2, self.time_unit, self.calendar))
-        
-        t1, t2 = find_index(ti1_index, ti2_index)
-
-        # print(start, end, start_index, end_index )
-        # print(t1, t2, lb, hb )
-                # Iterate a cada 3 anos dentro do intervalo
-        for year in range(ti1.year, ti2.year + 1, 3):
-            # print('year', year)
-            current_date = cftime.real_datetime(year, ti1.month, ti1.day)
-            ti1_index = int(cftime.date2num(current_date, self.time_unit, self.calendar))
-            t1 = find_index(ti1_index, ti1_index)[0]
-            
-            # print('t1', t1, 'lb', lb, 'current date', current_date)
-    # # Se a data estiver dentro do intervalo desejado
-    #         # if ti1_index <= current_index <= ti2_index:
-    #             # print('Ano:', current_date.year, 'Índice:', current_index)
-    #     if lb >= current_index:
-    #             print('Ano:', current_date.year, 'Índice:', current_index, 'lb', lb)
-
-
-    #     if lb >= t1:
-    #         print('t1 lb', t1, lb)
-            # prec = (self.pr[lb: hb + 1] * 86400)/1000000
-            # ipar = (self.rsds[lb: hb + 1] * 0.5 / 2.18e5)/10
-
-#============================================================================
-
-
         year0 = start.year
         co2 = find_co2(year0)
         count_days = start.dayofyr - 2
@@ -1670,15 +1647,7 @@ class grd:
                 dcs_allom    = np.zeros(npls, order='F')
                 dch_allom    = np.zeros(npls, order='F')
                 dcst_allom   = np.zeros(npls, order='F')
-                npp_allom    = np.zeros(npls, order='F')
-                ph_allom     = np.zeros(npls, order='F')
-                ar_allom     = np.zeros(npls, order='F')
-                ep_allom     = np.zeros(npls, order='F')
-                ev_allom     = np.zeros(npls, order='F')
-                lai_allom    = np.zeros(npls, order='F')
-                rm_allom     = np.zeros(npls, order='F') 
-                rg_allom     = np.zeros(npls, order='F')
-
+                
 
                 # Check the integrity of the data
                 assert self.vp_lsid.size == self.vp_cleaf_allom.size, 'different array sizes'
@@ -1717,7 +1686,10 @@ class grd:
                 self.vp_lsid = np.where(daily_output_allom['ocpavg'] > 0.0)[0]
                 self.vp_ocp_allom = daily_output_allom['ocpavg'][self.vp_lsid]
                 self.ls[step] = self.vp_lsid.size
+                
+                #no living PLS
 
+                #when there is no need to save (spinup)
                 if self.vp_lsid.size < 1 and not save:
                     self.vp_lsid = np.sort(
                         np.array(
@@ -1745,8 +1717,8 @@ class grd:
                             self.vp_cheart_allom = np.zeros(shape=(npls,), order='F')+ 80.#0.85*(self.vp_cwood_allom)
                             self.vp_csap_allom = np.zeros(shape=(npls,), order='F') + 20. #0.15*(self.vp_cwood_allom)
                             self.vp_cwood_allom = np.zeros(shape=(npls,), order='F') + self.vp_csap_allom + self.vp_cheart_allom
-                            self.vp_dcl_allom = np.zeros(shape=(npls,), order='F')
-
+                    
+                    self.vp_dcl_allom = np.zeros(shape=(self.vp_lsid.size,))
                     self.vp_dcw_allom = np.zeros(shape=(self.vp_lsid.size,))
                     self.vp_dcr_allom = np.zeros(shape=(self.vp_lsid.size,))
                     self.vp_dcs_allom = np.zeros(shape=(self.vp_lsid.size,))
@@ -1792,24 +1764,42 @@ class grd:
                 self.wp_water_upper_mm = self.swp.w1
                 self.wp_water_lower_mm = self.swp.w2
 
+                # OUTPUTS for SOIL CWM
+                wtot = self.wp_water_upper_mm + self.wp_water_lower_mm
+                s_out = soil_dec.carbon3(self.soil_temp, wtot / self.wmax_mm, self.litter_l[step],
+                                         self.cwd[step], self.litter_fr[step], self.lnc[:, step],
+                                         self.sp_csoil, self.sp_snc)
+
+                soil_out = catch_out_carbon3(s_out)
+                #end
+
                 if save:
                     assert self.save == True
+
                     self.emaxm.append(daily_output_allom['epavg'])
                     self.tsoil.append(self.soil_temp)
+                    self.ph_allom[step]      = daily_output_allom['phavg']
+                    self.ar_allom[step]      = daily_output_allom['aravg']
+                    self.npp_allom[step]     = daily_output_allom['nppavg']
+                    self.lai_allom[step]     = daily_output_allom['laiavg']
+                    self.rcm[step]           = daily_output_allom['rcavg']
+                    self.f5[step]            = daily_output_allom['f5avg']
+                    self.evapm[step]         = daily_output_allom['evavg']
+                    self.wsoil[step]         = self.wp_water_upper_mm
+                    self.swsoil[step]        = self.wp_water_lower_mm
+                    self.rm_allom[step]      = daily_output_allom['rmavg']
+                    self.rg_allom[step]      = daily_output_allom['rgavg']
+                    self.wue[step]           = daily_output_allom['wueavg']
+                    # self.vcmax[step]         = daily_output_allom['vcmax']
+                    self.specific_la[step]   = daily_output_allom['specific_la']
+
                     self.cleaf_allom[step]   = daily_output_allom['cleaf_grd']
                     self.cwood_allom[step]   = daily_output_allom['cwood_grd']
                     self.croot_allom[step]   = daily_output_allom['croot_grd']
                     self.csap_allom[step]    = daily_output_allom['csap_grd']
                     self.cheart_allom[step]  = daily_output_allom['cheart_grd']
                     self.csto_allom[step]    = daily_output_allom['csto_grd']
-                    self.npp_allom[step]     = daily_output_allom['nppavg']
-                    self.ph_allom[step]      = daily_output_allom['phavg']
-                    self.ar_allom[step]      = daily_output_allom['aravg']
-                    self.ep_allom[step]      = daily_output_allom['epavg']
-                    self.ev_allom[step]      = daily_output_allom['evavg']
-                    self.lai_allom[step]     = daily_output_allom['laiavg']
-                    self.rm_allom[step]      = daily_output_allom['rmavg']
-                    self.rg_allom[step]      = daily_output_allom['rgavg']
+                    
                     self.area_allom[self.vp_lsid, step] = self.vp_ocp_allom
 
 

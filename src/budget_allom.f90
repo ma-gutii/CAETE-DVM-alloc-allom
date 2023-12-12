@@ -53,6 +53,20 @@ contains
 
       !PLS traits (traits)
       real(r_8),dimension(ntraits,npls),intent(in) :: dt
+            !Water
+      real(r_8),intent(in) :: w1  !Initial (previous month last day) soil moisture storage (mm) - upper layer
+      real(r_8),intent(in) :: w2  !Initial (previous month last day) soil moisture storage (mm) - lower layer
+
+      !Climatic data
+      real(r_4),intent(in) :: temp    ! Surface air temperature (oC)
+      real(r_4),intent(in) :: p0      ! Surface pressure (mb)
+      real(r_4),intent(in) :: ipar    ! Incident photosynthetic active radiation mol Photons m-2 s-1
+      real(r_4),intent(in) :: rh      ! Relative humidity 
+      real(r_8),intent(in) :: catm    ! ATM CO2 concentration ppm
+      real(r_4),intent(in) :: ts      ! Soil temperature (oC)
+
+      !Soil
+      real(r_8),intent(in) :: wmax_in ! Saturation point
 
       !Vegetation pools
       real(r_8),dimension(npls),intent(in) :: cleaf_in
@@ -61,7 +75,6 @@ contains
       real(r_8),dimension(npls),intent(in) :: csap_in
       real(r_8),dimension(npls),intent(in) :: cheart_in
       real(r_8),dimension(npls),intent(in) :: csto_in
-
 
       !Delta vegetation pools
       real(r_8),dimension(npls),intent(in) :: dleaf_in
@@ -72,20 +85,10 @@ contains
       real(r_8),dimension(npls),intent(in) :: dsto_in
 
 
-      !Water
-      real(r_8),intent(in) :: w1  !Initial (previous month last day) soil moisture storage (mm) - upper layer
-      real(r_8),intent(in) :: w2  !Initial (previous month last day) soil moisture storage (mm) - lower layer
 
-      !Soil
-      real(r_4),intent(in) :: ts      ! Soil temperature (oC)
-      real(r_8),intent(in) :: wmax_in ! Saturation point
+      
 
-      !Climatic data
-      real(r_4),intent(in) :: temp    ! Surface air temperature (oC)
-      real(r_4),intent(in) :: p0      ! Surface pressure (mb)
-      real(r_4),intent(in) :: ipar    ! Incident photosynthetic active radiation mol Photons m-2 s-1
-      real(r_4),intent(in) :: rh      ! Relative humidity 
-      real(r_8),intent(in) :: catm    ! ATM CO2 concentration ppm
+      
 
 
       !==========================================================================
