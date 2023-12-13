@@ -578,6 +578,9 @@ class grd:
         self.dheart_allom = np.zeros(shape=(n,), order='F')
         self.dsto_allom   = np.zeros(shape=(n,), order='F')
         
+        self.vcmax = np.zeros(shape=(n,), order='F')
+        self.specific_la = np.zeros(shape=(n,), order='F')
+
         self.ls = np.zeros(shape=(n,), order='F')       
         
         self.area_allom = np.zeros(shape=(npls, n), order='F')
@@ -1764,15 +1767,6 @@ class grd:
                 self.wp_water_upper_mm = self.swp.w1
                 self.wp_water_lower_mm = self.swp.w2
 
-                # OUTPUTS for SOIL CWM
-                wtot = self.wp_water_upper_mm + self.wp_water_lower_mm
-                s_out = soil_dec.carbon3(self.soil_temp, wtot / self.wmax_mm, self.litter_l[step],
-                                         self.cwd[step], self.litter_fr[step], self.lnc[:, step],
-                                         self.sp_csoil, self.sp_snc)
-
-                soil_out = catch_out_carbon3(s_out)
-                #end
-
                 if save:
                     assert self.save == True
 
@@ -1790,7 +1784,7 @@ class grd:
                     self.rm_allom[step]      = daily_output_allom['rmavg']
                     self.rg_allom[step]      = daily_output_allom['rgavg']
                     self.wue[step]           = daily_output_allom['wueavg']
-                    # self.vcmax[step]         = daily_output_allom['vcmax']
+                    self.vcmax[step]         = daily_output_allom['vcmax']
                     self.specific_la[step]   = daily_output_allom['specific_la']
 
                     self.cleaf_allom[step]   = daily_output_allom['cleaf_grd']

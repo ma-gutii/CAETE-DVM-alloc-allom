@@ -27,7 +27,8 @@ with open("spin{}.pkz".format(spin), 'rb') as fh:
 print(dt.keys())  # List the available keys for the outputs
 
 # Specify the variables to be plotted
-variables_to_plot = ['emaxm', 'tsoil', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto', 'npp', 'photo', 'ar', 'ep', 'ev', 'lai', 'rm', 'rg', 'ls']
+# variables_to_plot = ['emaxm', 'tsoil', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto', 'npp', 'photo', 'ar', 'evapm', 'lai', 'rm', 'rg', 'ls']
+variables_to_plot = ['cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto', 'npp', 'photo', 'ar', 'lai', 'rm', 'rg', 'ls']
 
 # Plot the specified variables in a 4x4 grid
 fig, axs = plt.subplots(nrows=5, ncols=4, figsize=(20, 16))
