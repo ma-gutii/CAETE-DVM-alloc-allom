@@ -28,10 +28,10 @@ print(dt.keys())  # List the available keys for the outputs
 
 # Specify the variables to be plotted
 # variables_to_plot = ['emaxm', 'tsoil', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto', 'npp', 'photo', 'ar', 'evapm', 'lai', 'rm', 'rg', 'ls']
-variables_to_plot = ['cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto', 'npp', 'photo', 'ar', 'lai', 'rm', 'rg', 'ls']
+variables_to_plot = ['emaxm', 'tsoil', 'photo', 'ar', 'npp', 'lai', 'rcm', 'f5', 'runom', 'evapm', 'wsoil', 'rm', 'rg', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto', 'wue', 'area', 'ls']
 
 # Plot the specified variables in a 4x4 grid
-fig, axs = plt.subplots(nrows=5, ncols=4, figsize=(20, 16))
+fig, axs = plt.subplots(nrows=6, ncols=4, figsize=(20, 16))
 
 for i, key in enumerate(variables_to_plot):
     values = dt[key]
