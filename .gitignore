@@ -13,7 +13,7 @@ outputs/*
 !outputs/*.py
 !outputs/*.csv
 !outputs/base_run/
-!outputs/t10_141223/gridcell175-235/timeseries_t10_141223_all_variables.png
+!outputs/t10_141223/gridcell175-235/
 outputs/base_run/gridcell175-235/csv/*csv
 
 
