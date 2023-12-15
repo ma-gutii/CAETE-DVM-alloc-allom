@@ -135,7 +135,7 @@ df['Date'] = pd.to_datetime(df['Date'])
 # Create a figure and an array of subplots based on the number of variables
 num_variables = len(variables_to_plot)
 num_rows = (num_variables + 1) // 4  # Ensure at least 1 row
-fig, axs = plt.subplots(nrows=6, ncols=4, figsize=(15, 5 * num_rows), sharex=True)
+fig, axs = plt.subplots(nrows=5, ncols=3, figsize=(15, 5 * num_rows), sharex=True)
 
 # Flatten the axs array to handle 1D indexing
 axs = axs.flatten()

@@ -13,6 +13,7 @@ outputs/*
 !outputs/*.py
 !outputs/*.csv
 !outputs/base_run/
+!outputs/t10_141223/gridcell175-235/timeseries_t10_141223_all_variables.png
 outputs/base_run/gridcell175-235/csv/*csv
 
 
@@ -35,3 +36,4 @@ k34/MetData_AmzFACE2000_2015_CAETE.csv
 CAETE_PRE_IMERSAO/
 
 k34/
+
