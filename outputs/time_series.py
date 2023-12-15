@@ -27,6 +27,7 @@ import joblib
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import math
 
 # Prompt the user to determine if the script is running on a server or not
 while True:
@@ -54,25 +55,54 @@ all_dates = []
 all_spins = []
 
 # Date intervals for each spin
-run_breaks_hist = [('19790101', '19801231'),
-                   ('19810101', '19821231'),
-                   ('19830101', '19841231'),
-                   ('19850101', '19861231'),
-                   ('19870101', '19881231'),
-                   ('19890101', '19901231'),
-                   ('19910101', '19921231'),
-                   ('19930101', '19941231'),
-                   ('19950101', '19961231'),
-                   ('19970101', '19981231'),
-                   ('19990101', '20001231'),
-                   ('20010101', '20021231'),
-                   ('20030101', '20041231'),
-                   ('20050101', '20061231'),
-                   ('20070101', '20081231'),
-                   ('20090101', '20101231'),
-                   ('20110101', '20121231'),
-                   ('20130101', '20141231'),
-                   ('20150101', '20161231')]
+# run_breaks_hist = [('19790101', '19801231'),
+#                    ('19810101', '19821231'),
+#                    ('19830101', '19841231'),
+#                    ('19850101', '19861231'),
+#                    ('19870101', '19881231'),
+#                    ('19890101', '19901231'),
+#                    ('19910101', '19921231'),
+#                    ('19930101', '19941231'),
+#                    ('19950101', '19961231'),
+#                    ('19970101', '19981231'),
+#                    ('19990101', '20001231'),
+#                    ('20010101', '20021231'),
+#                    ('20030101', '20041231'),
+#                    ('20050101', '20061231'),
+#                    ('20070101', '20081231'),
+#                    ('20090101', '20101231'),
+#                    ('20110101', '20121231'),
+#                    ('20130101', '20141231'),
+#                    ('20150101', '20161231')]
+
+
+start_year = 1979
+end_year   = 2017
+
+run_breaks_hist = []
+
+for year in range(start_year, end_year, 1):
+    #Crie as datas de início e fim no formato 'YYYYMMDD'
+    start_date = f"{year}0101"
+    end_date = f"{year}1231"
+ 
+
+    # Adicione a tupla à lista run_breaks_hist
+    run_breaks_hist.append((start_date, end_date))
+
+print(run_breaks_hist)
+
+# variables_to_plot = ['emaxm', 'tsoil', 'photo', 'ar', 'npp', 'lai', 'rcm', 'f5', 'runom', 'evapm', 'wsoil', 'rm', 'rg', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto', 'wue', 'area', 'ls']
+
+variables_to_plot = ['photo', 'ar', 'npp',  'lai', 'f5', 'evapm', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto', 'wue', 'ls']
+all_data = {variable: [] for variable in variables_to_plot}
+all_dates = []
+all_spins = []
+
+# Initialize lists to store all time series, dates, and spins for all variables
+all_data = {variable: [] for variable in variables_to_plot}
+all_dates = []
+all_spins = []
 
 # Iterate over all available spins
 for spin, (start_date, end_date) in enumerate(run_breaks_hist, start=1):
@@ -80,41 +110,47 @@ for spin, (start_date, end_date) in enumerate(run_breaks_hist, start=1):
     with open(f"spin{spin:02d}.pkz", 'rb') as fh:
         dt = joblib.load(fh)
 
-    # Get the NPP time series for the current spin and its dates
-    npp_series = dt.get('npp', [])
-    # ls_series  = dt.get('ls', [])
+    # Iterate over all variables and extract time series
+    for variable in variables_to_plot:
+        variable_series = dt.get(variable, [])
+        all_data[variable].extend(variable_series)
+
+    # Create date index and update dates and spins lists
     date_index = pd.date_range(start=start_date, end=end_date, freq='D')
-
-    # Add the time series, dates, and spin number to the lists
-    all_series.extend(npp_series)
-    # all_series_ls.extend(ls_series)
-
     all_dates.extend(date_index)
     all_spins.extend([spin] * len(date_index))
 
-# Create a DataFrame with time series, dates, and spin numbers
-df = pd.DataFrame({'Spin': all_spins, 'Date': all_dates, 'NPP': all_series}) #, 'ls': all_series_ls})
+# Create a DataFrame with time series, dates, and spin numbers for all variables
+all_data['Date'] = all_dates
+all_data['Spin'] = all_spins
+df = pd.DataFrame(all_data)
 
 # Save the DataFrame to a CSV file
 df.to_csv('concatenated_series_all_spins.csv', index=False)
 
-# Print a small part of the data
-print(df.head())
-
 # Convert the 'Date' column to the datetime data type if it's not already
 df['Date'] = pd.to_datetime(df['Date'])
 
-# Plot the time series for 'NPP' against the 'Date' column
-plt.plot(df['Date'], df['NPP'])
-plt.xlabel('Date')
-plt.ylabel('NPP')
-plt.title('Time Series of NPP')
 
-# Plot the time series for 'NPP' against the 'Date' column
-# plt.plot(df['Date'], df['ls'])
-# plt.xlabel('Date')
-# plt.ylabel('ls')
-# plt.title('Time Series of ls')
+# Create a figure and an array of subplots based on the number of variables
+num_variables = len(variables_to_plot)
+num_rows = (num_variables + 1) // 4  # Ensure at least 1 row
+fig, axs = plt.subplots(nrows=6, ncols=4, figsize=(15, 5 * num_rows), sharex=True)
+
+# Flatten the axs array to handle 1D indexing
+axs = axs.flatten()
+
+# Iterate over variables and plot each one
+for i, variable in enumerate(variables_to_plot):
+    axs[i].plot(df['Date'], df[variable])
+    axs[i].set_ylabel(variable)
+    axs[i].set_title(f'Time Series of {variable}')
+
+# Adjust the layout to prevent title overlap
+plt.tight_layout()
 
 # Save the plot as an image
-plt.savefig(os.path.join(f'{main_path}/outputs/{run_name}/gridcell175-235/', f'timeseries_{run_name}.png'))
+plt.savefig(os.path.join(f'{main_path}/outputs/{run_name}/gridcell175-235/', f'timeseries_{run_name}_all_variables.png'))
+
+# Display the subplots
+plt.show()

@@ -65,11 +65,27 @@ def zip_gridtime(grd_pool, interval):
         res.append((j, interval[i % len(interval)]))
     return res
 
-gridcell.run_caete_allom('19800101','20000101')
-gridcell.run_caete_allom('20000101','20050101')
-gridcell.pr = gridcell.pr * 0.2
-gridcell.run_caete_allom('20050101','20060101')
-gridcell.run_caete_allom('20070101','20150101')
+# Loop para executar para cada ano de '19790101' a '20161231'
+for year in range(1979, 2017):
+    start_date = f"{year}0101"
+    end_date = f"{year}1231"
+
+    # Aplica gridcell.pr * 0.5 a cada 3 anos
+    if (year % 3 == 0) and (start_date != '19790101'):  # Garante que o primeiro ano não seja afetado
+        print(year)
+        gridcell.pr = gridcell.pr * 0.5
+    
+    # Execute o método para o intervalo de datas atual
+    gridcell.run_caete_allom(start_date, end_date)
+
+# gridcell.run_caete_allom('19790101','19791231')
+# gridcell.run_caete_allom('19800101','19801231')
+
+# gridcell.run_caete_allom('20000101','20050101')
+# gridcell.pr = gridcell.pr * 0.5
+# gridcell.run_caete_allom('20050101','20060101')
+# gridcell.rsds = gridcell.rsds
+# gridcell.run_caete_allom('20070101','20150101')
 
 # def apply_funX(grid, brk):
 #     grid.run_caete_allom(brk[0], brk[1])
