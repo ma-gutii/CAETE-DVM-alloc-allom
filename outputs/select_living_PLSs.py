@@ -4,7 +4,7 @@ import re
 
 
 run_name = input("What is the run name? ")
-grd_name = "175-235"#input("The grid cell?lat-long ")
+grd_name = input("The grid cell?lat-long ")
 path_csv = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{run_name}/gridcell{grd_name}/csv"
 start_year = "1979" #input("what is the start year? ")
 end_year = "2017" #input("what is the start year? + 1")

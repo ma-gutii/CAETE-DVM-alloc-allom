@@ -44,9 +44,10 @@ while True:
 
 # Input the run name
 run_name = input('run name: ')
+grid_xy = input('which gridcell? (lat-long)')
 
 # Navigate to the specified folder
-os.chdir(f'{main_path}outputs/{run_name}/gridcell175-235/')
+os.chdir(f'{main_path}outputs/{run_name}/gridcell{grid_xy}/')
 
 # Initialize lists to store all time series, dates, and spins
 all_series = []
@@ -129,7 +130,7 @@ for i, variable in enumerate(variables_to_plot):
 plt.tight_layout()
 
 # Save the plot as an image
-plt.savefig(os.path.join(f'{main_path}/outputs/{run_name}/gridcell175-235/', f'timeseries_{run_name}_all_variables.png'))
+plt.savefig(os.path.join(f'{main_path}/outputs/{run_name}/gridcell{grid_xy}/', f'timeseries_{run_name}_all_variables.png'))
 
 # Display the subplots
 plt.show()

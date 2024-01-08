@@ -149,8 +149,12 @@ if not sombrero:
     
 
 if zone == 'c':
-    y0, y1 = 175, 176
-    x0, x1 = 235, 236
+    #Gridcell MAN: 186, 239
+    y0, y1 = 186, 187
+    x0, x1 = 239, 240
+
+    # y0, y1 = 175, 176
+    # x0, x1 = 235, 236
     folder = "central"
 
 elif zone == 's':

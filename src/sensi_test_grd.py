@@ -53,16 +53,41 @@ def zip_gridtime(grd_pool, interval):
         res.append((j, interval[i % len(interval)]))
     return res
 
+while True:
+    perc_prec = input("What is the percentage of reduction? [10, 20, 30] ")
+    
+    if perc_prec == '10':
+        print('You are applying 10% of precipitation reduction')
+        #10% precipitation reduction
+        prec_red = 0.9
+        break
+
+    elif perc_prec == '20':
+        print('You are applying 20% of precipitation reduction')
+        #20% precipitation reduction
+        prec_red = 0.8
+        break
+
+    elif perc_prec == '30':
+        print('You are applying 30% of precipitation reduction')
+        #30% precipitation reduction
+        prec_red = 0.8
+        break
+    
+    else:
+        print('Reduction out of range -- CANCELLING')
+        pass
+        
 # Loop para executar para cada ano de '19790101' a '20161231'
 for year in range(1979, 2017):
     start_date = f"{year}0101"
     end_date = f"{year}1231"
 
     # Application for a whole year in the set interval
-    # if (year % interval == 0) and (start_date != '19790101'):  # Garante que o primeiro ano não seja afetado
-    #     print(f"applying the disturbance in the {year}")
-    #     #20% precipitation reduction
-    #     gridcell.pr = gridcell.pr * 0.8
+    if (year % interval == 0) and (start_date != '19790101'):  # Garante que o primeiro ano não seja afetado
+        print(f"applying the disturbance in {year}")
+        gridcell.pr = gridcell.pr * prec_red
+        
      
     # Execute o método para o intervalo de datas atual
     gridcell.run_caete_allom(start_date, end_date)

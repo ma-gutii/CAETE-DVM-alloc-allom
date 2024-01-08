@@ -43,7 +43,12 @@ def pkz2csv(file, path, grd_name, spin_id, date_range) -> pd.DataFrame:
         end_date = date_range[1]
         print(end_date)
         idxT1 = pd.date_range(start=start_date, end=end_date, freq='D')    
+        print('')
+        print('')
         print(f"idxt1: {idxT1}")
+        print('')
+        print('')
+        print(f'len area_TS {len(area_TS)} len idxT1 {len(idxT1)}')
 
     # Verifique se o comprimento de area_TS é consistente com o índice idxT1
         assert len(area_TS) == len(idxT1), "Length mismatch between area_TS and idxT1"
