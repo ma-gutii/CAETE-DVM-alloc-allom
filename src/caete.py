@@ -288,7 +288,8 @@ def find_coord(N, W):
         Xind += lon.size // 2
         while Xc > lon[Xind]:
             Xind += 1
-
+    
+    print('XY', Yind, Xind)
     return Yind, Xind
 
 
