@@ -151,11 +151,11 @@ if not sombrero:
 if zone == 'c':
       
     #Gridcell MAN: 186, 239
-    y0, y1 = 186, 187
-    x0, x1 = 239, 240
+    # y0, y1 = 186, 187
+    # x0, x1 = 239, 240
 
-    # y0, y1 = 175, 176
-    # x0, x1 = 235, 236
+    y0, y1 = 175, 176
+    x0, x1 = 235, 236
     folder = "central"
 
 elif zone == 's':
@@ -312,6 +312,9 @@ else:
         print("Using PLS TABLE from BASE_RUN")
         os.makedirs(dump_folder, exist_ok=True)
         pls_table = read_pls_table(out=Path(os.path.join(dump_folder, ATTR_FILENAME)))
+    else:
+        print(f"WARNING: Creating a new PLS table for a historical simulated ({outf}) run ")
+        pls_table = pls.table_gen(npls, dump_folder)
 
 
 # # Create the gridcell objects
