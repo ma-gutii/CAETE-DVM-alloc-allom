@@ -149,6 +149,7 @@ if not sombrero:
     
 
 if zone == 'c':
+      
     #Gridcell MAN: 186, 239
     y0, y1 = 186, 187
     x0, x1 = 239, 240
@@ -163,8 +164,13 @@ elif zone == 's':
     folder = "south"
 
 elif zone == 'nw':
-    y0, y1 = 168, 175
-    x0, x1 = 225, 230
+   
+    #Gridcell ALP: 188, 213
+    y0, y1 = 188, 189
+    x0, x1 = 213, 214
+
+    # y0, y1 = 168, 175
+    # x0, x1 = 225, 230
     folder = "north_west"
 
 elif zone == 'e':
