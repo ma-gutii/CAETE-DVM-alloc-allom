@@ -64,7 +64,10 @@ for date_range in run_breaks_hist1:
 os.chdir(f'{main_path}outputs/{run_name}/{grd_name}/')
 
 for date_range in run_breaks_hist2:
-    print('DATE RANGE=====',date_range)
+    print('Joining together all time series, dates, and spins =====',date_range)
     
-    t.join(start_date, end_date, run_breaks_hist2)
+print('Plotting')
+t.join_plot(start_date, end_date, run_breaks_hist2, main_path, run_name, grd_name)
+
+
 

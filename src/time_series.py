@@ -30,12 +30,10 @@ import matplotlib.pyplot as plt
 import math
 
 #Joining together all time series, dates, and spins
-def join(start_date, end_date, run_breaks_hist): # Initialize lists to store all time series, dates, and spins
+def join_plot(start_date, end_date, run_breaks_hist, main_path, run_name, grd_name): # Initialize lists to store all time series, dates, and spins
     
     variables_to_plot = ['photo', 'ar', 'npp',  'lai', 'f5', 'evapm', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto', 'wue', 'ls']
 
-    all_series = []
-    all_series_ls = []
     all_dates = []
     all_spins = []
     all_data = {variable: [] for variable in variables_to_plot}
@@ -67,7 +65,32 @@ def join(start_date, end_date, run_breaks_hist): # Initialize lists to store all
     # Convert the 'Date' column to the datetime data type if it's not already
     df['Date'] = pd.to_datetime(df['Date'])
 
-    
+# # Create a figure and an array of subplots based on the number of variables
+    num_variables = len(variables_to_plot)
+    num_rows = (num_variables + 1) // 4  # Ensure at least 1 row
+    fig, axs = plt.subplots(nrows=5, ncols=3, figsize=(15, 5 * num_rows), sharex=True)
+
+# # Flatten the axs array to handle 1D indexing
+    axs = axs.flatten()
+
+# # Iterate over variables and plot each one
+    for i, variable in enumerate(variables_to_plot):
+        axs[i].plot(df['Date'], df[variable])
+        axs[i].set_ylabel(variable)
+        axs[i].set_title(f'Time Series of {variable}')
+    # 
+    # Adjust the layout to prevent title overlap
+    plt.tight_layout()
+    # 
+    # Save the plot as an image
+    plt.savefig(os.path.join(f'{main_path}/outputs/{run_name}/{grd_name}/', f'timeseries_{run_name}_all_variables.png'))
+    # 
+    # Display the subplots
+    plt.show()
+
+
+
+
 # # Prompt the user to determine if the script is running on a server or not
 # while True:
 #     server = input('Are you running in the server? y/n ')
