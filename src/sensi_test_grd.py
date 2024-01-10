@@ -36,9 +36,32 @@ with open(run_path, 'rb') as fh:
     # Load data from the file using the joblib library
     init_conditions = joblib.load(fh)
     #init_conditions contais all the attributes and methods of caete.grd
+all_attributes_and_methods = dir(init_conditions)
 
-application_interval = input('Which is the interval between the applications? ')
+# Print the list
+print(all_attributes_and_methods)
+
+experiment = input("regular climate(a) or experiment(b)? ")
+
+if experiment == 'a':
+    print('')
+    print('')
+    print("YOU ARE RUNNING WITH REGULAR CLIMATE")
+    print('')
+    print('')
+
+    application_interval = '0'
+else:
+    print('')
+    print('')
+    print("YOU ARE RUNNING AN EXPERIMENT")
+    print('')
+    print('')
+    
+    application_interval = input('Which is the interval between the applications? ')
+
 interval = int(application_interval) + 1 #+1 guarantee the right interval between applications
+
 # new outputs folder
 run_name = input(f"Give a name to this output: ")
 dump_folder = Path(f"{run_name}")
@@ -54,8 +77,14 @@ def zip_gridtime(grd_pool, interval):
     return res
 
 while True:
-    perc_prec = input("What is the percentage of reduction? [10, 20, 30] ")
+    perc_prec = input("What is the percentage of reduction? [0, 10, 20, 30] ")
     
+    if perc_prec == '0':
+        print('You are not applying precipitation reduction')
+        #10% precipitation reduction
+        prec_red = 1.
+        break
+
     if perc_prec == '10':
         print('You are applying 10% of precipitation reduction')
         #10% precipitation reduction
@@ -84,7 +113,11 @@ for year in range(1979, 2017):
     end_date = f"{year}1231"
 
     # Application for a whole year in the set interval
-    if (year % interval == 0) and (start_date != '19790101'):  # Garante que o primeiro ano não seja afetado
+    if (year % interval == 0) and (experiment =='a'):
+        print(f"running the model in {year}")
+        gridcell.pr = gridcell.pr * prec_red
+
+    elif (year % interval == 0) and (start_date != '19790101'):  # Garante que o primeiro ano não seja afetado
         print(f"applying the disturbance in {year}")
         gridcell.pr = gridcell.pr * prec_red
         
