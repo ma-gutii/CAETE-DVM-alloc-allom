@@ -151,16 +151,26 @@ if not sombrero:
 if zone == 'c':
       
     #Gridcell MAN: 186, 239
-    y0, y1 = 186, 187
-    x0, x1 = 239, 240
+    # y0, y1 = 186, 187
+    # x0, x1 = 239, 240
 
     # y0, y1 = 175, 176
     # x0, x1 = 235, 236
     folder = "central"
 
 elif zone == 's':
-    y0, y1 = 200, 211
-    x0, x1 = 225, 231
+    
+    # Gridcell NVX: 210-249
+    y0, y1 = 210, 211
+    x0, x1 = 249, 250
+    
+
+    # #Gridcell FEC: 200-225
+    # y0, y1 = 200, 201
+    # x0, x1 = 225, 226
+
+    # y0, y1 = 200, 211
+    # x0, x1 = 225, 231
     folder = "south"
 
 elif zone == 'nw':
@@ -174,10 +184,13 @@ elif zone == 'nw':
     folder = "north_west"
 
 elif zone == 'e':
-    y0, y1 = 190, 201
-    x0, x1 = 255, 261
+   
+    y0, y1 = 183, 184
+    x0, x1 = 257, 258
     folder = "east"
 
+    # y0, y1 = 190, 201
+    # x0, x1 = 255, 261
 elif zone == 'u':
     y = y_grd
     x = x_grd
@@ -258,7 +271,9 @@ if sombrero:
         from parameters import pls_path, ATTR_FILENAME
         if pls_path.exists():
             from caete_utils import read_pls_table
-            print("Using PLS TABLE from BASE_RUN")
+            print('')
+            print("Using PLS TABLE from BASE_RUN : baserun_6000pls_attrs_table/pls_attrs-6000.csv")
+            print('')
             os.makedirs(dump_folder, exist_ok=True)
             pls_table = read_pls_table(out=Path(os.path.join(dump_folder, ATTR_FILENAME)))
         else:
@@ -309,7 +324,9 @@ else:
     from parameters import pls_path, ATTR_FILENAME
     if pls_path.exists():
         from caete_utils import read_pls_table
-        print("Using PLS TABLE from BASE_RUN")
+        print('')
+        print("Using PLS TABLE from BASE_RUN : baserun_6000pls_attrs_table/pls_attrs-6000.csv")
+        print('')
         os.makedirs(dump_folder, exist_ok=True)
         pls_table = read_pls_table(out=Path(os.path.join(dump_folder, ATTR_FILENAME)))
     else:

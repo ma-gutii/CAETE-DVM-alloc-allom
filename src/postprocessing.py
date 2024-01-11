@@ -5,12 +5,36 @@ import joblib
 import pandas as pd
 import numpy as np
 
+
+while True:
+    grd_acro = input('Gridcell acronym [ALP, FEC, MAN, CAX, NVX]: ')
+
+    if grd_acro == 'ALP':
+        grd = '188-213'
+        break
+    elif grd_acro == 'FEC':
+        grd = '200-225'
+        break
+    elif grd_acro == 'MAN':
+        grd = '186-239'
+        break
+    elif grd_acro == 'CAX':
+        grd = '183-257'
+        break
+    elif grd_acro == 'NVX':
+        grd = '210-249'
+        break
+    else:
+        print('This acronym does not correspond')
+        break
+
+
 while True:
     server = input('Are you running in the server? y/n ')
 
     if server == 'y':
         # Set the main_path accordingly for server
-        main_path = '/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/'
+        main_path = f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/spinup_runs/'
         break
     elif server == 'n':
         # Set the main_path accordingly for local machine
@@ -18,9 +42,9 @@ while True:
         break
 
 run_name = input('Run name: ')
-grd = input('Which gridcell (lat-long): ')
+
 print('GRDDDDD == ', grd)
-path = f"../outputs/{run_name}/gridcell{grd}"
+path = f"../outputs/{grd_acro}/spinup_runs/{run_name}/gridcell{grd}"
 grd_name = f"gridcell{grd}"
 
 
@@ -57,11 +81,11 @@ for year in range(start_year, end_year, 1):
 for date_range in run_breaks_hist1:
 
     start_date, end_date, spin_id = date_range
-    file = p.read_pkz(int(spin_id), run_name, grd_name )
-    p.pkz2csv(file, path, grd_name, run_name, int(spin_id), date_range)
+    file = p.read_pkz(int(spin_id), run_name, grd_name, grd_acro)
+    p.pkz2csv(file, path, grd_name, run_name, int(spin_id), date_range, grd_acro)
 
 # # Navigate to the specified folder to access spins
-os.chdir(f'{main_path}outputs/{run_name}/{grd_name}/')
+os.chdir(f'{main_path}{run_name}/{grd_name}/')
 
 for date_range in run_breaks_hist2:
     print('Joining together all time series, dates, and spins =====',date_range)

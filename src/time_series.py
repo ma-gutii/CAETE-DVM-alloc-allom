@@ -60,7 +60,7 @@ def join_plot(start_date, end_date, run_breaks_hist, main_path, run_name, grd_na
     df = pd.DataFrame(all_data)
 
     # Save the DataFrame to a CSV file
-    df.to_csv('concatenated_series_all_spins.csv', index=False)
+    df.to_csv(f'concatenated_series_{run_name}.csv', index=False)
 
     # Convert the 'Date' column to the datetime data type if it's not already
     df['Date'] = pd.to_datetime(df['Date'])
@@ -82,8 +82,9 @@ def join_plot(start_date, end_date, run_breaks_hist, main_path, run_name, grd_na
     # Adjust the layout to prevent title overlap
     plt.tight_layout()
     # 
+        
     # Save the plot as an image
-    plt.savefig(os.path.join(f'{main_path}/outputs/{run_name}/{grd_name}/', f'timeseries_{run_name}_all_variables.png'))
+    plt.savefig(os.path.join(f'{main_path}{run_name}/{grd_name}/', f'timeseries_{run_name}_all_variables.png'))
     # 
     # Display the subplots
     plt.show()
