@@ -150,9 +150,9 @@ if not sombrero:
 
 if zone == 'c':
       
-    #Gridcell MAN: 186, 239
-    # y0, y1 = 186, 187
-    # x0, x1 = 239, 240
+    # Gridcell MAN: 186, 239
+    y0, y1 = 186, 187
+    x0, x1 = 239, 240
 
     # y0, y1 = 175, 176
     # x0, x1 = 235, 236
@@ -396,7 +396,7 @@ def apply_fun(grid:grd, allometry = allom)->grd:
 def apply_fun0(grid:grd, allometry = allom)->grd:
     if allom:
         grid.run_caete_allom('19790101', '19891231', spinup=35,
-                   fix_co2='1980', save=False, nutri_cycle=False)
+                   fix_co2='1980', save=True, nutri_cycle=False)
     else:
         grid.run_caete('19790101', '19891231', spinup=35,
                    fix_co2='1980', save=False)
@@ -412,7 +412,7 @@ def zip_gridtime(grd_pool, interval):
 
 def apply_funX(grid:grd, brk:list, allometry = allom)->grd:
     if allom:
-        grid.run_caete_allom(brk[0], brk[1], nutri_cycle=False)
+        grid.run_caete_allom(brk[0], brk[1], save = False, nutri_cycle=False)
     else:
         grid.run_caete(brk[0], brk[1])
     return grid

@@ -4,9 +4,10 @@ import matplotlib.pyplot as plt
 
 # Get user input for the run name
 run_name = input('run name: ')
+grd = input('lat-long: ')
 
 # Set the path to the data directory
-path = '/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{}/gridcell175-235'.format(run_name)
+path = f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{run_name}/gridcell{grd}'
 
 # Change the current working directory to the specified path
 os.chdir(path)
