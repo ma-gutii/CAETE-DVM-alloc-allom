@@ -83,3 +83,85 @@ plt.legend()
 plt.savefig(f'{main_path}/timeseries_mean_spinup.png')
 
 plt.show()
+
+# Calcular a diferença para cada série em relação à média geral
+diferencas = series_array - media_geral
+
+# Calcular a variância para cada série em relação à média geral
+variancias = np.var(diferencas, axis=1)
+
+# Calcular o desvio padrão para cada série em relação à média geral
+desvios_padrao = np.std(series_array, axis=1)
+
+# Identificar a série com a maior variância
+indice_maior_variancia = np.argmax(variancias)
+serie_maior_variancia = dfs[list(dfs.keys())[indice_maior_variancia]]
+
+print(f"Série com Maior Variância em Relação à Média Geral: {list(dfs.keys())[indice_maior_variancia]}")
+
+# Identificar a série com a maior variância
+indice_menor_variancia = np.argmin(variancias)
+serie_menor_variancia = dfs[list(dfs.keys())[indice_menor_variancia]]
+
+print(f"Série com Menor Variância em Relação à Média Geral: {list(dfs.keys())[indice_menor_variancia]}")
+
+# Obter o valor de 'ls' para a série de maior variância
+valor_ls_maior_variancia = serie_maior_variancia['ls'].values[0]
+
+print(f"Valor de 'ls' para a Série com Maior Variância: {valor_ls_maior_variancia}")
+
+# Obter o valor de 'ls' para a série de menor variância
+valor_ls_menor_variancia = serie_menor_variancia['ls'].values[0]
+
+print(f"Valor de 'ls' para a Série com Meenor Variância: {valor_ls_menor_variancia}")
+
+# Identificar a série com o maior desvio padrão
+indice_maior_desvio_padrao = np.argmax(desvios_padrao)
+serie_maior_desvio_padrao = dfs[list(dfs.keys())[indice_maior_desvio_padrao]]
+
+# Identificar a série com o menor desvio padrão
+
+indice_menor_desvio_padrao = np.argmin(desvios_padrao)
+serie_menor_desvio_padrao = dfs[list(dfs.keys())[indice_menor_desvio_padrao]]
+print(f"Série com Maior Desvio Padrão em Relação à Média Geral: {list(dfs.keys())[indice_maior_desvio_padrao]}")
+print(f"Série com Menor Desvio Padrão em Relação à Média Geral: {list(dfs.keys())[indice_menor_desvio_padrao]}")
+
+## Calcular o desvio padrão para cada série em relação à média geral
+desvios_padrao = np.std(series_array, axis=0)
+
+# Identificar a série com o maior desvio padrão
+indice_maior_desvio_padrao = np.argmax(desvios_padrao)
+serie_maior_desvio_padrao = dfs[list(dfs.keys())[indice_maior_desvio_padrao]]
+
+# Identificar a série com o menor desvio padrão
+indice_menor_desvio_padrao = np.argmin(desvios_padrao)
+serie_menor_desvio_padrao = dfs[list(dfs.keys())[indice_menor_desvio_padrao]]
+
+# Calcular o desvio padrão para a série com o maior desvio padrão
+desvio_padrao_maior = np.std(serie_maior_desvio_padrao['npp'].values)
+
+# Calcular o desvio padrão para a série com o menor desvio padrão
+desvio_padrao_menor = np.std(serie_menor_desvio_padrao['npp'].values)
+
+# Plotar a média geral
+plt.plot(datas, media_geral, label='Média Geral')
+
+# Adicionar sombra representando o desvio padrão para a série de maior desvio padrão
+plt.fill_between(datas,
+                 media_geral - desvio_padrao_maior,
+                 media_geral + desvio_padrao_maior, alpha=0.2, label='Desvio Padrão (Maior)')
+
+# Adicionar sombra representando o desvio padrão para a série de menor desvio padrão
+plt.fill_between(datas,
+                 media_geral - desvio_padrao_menor,
+                 media_geral + desvio_padrao_menor, alpha=0.2, label='Desvio Padrão (Menor)')
+
+plt.xlabel('Data')
+plt.ylabel('Valores')
+plt.title('Média Geral e Desvio Padrão para Séries Temporais')
+plt.legend()
+
+# Salvar os gráficos como um único arquivo PNG
+plt.savefig(f'{main_path}/timeseries_mean_std_shade_spinup.png')
+
+plt.show()
