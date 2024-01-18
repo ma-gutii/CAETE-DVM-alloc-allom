@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 while True:
-    grd_acro = 'MAN' #input('Gridcell acronym [ALP, FEC, MAN, CAX, NVX]: ')
+    grd_acro = input('Gridcell acronym [ALP, FEC, MAN, CAX, NVX]: ')
 
     if grd_acro == 'ALP':
         grd = '188-213'
@@ -31,7 +31,7 @@ while True:
 main_path = f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/state_start/'
        
 # Input the main run name
-main_run_name = 'MAN_save_spin' #input('Main run name: ')
+main_run_name = input('Main run name: ')
 
 # Create a dictionary to store the temporal series
 dfs = {}
@@ -64,6 +64,8 @@ for run_name, df in dfs.items():
 
 # Converter a lista de listas em um array NumPy
 series_array = np.array(series)
+
+
 
 # Calcular a média ao longo do eixo 0 (média de cada ponto de dado ao longo das séries)
 media_geral = np.mean(series_array, axis=0)
@@ -126,35 +128,18 @@ serie_menor_desvio_padrao = dfs[list(dfs.keys())[indice_menor_desvio_padrao]]
 print(f"Série com Maior Desvio Padrão em Relação à Média Geral: {list(dfs.keys())[indice_maior_desvio_padrao]}")
 print(f"Série com Menor Desvio Padrão em Relação à Média Geral: {list(dfs.keys())[indice_menor_desvio_padrao]}")
 
-## Calcular o desvio padrão para cada série em relação à média geral
-desvios_padrao = np.std(series_array, axis=0)
-
-# Identificar a série com o maior desvio padrão
-indice_maior_desvio_padrao = np.argmax(desvios_padrao)
-serie_maior_desvio_padrao = dfs[list(dfs.keys())[indice_maior_desvio_padrao]]
-
-# Identificar a série com o menor desvio padrão
-indice_menor_desvio_padrao = np.argmin(desvios_padrao)
-serie_menor_desvio_padrao = dfs[list(dfs.keys())[indice_menor_desvio_padrao]]
-
-# Calcular o desvio padrão para a série com o maior desvio padrão
-desvio_padrao_maior = np.std(serie_maior_desvio_padrao['npp'].values)
-
-# Calcular o desvio padrão para a série com o menor desvio padrão
-desvio_padrao_menor = np.std(serie_menor_desvio_padrao['npp'].values)
-
 # Plotar a média geral
-plt.plot(datas, media_geral, label='Média Geral')
+# plt.plot(datas, media_geral, label='Média Geral', linewidth=0.1)
 
 # Adicionar sombra representando o desvio padrão para a série de maior desvio padrão
 plt.fill_between(datas,
-                 media_geral - desvio_padrao_maior,
-                 media_geral + desvio_padrao_maior, alpha=0.2, label='Desvio Padrão (Maior)')
+                 media_geral - np.std(series_array, axis=0),
+                 media_geral + np.std(series_array, axis=0), alpha=1, label='Desvio Padrão (Maior)')
 
 # Adicionar sombra representando o desvio padrão para a série de menor desvio padrão
 plt.fill_between(datas,
-                 media_geral - desvio_padrao_menor,
-                 media_geral + desvio_padrao_menor, alpha=0.2, label='Desvio Padrão (Menor)')
+                 media_geral - np.std(series_array, axis=0),
+                 media_geral + np.std(series_array, axis=0), alpha=0.5, label='Desvio Padrão (Menor)')
 
 plt.xlabel('Data')
 plt.ylabel('Valores')
@@ -162,6 +147,17 @@ plt.title('Média Geral e Desvio Padrão para Séries Temporais')
 plt.legend()
 
 # Salvar os gráficos como um único arquivo PNG
-plt.savefig(f'{main_path}/timeseries_mean_std_shade_spinup.png')
+# plt.savefig(f'{main_path}/timeseries_mean_std_shade_spinup.png')
 
 plt.show()
+
+## Encontrar a série com maior e menor valor de 'ls'
+indice_maior_ls_global = np.argmax(series_array[:, -1])
+indice_menor_ls_global = np.argmin(series_array[:, -1])
+
+# Recuperar os valores de 'ls' correspondentes
+valor_maior_ls_global = series_array[indice_maior_ls_global, -1]
+valor_menor_ls_global = series_array[indice_menor_ls_global, -1]
+
+print(f"Série com Maior Valor de 'ls' Global: {list(dfs.keys())[indice_maior_ls_global]}, Valor: {valor_maior_ls_global}")
+print(f"Série com Menor Valor de 'ls' Global: {list(dfs.keys())[indice_menor_ls_global]}, Valor: {valor_menor_ls_global}")
