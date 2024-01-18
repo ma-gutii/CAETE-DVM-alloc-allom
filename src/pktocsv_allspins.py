@@ -4,9 +4,9 @@ import pandas as pd
 import numpy as np
 
 def read_pkz(spin, run_name, grd_name, grd_acro):
-    with open(f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/spinup_runs/{run_name}/{grd_name}/spin{spin:02d}.pkz", 'rb') as fh:
+    with open(f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{run_name}/{grd_name}/spin{spin:02d}.pkz", 'rb') as fh:
         dt = joblib.load(fh)
-    print(f"Loaded data for spin {spin:02d}")
+    # print(f"Loaded data for spin {spin:02d}")
     return dt
 
 def pkz2csv(file, path, grd_name, run_name, spin_id, date_range, grd_acro) -> pd.DataFrame:
@@ -29,13 +29,13 @@ def pkz2csv(file, path, grd_name, run_name, spin_id, date_range, grd_acro) -> pd
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    folder_path2 = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/spinup_runs/{run_name}/{grd_name}/csv"
+    folder_path2 = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{run_name}/{grd_name}/csv"
     if not os.path.exists(folder_path2):
         os.makedirs(folder_path2)
 
     for lev in idx1:
         area_TS = area[lev, :]
-        print(f"lev: {lev}, area_TS length: {len(area_TS)}")
+        # print(f"lev: {lev}, area_TS length: {len(area_TS)}")
         # Crie idxT1 com freq='Y'
         # Crie idxT1 manualmente representando anos inteiros
         start_date = date_range[0]
@@ -66,7 +66,7 @@ def pkz2csv(file, path, grd_name, run_name, spin_id, date_range, grd_acro) -> pd
             YEAR.append(i.year)
             PID.append(int(lev))
             OCP.append(float(area_TS.loc[[i.date()]].iloc[0]))
-            print(f"lev: {lev}, PID: {int(lev)}")
+            # print(f"lev: {lev}, PID: {int(lev)}")
 
         ocp_ts = pd.Series(OCP, index=idxT2)
         pid_ts = pd.Series(PID, index=idxT2)
@@ -86,7 +86,7 @@ def pkz2csv(file, path, grd_name, run_name, spin_id, date_range, grd_acro) -> pd
 
         # Save the CSV file with spin information in the name
         csv_filename = f"{run_name}_{grd_name}_spin{spin_id:02d}_EV_{int(lev)}.csv"
-        dt1.to_csv(f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/spinup_runs/{run_name}/{grd_name}/csv/{csv_filename}", index=False)
+        dt1.to_csv(f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{run_name}/{grd_name}/csv/{csv_filename}", index=False)
 
 # # # User inputs
 # run_name = input('Run name: ')

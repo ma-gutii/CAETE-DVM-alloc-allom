@@ -34,7 +34,7 @@ while True:
 
     if server == 'y':
         # Set the main_path accordingly for server
-        main_path = f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/spinup_runs/'
+        main_path = f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/'
         break
     elif server == 'n':
         # Set the main_path accordingly for local machine
@@ -44,7 +44,7 @@ while True:
 run_name = input('Run name: ')
 
 print('GRDDDDD == ', grd)
-path = f"../outputs/{grd_acro}/spinup_runs/{run_name}/gridcell{grd}"
+path = f"../outputs/{run_name}/gridcell{grd}"
 grd_name = f"gridcell{grd}"
 
 

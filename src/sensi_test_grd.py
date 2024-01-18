@@ -26,7 +26,7 @@ from pathlib import Path
 import joblib
 import numpy as np
 
-from parameters import BASE_RUN, ATTR_FILENAME, run_path, pls_path
+from parameters import base_run, ATTR_FILENAME, run_path, pls_path
 
 assert run_path.exists(), "Wrong path to initial conditions"
 assert pls_path.exists(), "Wrong path to Attributes Table"
@@ -38,8 +38,7 @@ with open(run_path, 'rb') as fh:
     #init_conditions contais all the attributes and methods of caete.grd
 all_attributes_and_methods = dir(init_conditions)
 
-# Print the list
-print(all_attributes_and_methods)
+
 
 experiment = input("regular climate(a) or experiment(b)? ")
 
@@ -58,24 +57,9 @@ else:
     print('')
     print('')
     
-    application_interval = input('Which is the interval between the applications? ')
+    application_interval = input('Which is the interval between the applications? [1, 3, 5, 7] ')
 
 interval = int(application_interval) + 1 #+1 guarantee the right interval between applications
-
-# new outputs folder
-run_name = input(f"Give a name to this output: ")
-dump_folder = Path(f"{run_name}")
-
-for gridcell in init_conditions:
-    gridcell.clean_run(dump_folder, "init_cond")
-    
-
-def zip_gridtime(grd_pool, interval):
-    res = []
-    for i, j in enumerate(grd_pool):
-        res.append((j, interval[i % len(interval)]))
-    return res
-
 while True:
     perc_prec = input("What is the percentage of reduction? [0, 10, 20, 30] ")
     
@@ -106,6 +90,21 @@ while True:
     else:
         print('Reduction out of range -- CANCELLING')
         pass
+# new outputs folder
+run_name = input(f"Give a name to this output: ")
+dump_folder = Path(f"{run_name}")
+
+for gridcell in init_conditions:
+    gridcell.clean_run(dump_folder, "init_cond")
+    
+
+def zip_gridtime(grd_pool, interval):
+    res = []
+    for i, j in enumerate(grd_pool):
+        res.append((j, interval[i % len(interval)]))
+    return res
+
+
         
 # Loop para executar para cada ano de '19790101' a '20161231'
 for year in range(1979, 2017):

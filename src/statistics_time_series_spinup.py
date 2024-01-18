@@ -128,6 +128,17 @@ serie_menor_desvio_padrao = dfs[list(dfs.keys())[indice_menor_desvio_padrao]]
 print(f"Série com Maior Desvio Padrão em Relação à Média Geral: {list(dfs.keys())[indice_maior_desvio_padrao]}")
 print(f"Série com Menor Desvio Padrão em Relação à Média Geral: {list(dfs.keys())[indice_menor_desvio_padrao]}")
 
+# Obter o valor de 'ls' para a série de maior variância
+valor_ls_maior_desvio_padrao = serie_maior_desvio_padrao['ls'].values[0]
+
+print(f"Valor de 'ls' para a Série com Maior dp: {valor_ls_maior_desvio_padrao}")
+
+# Obter o valor de 'ls' para a série de menor variância
+valor_ls_menor_desvio_padrao = serie_menor_desvio_padrao['ls'].values[0]
+
+print(f"Valor de 'ls' para a Série com Meenor dp: {valor_ls_menor_desvio_padrao}")
+
+
 # Plotar a série com o menor desvio padrão
 plt.plot(datas, serie_menor_desvio_padrao['npp'], label='Menor Desvio Padrão - Original', alpha = 0.3, color = 'blue', linewidth = 0.1)
 

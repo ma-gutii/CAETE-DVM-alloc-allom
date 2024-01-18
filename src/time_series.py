@@ -44,6 +44,9 @@ def join_plot(start_date, end_date, run_breaks_hist, main_path, run_name, grd_na
         with open(f"spin{spin:02d}.pkz", 'rb') as fh:
             dt = joblib.load(fh)
 
+        #calculating total carbon
+        dt['totalcarbon'] = dt['cleaf'] + dt['cwood'] + dt['croot'] + dt['csap'] + dt['cheart'] + dt['csto']
+
         # Iterate over all variables and extract time series
         for variable in variables_to_plot:
             variable_series = dt.get(variable, [])
@@ -66,15 +69,15 @@ def join_plot(start_date, end_date, run_breaks_hist, main_path, run_name, grd_na
     df['Date'] = pd.to_datetime(df['Date'])
 
 # # Create a figure and an array of subplots based on the number of variables
-    num_variables = len(variables_to_plot)
+    num_variables = len(variables_to_plot) +1 # +1 for the 'totalcarbon' variable
     num_rows = (num_variables + 1) // 4  # Ensure at least 1 row
-    fig, axs = plt.subplots(nrows=5, ncols=3, figsize=(15, 5 * num_rows), sharex=True)
+    fig, axs = plt.subplots(nrows=num_rows, ncols=4, figsize=(15, 5 * num_rows), sharex=True)
 
 # # Flatten the axs array to handle 1D indexing
     axs = axs.flatten()
 
 # # Iterate over variables and plot each one
-    for i, variable in enumerate(variables_to_plot):
+    for i, variable in enumerate(variables_to_plot + ['totalcarbon']):
         axs[i].plot(df['Date'], df[variable])
         axs[i].set_ylabel(variable)
         axs[i].set_title(f'Time Series of {variable}')
