@@ -151,8 +151,8 @@ if not sombrero:
 if zone == 'c':
       
     # # Gridcell MAN: 186, 239
-    # y0, y1 = 186, 187
-    # x0, x1 = 239, 240
+    y0, y1 = 186, 187
+    x0, x1 = 239, 240
 
     # y0, y1 = 175, 176
     # x0, x1 = 235, 236
@@ -162,7 +162,7 @@ elif zone == 's':
     
     # # Gridcell NVX: 210-249
     # y0, y1 = 210, 211
-    # x0, x1 = 249, 250
+    # x0, x1 = 230, 231
     
 
     #Gridcell FEC: 200-225
@@ -185,8 +185,8 @@ elif zone == 'nw':
 
 elif zone == 'e':
     # #Gridcell CAX: 183, 257
-    y0, y1 = 183, 184
-    x0, x1 = 257, 258
+    # y0, y1 = 183, 184
+    # x0, x1 = 257, 258
     folder = "east"
 
     # y0, y1 = 190, 201
@@ -368,6 +368,7 @@ def chunks(lst, chunck_size):
 
 # # START GRIDCELLS
 print("Starting gridcells")
+print(grid_mn)
 print_progress(0, len(grid_mn), prefix='Progress:', suffix='Complete')
 for i, g in enumerate(grid_mn):  #enumerate creates the index (i) for each gridcell in grid_mn
     apply_init(g)
