@@ -76,15 +76,15 @@ for run_name in run_names:
 
     for lev in idx1:
         area_TS = area[lev, :]
-        print(f"lev: {lev}, area_TS length: {len(area_TS)}")
+        # print(f"lev: {lev}, area_TS length: {len(area_TS)}")
 
         idxT1 = pd.date_range(start=start_date, end=end_date, freq='D')    
-        print('')
-        print('')
-        print(f"idxt1: {idxT1}")
-        print('')
-        print('')
-        print(f'len area_TS {len(area_TS)} len idxT1 {len(idxT1)}')
+        # print('')
+        # print('')
+        # print(f"idxt1: {idxT1}")
+        # print('')
+        # print('')
+        # print(f'len area_TS {len(area_TS)} len idxT1 {len(idxT1)}')
 
         assert len(area_TS) == len(idxT1), "Length mismatch between area_TS and idxT1"
 

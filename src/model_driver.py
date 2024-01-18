@@ -150,9 +150,9 @@ if not sombrero:
 
 if zone == 'c':
       
-    # Gridcell MAN: 186, 239
-    y0, y1 = 186, 187
-    x0, x1 = 239, 240
+    # # Gridcell MAN: 186, 239
+    # y0, y1 = 186, 187
+    # x0, x1 = 239, 240
 
     # y0, y1 = 175, 176
     # x0, x1 = 235, 236
@@ -160,12 +160,12 @@ if zone == 'c':
 
 elif zone == 's':
     
-    # Gridcell NVX: 210-249
-    y0, y1 = 210, 211
-    x0, x1 = 249, 250
+    # # Gridcell NVX: 210-249
+    # y0, y1 = 210, 211
+    # x0, x1 = 249, 250
     
 
-    # #Gridcell FEC: 200-225
+    #Gridcell FEC: 200-225
     # y0, y1 = 200, 201
     # x0, x1 = 225, 226
 
@@ -175,16 +175,16 @@ elif zone == 's':
 
 elif zone == 'nw':
    
-    #Gridcell ALP: 188, 213
-    y0, y1 = 188, 189
-    x0, x1 = 213, 214
+    # #Gridcell ALP: 188, 213
+    # y0, y1 = 188, 189
+    # x0, x1 = 213, 214
 
     # y0, y1 = 168, 175
     # x0, x1 = 225, 230
     folder = "north_west"
 
 elif zone == 'e':
-   
+    # #Gridcell CAX: 183, 257
     y0, y1 = 183, 184
     x0, x1 = 257, 258
     folder = "east"

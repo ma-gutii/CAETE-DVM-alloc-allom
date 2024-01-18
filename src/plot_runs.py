@@ -13,7 +13,7 @@ while True:
 
     # Set the main_path accordingly based on the user's response
     if server == 'y':
-        main_path = f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/spinup_runs/'
+        main_path = f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/state_start/'
         break
     elif server == 'n':
         # Set the main_path accordingly for local machine
@@ -40,45 +40,38 @@ for i in range(1, run_number + 1):
     os.chdir(f'{main_path}{run_name}/gridcell{grd_name}')
 
     # Read the CSV file corresponding to the concatenated series
-    df = pd.read_csv(f'{main_path}{run_name}/gridcell{grd_name}/concatenated_series_{run_name}.csv')
+    df = pd.read_csv(f'{main_path}{run_name}/gridcell{grd_name}/csv/concatenated_series_{run_name}.csv')
 
     # Convert the 'Date' column to the datetime data type
     df['Date'] = pd.to_datetime(df['Date'])
 
     # Store the DataFrame in the dictionary
     dfs[run_name] = df
+variables_to_plot = ['photo', 'npp', 'evapm', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto','ls']
+# Create a figure and an array of subplots based on the number of variables
+num_variables = len(variables_to_plot)
+num_cols = 3
+num_rows = (num_variables + num_cols - 1) // num_cols  # Ensure at least 1 row
+fig, axs = plt.subplots(nrows=num_rows, ncols=num_cols, figsize=(15, 5 * num_rows), sharex=True)
 
-# Configuração do layout do gráfico
-# fig, ax = plt.subplots(figsize=(15, 8))
-fig, (ax_ls, ax_npp, ax_photo) = plt.subplots(nrows=3, figsize = (15,8), sharex=True)
+# Flatten the axs array to handle 1D indexing
+axs = axs.flatten()
 
-# Iterar sobre as rodadas e plotar cada uma
-for run_name, df in dfs.items():
-    ax_ls.plot(df['Date'], df['ls'], label=f'{run_name} - ls', alpha = 0.8, linewidth = 1.)
-    ax_npp.plot(df['Date'], df['npp'], label=f'{run_name} - npp', alpha = 0.5, linewidth = 0.6)
-    ax_photo.plot(df['Date'], df['photo'], label=f'{run_name} - photo', alpha = 0.5, linewidth = 0.6)
+# Iterar sobre as variáveis e plotar todas as rodadas para cada variável
+for i, variable in enumerate(variables_to_plot):
+    # Iterate over rodadas and plot each one
+    for run_name, df in dfs.items():
+        axs[i].plot(df['Date'], df[variable], alpha=0.5, linewidth=0.6, label=run_name)
 
-# Adicionar rótulos e título aos subplots
-ax_ls.set_ylabel('ls')
-ax_ls.set_title('Time Series of ls for All Runs')
+    axs[i].set_ylabel(variable)
+    axs[i].set_title(f'Time Series of {variable}')
+    axs[i].legend()
 
-ax_ls.set_ylabel('photo')
-ax_ls.set_title('Time Series of photo for All Runs')
-
-ax_npp.set_xlabel('Date')
-ax_npp.set_ylabel('npp')
-ax_npp.set_title('Time Series of npp for All Runs')
-
-# Adicionar legendas aos subplots
-ax_ls.legend()
-ax_npp.legend()
-ax_photo.legend()
-
-# Ajustar layout para evitar sobreposição
+# Adjust the layout to prevent title overlap
 plt.tight_layout()
 
-# Salvar os gráficos como arquivos PNG separados
-fig.savefig(f'{main_path}/timeseries_{main_run_name}.png')
+# Salvar os gráficos como um único arquivo PNG
+fig.savefig(f'{main_path}/timeseries_all_runs.png')
 
 # Exibir os gráficos
 plt.show()
