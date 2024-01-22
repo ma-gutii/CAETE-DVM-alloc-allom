@@ -8,11 +8,12 @@ while True:
     if grd_acro == 'ALP':
         grd = '188-213'
         base_run = 'ALP_save_spin_1'
-
         break
 
     elif grd_acro == 'FEC':
         grd = '200-225'
+        base_run = 'FEC_save_spin_6'
+
         break
     elif grd_acro == 'MAN':
         grd = '186-239'
@@ -20,6 +21,8 @@ while True:
         break
     elif grd_acro == 'CAX':
         grd = '183-257'
+        base_run = 'CAX_save_spin_5'
+
         break
     elif grd_acro == 'NVX':
         grd = '210-249'
