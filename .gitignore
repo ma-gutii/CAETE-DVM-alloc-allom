@@ -16,6 +16,7 @@ outputs/*
 !outputs/base_run/
 !outputs/t10_141223/gridcell175-235/*.png
 outputs/base_run/gridcell175-235/csv/*csv
+!outputs/AFL/experiments/AFL_10prec_1y/gridcell199-248/concatenated_series_AFL_10prec_1y.csv
 
 
 
