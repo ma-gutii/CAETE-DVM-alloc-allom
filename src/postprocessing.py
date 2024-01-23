@@ -44,49 +44,39 @@ while True:
         main_path = '/home/bianca/bianca/CAETE-DVM-alloc-allom/'
         break
 # run_names = ['ALP_30prec_1y']
-run_names = [
-    'AFL_regularclimate',
-    'AFL_10prec_1y',
-    'AFL_10prec_3y',
-    'AFL_10prec_5y',
-    'AFL_10prec_7y',
-    'AFL_20prec_1y',
-    'AFL_20prec_3y',
-    'AFL_20prec_5y',
-    'AFL_20prec_7y',
-    'AFL_30prec_1y',
-    'AFL_30prec_3y',
-    'AFL_30prec_5y',
-    'AFL_30prec_7y'
-]
+# run_names = [
     
-# run_names = ['FEC_regularclimate',
-#     'FEC_10prec_1y',
-#     'FEC_10prec_3y',
-#     'FEC_10prec_5y',
-#     'FEC_10prec_7y',
-#     'FEC_20prec_1y',
-#     'FEC_20prec_3y',
-#     'FEC_20prec_5y',
-#     'FEC_20prec_7y',
+#     'AFL_30prec_1y',
+#     'AFL_30prec_3y',
+#     'AFL_30prec_5y',
+#     'AFL_30prec_7y'
+# ]
+    
+# run_names = [
+#     # 
+#     'ALP_30prec_1y',
+#     'ALP_30prec_3y',
+#     'ALP_30prec_5y',
+#     'ALP_30prec_7y'
+# ]
+    
+# run_names = [
 #     'FEC_30prec_1y',
 #     'FEC_30prec_3y',
 #     'FEC_30prec_5y',
 #     'FEC_30prec_7y']
     
-# run_names = ['CAX_regularclimate',
-#     'CAX_10prec_1y',
-#     'CAX_10prec_3y',
-#     'CAX_10prec_5y',
-#     'CAX_10prec_7y',
-#     'CAX_20prec_1y',
-#     'CAX_20prec_3y',
-#     'CAX_20prec_5y',
-#     'CAX_20prec_7y',
+# run_names = [
 #     'CAX_30prec_1y',
 #     'CAX_30prec_3y',
 #     'CAX_30prec_5y',
 #     'CAX_30prec_7y']
+
+run_names = [
+    'MAN_30prec_1y',
+    'MAN_30prec_3y',
+    'MAN_30prec_5y',
+    'MAN_30prec_7y']
 
 
 # run_name = input('Run name: ')
