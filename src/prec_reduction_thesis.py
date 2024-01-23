@@ -86,7 +86,11 @@ while True:
         #30% precipitation reduction
         prec_red = 0.7
         if prec_red == 0.7:
-            print('OK')
+            print('')
+            print('OK',prec_red)
+            print('OK',prec_red)
+            print('OK',prec_red)
+            print('')
         else:
             print('WRONG')
         break
