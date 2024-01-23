@@ -16,7 +16,7 @@ outputs/*
 !outputs/base_run/
 !outputs/t10_141223/gridcell175-235/*.png
 outputs/base_run/gridcell175-235/csv/*csv
-!outputs/AFL/*
+
 
 
 Essas regras dizem para ignorar todos os arquivos dentro do diretório `outputs`, mas fazer exceções para os arquivos com extensão `.py` e `.csv`. Certifique-se de que este arquivo `.gitignore` esteja na raiz do seu repositório Git.
