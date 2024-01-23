@@ -43,21 +43,21 @@ while True:
         # Set the main_path accordingly for local machine
         main_path = '/home/bianca/bianca/CAETE-DVM-alloc-allom/'
         break
-
+run_names = ['ALP_30prec_1y']
 # run_names = [
-#     'ALP_regularclimate',
-#     'ALP_10prec_1y',
-#     'ALP_10prec_3y',
-#     'ALP_10prec_5y',
-#     'ALP_10prec_7y',
-#     'ALP_20prec_1y',
-#     'ALP_20prec_3y',
-#     'ALP_20prec_5y',
-#     'ALP_20prec_7y',
-#     'ALP_30prec_1y',
-#     'ALP_30prec_3y',
-#     'ALP_30prec_5y',
-#     'ALP_30prec_7y'
+#     'AFL_regularclimate',
+#     'AFL_10prec_1y',
+#     'AFL_10prec_3y',
+#     'AFL_10prec_5y',
+#     'AFL_10prec_7y',
+#     'AFL_20prec_1y',
+#     'AFL_20prec_3y',
+#     'AFL_20prec_5y',
+#     'AFL_20prec_7y',
+#     'AFL_30prec_1y',
+#     'AFL_30prec_3y',
+#     'AFL_30prec_5y',
+#     'AFL_30prec_7y'
 # ]
     
 # run_names = ['FEC_regularclimate',
@@ -88,12 +88,11 @@ while True:
 #     'CAX_30prec_5y',
 #     'CAX_30prec_7y']
 
-run_names = ['afl']
 
 # run_name = input('Run name: ')
 for run_name in run_names:
     print('GRDDDDD == ', grd)
-    path = f"../outputs/{run_name}/gridcell{grd}"
+    path = f"../outputs/AFL{run_name}/gridcell{grd}"
     grd_name = f"gridcell{grd}"
 
 
