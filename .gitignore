@@ -7,6 +7,7 @@ src/*.npy
 src/*.csv
 src/*.txt
 src/*.cfg
+!src/prec_reduction_thesis.py
 src/RUN*
 !src/code_table_allom.csv
 outputs/*

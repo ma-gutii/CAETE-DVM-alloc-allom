@@ -57,7 +57,7 @@ else:
     print('')
     print('')
     
-    application_interval = '1' #input('Which is the interval between the applications? [1, 3, 5, 7] ')
+    application_interval = input('Which is the interval between the applications? [1, 3, 5, 7] ')
 
 #+1 guarantee the right interval between applications
 interval = int(application_interval) + 1
