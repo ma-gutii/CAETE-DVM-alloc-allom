@@ -40,7 +40,7 @@ all_attributes_and_methods = dir(init_conditions)
 
 
 
-experiment = 'b' #input("regular climate(a) or experiment(b)? ")
+experiment = input("regular climate(a) or experiment(b)? ")
 
 if experiment == 'a':
     print('')
@@ -59,67 +59,48 @@ else:
     
     application_interval = input('Which is the interval between the applications? [1, 3, 5, 7] ')
 
-#+1 guarantee the right interval between applications
-interval = int(application_interval) + 1
-
-
-# while True:
-#     perc_prec = input("What is the percentage of reduction? [0, 10, 20, 30] ")
-    
-#     if perc_prec == '0':
-#         print('You are not applying precipitation reduction')
-#         #10% precipitation reduction
-#         prec_red = 1.
-#         break
-
-#     if perc_prec == '10':
-#         print('You are applying 10% of precipitation reduction')
-#         #10% precipitation reduction
-#         prec_red = 0.9
-#         break
-
-#     elif perc_prec == '20':
-#         print('You are applying 20% of precipitation reduction')
-#         #20% precipitation reduction
-#         prec_red = 0.8
-#         break
-
-#     elif perc_prec == '30':
-#         print('You are applying 30% of precipitation reduction')
-#         #30% precipitation reduction
-#         prec_red = 0.8
-#         break
-    
-#     else:
-#         print('Reduction out of range -- CANCELLING')
-#         pass
-# new outputs folder
-
+interval = int(application_interval) + 1 #+1 guarantee the right interval between applications
 while True:
-    grd_acro = input('Gridcell acronym [AFL, ALP, FEC, MAN, CAX]: ')
+    perc_prec = input("What is the percentage of reduction? [0, 10, 20, 30] ")
+    
+    if perc_prec == '0':
+        print('You are not applying precipitation reduction')
+        #10% precipitation reduction
+        prec_red = 1.
+        break
 
-    if grd_acro == 'ALP':
-        grd = '188-213'
+    if perc_prec == '10':
+        print('You are applying 10% of precipitation reduction')
+        #10% precipitation reduction
+        prec_red = 0.9
         break
-    elif grd_acro == 'FEC':
-        grd = '200-225'
+
+    elif perc_prec == '20':
+        print('You are applying 20% of precipitation reduction')
+        #20% precipitation reduction
+        prec_red = 0.8
         break
-    elif grd_acro == 'MAN':
-        grd = '186-239'
+
+    elif perc_prec == '30':
+        print('You are applying 30% of precipitation reduction')
+        #30% precipitation reduction
+        prec_red = 0.7
+        if prec_red == 0.7:
+            print('OK')
+        else:
+            print('WRONG')
         break
-    elif grd_acro == 'CAX':
-        grd = '183-257'
-        break
-    # elif grd_acro == 'NVX':
-    #     grd = '210-249'
-    #     break
-    elif grd_acro == 'AFL':
-       grd = '199-248'
-       break
+    
     else:
-        print('This acronym does not correspond')
-        break
+        print('Reduction out of range -- CANCELLING')
+        pass
+# new outputs folder
+run_name = input(f"Give a name to this output: ")
+dump_folder = Path(f"{run_name}")
 
+for gridcell in init_conditions:
+    gridcell.clean_run(dump_folder, "init_cond")
+    
 
 def zip_gridtime(grd_pool, interval):
     res = []
@@ -127,66 +108,22 @@ def zip_gridtime(grd_pool, interval):
         res.append((j, interval[i % len(interval)]))
     return res
 
-perc_prec = ['10', '20', '30']
- 
-for perc in perc_prec:
-    run_name = f'{grd_acro}_{perc}prec_{application_interval}y'      #input(f"Give a name to this output: ")
-    dump_folder = Path(f"{run_name}")
-
-    while True:
-    
-        if perc_prec == '0':
-            print('You are not applying precipitation reduction')
-            #10% precipitation reduction
-            prec_red = 1.
-            break
-
-        elif perc_prec == '10':
-            print('You are applying 10% of precipitation reduction')
-            #10% precipitation reduction
-            prec_red = 0.9
-            break
-
-        elif perc_prec == '20':
-            print('You are applying 20% of precipitation reduction')
-            #20% precipitation reduction
-            prec_red = 0.8
-            break
-
-        elif perc_prec == '30':
-            print('You are applying 30% of precipitation reduction')
-            #30% precipitation reduction
-            prec_red = 0.7
-            if prec_red == 0.7:
-                print('0.7 IS CORRECT')
-            else:
-                print('WROOOOOOOOOOOOOOOOOONG')
-            break
-    
-        else:
-            print('Reduction out of range -- CANCELLING')
-            pass
 
         
-    for gridcell in init_conditions:
-        gridcell.clean_run(dump_folder, "init_cond")
+# Loop para executar para cada ano de '19790101' a '20161231'
+for year in range(1979, 2017):
+    start_date = f"{year}0101"
+    end_date = f"{year}1231"
 
+    # Application for a whole year in the set interval
+    if (year % interval == 0) and (experiment =='a'):
+        print(f"running the model in {year}")
+        gridcell.pr = gridcell.pr * prec_red
 
-    # Loop para executar para cada ano de '19790101' a '20161231'
-    for year in range(1979, 2017):
-        start_date = f"{year}0101"
-        end_date = f"{year}1231"
-
-        # Application for a whole year in the set interval
-        if (year % interval == 0) and (experiment =='a'):
-            print(f"running the model in {year}")
-            gridcell.pr = gridcell.pr * prec_red
-
-        elif (year % interval == 0) and (start_date != '19790101'):  # Garante que o primeiro ano não seja afetado
-            print(f"applying the disturbance in {year}")
-            gridcell.pr = gridcell.pr * prec_red
-
-
-        # Execute o método para o intervalo de datas atual
-        gridcell.run_caete_allom(start_date, end_date)
-
+    elif (year % interval == 0) and (start_date != '19790101'):  # Garante que o primeiro ano não seja afetado
+        print(f"applying the disturbance in {year}")
+        gridcell.pr = gridcell.pr * prec_red
+        
+     
+    # Execute o método para o intervalo de datas atual
+    gridcell.run_caete_allom(start_date, end_date)
