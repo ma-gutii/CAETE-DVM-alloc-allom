@@ -13,7 +13,7 @@ end_date = '19891231'
 main_path = f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/'
 
 while True:
-    grd_acro = input('Gridcell acronym [ALP, FEC, MAN, CAX, NVX]: ')
+    grd_acro = input('Gridcell acronym [AFL, ALP, FEC, MAN, CAX, NVX]: ')
 
     if grd_acro == 'ALP':
         grd = '188-213'
@@ -30,6 +30,10 @@ while True:
     elif grd_acro == 'NVX':
         grd = '210-249'
         break
+    elif grd_acro == 'AFL':
+       grd = '199-248'
+       break
+    
     else:
         print('This acronym does not correspond')
         break

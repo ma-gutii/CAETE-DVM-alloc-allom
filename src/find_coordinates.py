@@ -59,10 +59,13 @@ print('MAN',coord)
 coord = find_coord(-1.7167, -51.45)
 print('CAX',coord)
 
-"NVX - Nova Xavantina"
-coord = find_coord(-14.8167, -55.4)
-print('FEC',coord)
+# "NVX - Nova Xavantina"
+# coord = find_coord(-14.8167, -55.4)
+# print('FEC',coord)
 
+"AFL - Alta Floresta"
+coord = find_coord(-9.52, -55.93)
+print('AFL',coord)
 import numpy as np
 
 def reverse_coord(Yind, Xind):

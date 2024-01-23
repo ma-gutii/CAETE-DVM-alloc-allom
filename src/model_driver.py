@@ -159,10 +159,16 @@ if zone == 'c':
     folder = "central"
 
 elif zone == 's':
+     
     
-    # # Gridcell NVX: 210-249
+    # Gridcell AFL: 199-248
+
+    y0, y1 = 199, 200
+    x0, x1 = 248, 249 
+    
+    # # # Gridcell NVX: 210-249
     # y0, y1 = 210, 211
-    # x0, x1 = 230, 231
+    # x0, x1 = 249, 250
     
 
     #Gridcell FEC: 200-225
@@ -397,7 +403,7 @@ def apply_fun(grid:grd, allometry = allom)->grd:
 def apply_fun0(grid:grd, allometry = allom)->grd:
     if allom:
         grid.run_caete_allom('19790101', '19891231', spinup=35,
-                   fix_co2='1980', save=False, nutri_cycle=False)
+                   fix_co2='1980', save=True, nutri_cycle=False)
     else:
         grid.run_caete('19790101', '19891231', spinup=35,
                    fix_co2='1980', save=False)
@@ -413,7 +419,7 @@ def zip_gridtime(grd_pool, interval):
 
 def apply_funX(grid:grd, brk:list, allometry = allom)->grd:
     if allom:
-        grid.run_caete_allom(brk[0], brk[1], save = True, nutri_cycle=False)
+        grid.run_caete_allom(brk[0], brk[1], save = False, nutri_cycle=False)
     else:
         grid.run_caete(brk[0], brk[1])
     return grid

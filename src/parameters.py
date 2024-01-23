@@ -3,7 +3,7 @@ from pathlib import Path
 
 # Name of the base historical observed run.
 while True:
-    grd_acro = input('Gridcell acronym [ALP, FEC, MAN, CAX, NVX]: ')
+    grd_acro = input('Gridcell acronym [AFL, ALP, FEC, MAN, CAX, NVX]: ')
 
     if grd_acro == 'ALP':
         grd = '188-213'
@@ -26,6 +26,12 @@ while True:
         break
     elif grd_acro == 'NVX':
         grd = '210-249'
+        base_run = 'not defined'
+        break
+
+    elif grd_acro == 'AFL':
+        grd = '199-248'
+        base_run = 'not defined'
         break
     else:
         print('This acronym does not correspond')

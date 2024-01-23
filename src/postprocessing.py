@@ -7,7 +7,7 @@ import numpy as np
 
 
 while True:
-    grd_acro = input('Gridcell acronym [ALP, FEC, MAN, CAX, NVX]: ')
+    grd_acro = input('Gridcell acronym [AFL, ALP, FEC, MAN, CAX, NVX]: ')
 
     if grd_acro == 'ALP':
         grd = '188-213'
@@ -23,6 +23,9 @@ while True:
         break
     elif grd_acro == 'NVX':
         grd = '210-249'
+        break
+    elif grd_acro == 'AFL':
+        grd = '199-248'
         break
     else:
         print('This acronym does not correspond')
@@ -71,19 +74,21 @@ while True:
 #     'FEC_30prec_5y',
 #     'FEC_30prec_7y']
     
-run_names = ['CAX_regularclimate',
-    'CAX_10prec_1y',
-    'CAX_10prec_3y',
-    'CAX_10prec_5y',
-    'CAX_10prec_7y',
-    'CAX_20prec_1y',
-    'CAX_20prec_3y',
-    'CAX_20prec_5y',
-    'CAX_20prec_7y',
-    'CAX_30prec_1y',
-    'CAX_30prec_3y',
-    'CAX_30prec_5y',
-    'CAX_30prec_7y']
+# run_names = ['CAX_regularclimate',
+#     'CAX_10prec_1y',
+#     'CAX_10prec_3y',
+#     'CAX_10prec_5y',
+#     'CAX_10prec_7y',
+#     'CAX_20prec_1y',
+#     'CAX_20prec_3y',
+#     'CAX_20prec_5y',
+#     'CAX_20prec_7y',
+#     'CAX_30prec_1y',
+#     'CAX_30prec_3y',
+#     'CAX_30prec_5y',
+#     'CAX_30prec_7y']
+
+run_names = ['afl']
 
 # run_name = input('Run name: ')
 for run_name in run_names:

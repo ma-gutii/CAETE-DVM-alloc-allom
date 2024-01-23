@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-grd_acro = input('Gridcell acronym [ALP, FEC, MAN, CAX, NVX]: ')
+grd_acro = input('Gridcell acronym [AFL, ALP, FEC, MAN, CAX, NVX]: ')
 
 # Prompt the user to determine if the script is running on a server or locally
 while True:
