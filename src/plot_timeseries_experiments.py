@@ -29,11 +29,11 @@ while True:
 
 
 
-path_regclim = "/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/AFL/experiments/AFL_regularclimate/gridcell199-248/concatenated_series_AFL_regularclimate.csv"
+path_regclim = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/{grd_acro}_regularclimate/gridcell{grd}/concatenated_series_{grd_acro}_regularclimate.csv"
 
-path = "/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/AFL/experiments/20perc_reduction/"
+path = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/20perc_reduction/"
 
-path_csv_allfreq = f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/AFL/experiments/20perc_reduction/concatenated_series_AFL_20prec_allfreq.csv'
+path_csv_allfreq = f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/20perc_reduction/concatenated_series_{grd_acro}_20prec_allfreq.csv'
 
 #verify if the table with all frequencies for this experiment 
     #already exists
@@ -51,10 +51,10 @@ else:
     list = []
 
     #Path to dir
-    path = "/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/AFL/experiments/20perc_reduction/"
+    path = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/20perc_reduction/"
 
     #Path reg clim
-    path_regclim = "/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/AFL/experiments/AFL_regularclimate/gridcell199-248/concatenated_series_AFL_regularclimate.csv"
+    path_regclim = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/{grd_acro}_regularclimate/gridcell{grd}/concatenated_series_{grd_acro}_regularclimate.csv"
     df_regclim = pd.read_csv(path_regclim)
     df_regclim['frequency'] = 0
     df_regclim['prec_red_perc'] = 0.0
@@ -107,7 +107,7 @@ else:
 
 
     #save the csv with all frequencies + regular climate
-    csv_allfreq.to_csv(f"{path}/concatenated_series_AFL_20prec_allfreq.csv",index=False)
+    csv_allfreq.to_csv(f"{path}/concatenated_series_{grd_acro}_20prec_allfreq.csv",index=False)
 
 # #Plotting the time series:
 plt.figure(figsize=(13,9))
@@ -118,7 +118,7 @@ for freq in [0, 1, 3, 5, 7]:
         file_path = path_regclim
     else: 
         # File name for the current frequency
-        file_name = f'concatenated_series_AFL_20prec_{freq}y.csv'
+        file_name = f'concatenated_series_{grd_acro}_20prec_{freq}y.csv'
 
         # Full path of the file
         file_path = os.path.join(path, file_name)
@@ -150,7 +150,7 @@ plt.title('Time series - 20% precipitation reduction')
 plt.legend()
 
 # Save the plot as a PNG file
-plt.savefig(os.path.join(path, 'AFL_timeseries_allfreq_20perc.png'))
+plt.savefig(os.path.join(path, f'{grd_acro}_timeseries_allfreq_20perc.png'))
 
 # Show the plot
 plt.show()
@@ -165,7 +165,7 @@ fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 8), sharex=True)
 # Iterate over the frequencies
 for idx, freq in enumerate(frequencies, 1):
     # File name for the current frequency
-    file_name = f'concatenated_series_AFL_20prec_{freq}y.csv'
+    file_name = f'concatenated_series_{grd_acro}_20prec_{freq}y.csv'
     
     # Full path of the file
     file_path = os.path.join(path, file_name)
@@ -197,7 +197,7 @@ for idx, freq in enumerate(frequencies, 1):
 plt.tight_layout()
 
 # # Save the plot as a PNG file
-plt.savefig(os.path.join(path, 'AFL_timeseries_allfreq_x_regclim_20perc.png'))
+plt.savefig(os.path.join(path, f'{grd_acro}_timeseries_allfreq_x_regclim_20perc.png'))
 
 # # Show the plot
 plt.show()
