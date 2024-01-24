@@ -1,9 +1,10 @@
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
+import glob
 
 while True:
-    grd_acro = input('Gridcell acronym [AFL, ALP, FEC, MAN, CAX, NVX]: ')
+    grd_acro = input('Gridcell acronym [AFL, ALP, FEC, MAN, CAX]: ')
 
     if grd_acro == 'ALP':
         grd = '188-213'
@@ -28,122 +29,68 @@ while True:
         break
 
 
+# Consolidate file paths
+base_path = "/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs"
+path_regclim = os.path.join(base_path, grd_acro, f"experiments/{grd_acro}_regularclimate/gridcell{grd}/concatenated_series_{grd_acro}_regularclimate.csv")
+path_csv_allfreq = os.path.join(base_path, grd_acro, "experiments/20perc_reduction", f"concatenated_series_{grd_acro}_20prec_allfreq.csv")
+path = os.path.join(base_path, grd_acro, "experiments/20perc_reduction/")
 
-path_regclim = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/{grd_acro}_regularclimate/gridcell{grd}/concatenated_series_{grd_acro}_regularclimate.csv"
+# Use a function for frequency logic
+def get_file_path(freq):
+    if freq == 0:
+        return path_regclim
+    return os.path.join(base_path, grd_acro, f'experiments/20perc_reduction/concatenated_series_{grd_acro}_20prec_{freq}y.csv')
 
-path = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/20perc_reduction/"
+# Avoid using reserved words
+dfs_list = []
 
-path_csv_allfreq = f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/20perc_reduction/concatenated_series_{grd_acro}_20prec_allfreq.csv'
-
-#verify if the table with all frequencies for this experiment 
-    #already exists
+# Verify if the table with all frequencies for this experiment already exists
 if os.path.exists(path_csv_allfreq) and os.path.exists(path_regclim):
-    #load
     print('\n !!!!!!!!! The csv with all frequencies for this experiment already exists !!!!!!!!! \n')
     csv_allfreq = pd.read_csv(path_csv_allfreq)
-    
     df_regclim = pd.read_csv(path_regclim)
-
+    
 else:
-    print('\n !!!!!!!!! Creating the csv with all frquencies for this experiment !!!!!!!!! \n')
-
-    #Lista para armazenar os dataframes
-    list = []
-
-    #Path to dir
-    path = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/20perc_reduction/"
-
-    #Path reg clim
-    path_regclim = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/{grd_acro}_regularclimate/gridcell{grd}/concatenated_series_{grd_acro}_regularclimate.csv"
+    print('\n !!!!!!!!! Creating the csv with all frequencies for this experiment !!!!!!!!! \n')
     df_regclim = pd.read_csv(path_regclim)
     df_regclim['frequency'] = 0
     df_regclim['prec_red_perc'] = 0.0
+    df_regclim['total_carbon'] = df_regclim[['cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto']].sum(axis=1)
 
-    df_regclim['total_carbon'] = (
-        df_regclim['cleaf'] +
-        df_regclim['cwood'] +
-        df_regclim['croot'] +
-        df_regclim['csap'] +
-        df_regclim['cheart'] +
-        df_regclim['csto']
-        )
+    path = os.path.join(base_path, grd_acro, "experiments/20perc_reduction/")
+    files = glob.glob(os.path.join(path, '*y.csv'))
 
-
-    # obtain list of files
-    files = os.listdir(path)
-    print(files)
-
-    #iterates on csv files
     for file in files:
-        if file.endswith('y.csv'):
-            # Extrats the frequency of disturbance (1, 3, 5, 7 years)
-            frequency = int(file.split('_')[-1][0])
-            # print(frequency)
+        frequency = int(file.split('_')[-1][0])
+        df = pd.read_csv(file)
+        df['frequency'] = frequency
+        df['prec_red_perc'] = 20.0
+        df['total_carbon'] = df[['cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto']].sum(axis=1)
+        dfs_list.append(df)
 
-            # Load csv in a DataFrame e add the colunm 'frequency'
-            df = pd.read_csv(os.path.join(path, file))
-            df['frequency'] = frequency
-            df['prec_red_perc'] = 20.
-            df['total_carbon'] = (
-            df['cleaf'] +
-            df['cwood'] +
-            df['croot'] +
-            df['csap'] +
-            df['cheart'] +
-            df['csto']
-            )
-        # else:
-
-            # Add df to the list
-            list.append(df)
-
-    #include csv regular climate in the list
-    list.append(df_regclim)
-
-    #concatenate the sheets
-    csv_allfreq = pd.concat(list, ignore_index=True)
-
+    dfs_list.append(df_regclim)
+    csv_allfreq = pd.concat(dfs_list, ignore_index=True)
     csv_allfreq['date_dateformat'] = pd.to_datetime(csv_allfreq['Date'])
+    csv_allfreq.to_csv(os.path.join(path, f'concatenated_series_{grd_acro}_20prec_allfreq.csv'), index=False)
 
+# Plotting the time series
+plt.figure(figsize=(13, 9))
 
-    #save the csv with all frequencies + regular climate
-    csv_allfreq.to_csv(f"{path}/concatenated_series_{grd_acro}_20prec_allfreq.csv",index=False)
-
-# #Plotting the time series:
-plt.figure(figsize=(13,9))
-
-# Iterate over the frequencies
 for freq in [0, 1, 3, 5, 7]:
-    if freq == 0:
-        file_path = path_regclim
-    else: 
-        # File name for the current frequency
-        file_name = f'concatenated_series_{grd_acro}_20prec_{freq}y.csv'
-
-        # Full path of the file
-        file_path = os.path.join(path, file_name)
-
-
-    # Check if the file exists
+    file_path = get_file_path(freq)
     if os.path.exists(file_path):
         if freq == 0:
             print(f'\nPlotting time series for regular climate...\n')
             df = pd.read_csv(file_path)
-            # Convert the 'Date' column to the date format
             df['date_dateformat'] = pd.to_datetime(df['Date'])
-            # Plot the time series
-            plt.plot(df['date_dateformat'], df['npp'], label=f'Regular climate', linewidth = 0.6, alpha=0.8, color = 'black', zorder = 5)
-
+            plt.plot(df['date_dateformat'], df['npp'], label='Regular climate', linewidth=0.6, alpha=0.8, color='black', zorder=5)
         else:
             print(f'\nPlotting time series for frequency {freq} years...\n')
-            # Load the DataFrame from the CSV file
             df = pd.read_csv(file_path)
-            # Convert the 'Date' column to the date format
             df['date_dateformat'] = pd.to_datetime(df['Date'])
-            # Plot the time series
-            plt.plot(df['date_dateformat'], df['npp'], label=f'Frequency {freq} years', linewidth = 0.8, alpha=0.8)
+            plt.plot(df['date_dateformat'], df['npp'], label=f'Frequency {freq} years', linewidth=0.8, alpha=0.8)
 
-# # Add labels to the axes and legend
+# Add labels to the axes and legend
 plt.xlabel('Date')
 plt.ylabel('NPP')
 plt.title('Time series - 20% precipitation reduction')
@@ -155,49 +102,28 @@ plt.savefig(os.path.join(path, f'{grd_acro}_timeseries_allfreq_20perc.png'))
 # Show the plot
 plt.show()
 
-# Plot freq X regular climate:
-# Frequencies to iterate over
-frequencies = [1, 3, 5, 7]
-
-# Create subplots
+# Plot freq X regular climate
 fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 8), sharex=True)
 
-# Iterate over the frequencies
-for idx, freq in enumerate(frequencies, 1):
-    # File name for the current frequency
-    file_name = f'concatenated_series_{grd_acro}_20prec_{freq}y.csv'
-    
-    # Full path of the file
-    file_path = os.path.join(path, file_name)
+frequencies = [1, 3, 5, 7]
 
-    # Check if the file exists
+for idx, freq in enumerate(frequencies, 1):
+    file_path = get_file_path(freq)
     if os.path.exists(file_path) and os.path.exists(path_regclim):
         print(f'\nPlotting time series for frequency {freq} years...\n')
-        
-        # Load the DataFrame from the CSV file
         df = pd.read_csv(file_path)
         df['date_dateformat'] = pd.to_datetime(df['Date'])
         df_regclim = pd.read_csv(path_regclim)
         df_regclim['date_dateformat'] = pd.to_datetime(df_regclim['Date'])
 
+        axes[(idx-1)//2, (idx-1)%2].plot(df['date_dateformat'], df['npp'], label=f'Frequency {freq} years', linewidth=0.2, color='coral', alpha=0.8)
+        axes[(idx-1)//2, (idx-1)%2].plot(df_regclim['date_dateformat'], df_regclim['npp'], label='Regular Climate', linewidth=0.2, color='black', alpha=0.8)
 
-        # Plot the time series for the current frequency
-        axes[(idx-1)//2, (idx-1)%2].plot(df['date_dateformat'], df['npp'], label=f'Frequency {freq} years', linewidth=0.2, color = 'coral', alpha = 0.8)
-        
-        # Plot the time series for regular climate
-        axes[(idx-1)//2, (idx-1)%2].plot(df_regclim['date_dateformat'], df_regclim['npp'], label='Regular Climate', linewidth=0.2, color = 'black', alpha = 0.8)
-
-#         # Add labels to the axes and legend
         axes[(idx-1)//2, (idx-1)%2].set_xlabel('Date')
         axes[(idx-1)//2, (idx-1)%2].set_ylabel('NPP')
         axes[(idx-1)//2, (idx-1)%2].set_title(f'Time series - {freq} years precipitation reduction')
         axes[(idx-1)//2, (idx-1)%2].legend()
 
-# # Adjust layout
 plt.tight_layout()
-
-# # Save the plot as a PNG file
 plt.savefig(os.path.join(path, f'{grd_acro}_timeseries_allfreq_x_regclim_20perc.png'))
-
-# # Show the plot
 plt.show()
