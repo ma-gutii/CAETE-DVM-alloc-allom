@@ -131,9 +131,17 @@ else:
 # Plotting other variables with 3 year frequency
 df = pd.read_csv(f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/20perc_reduction/concatenated_series_{grd_acro}_20prec_allfreq.csv')
 df['date_dateformat'] = pd.to_datetime(df['Date'])
+
 # Filter DataFrame for the desired frequency
 
 df_3y = df[df['frequency'] == 3]
+
+df_regclim = pd.read_csv(path_regclim)
+df_regclim['frequency'] = 0
+df_regclim['prec_red_perc'] = 0.0
+df_regclim['total_carbon'] = df_regclim[['cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto']].sum(axis=1)
+df_regclim['date_dateformat'] = pd.to_datetime(df_regclim['Date'])
+
 
 plt.figure(figsize=(15, 10))
 variables_to_plot = ['npp', 'photo', 'ls', 'evapm']
@@ -149,14 +157,17 @@ fig, axes = plt.subplots(2, 2, figsize=(15,10), sharex=True)
 for idx, variable in enumerate(variables_to_plot):
     row = idx // 2
     col = idx % 2
-    axes[row, col].plot(df_3y['date_dateformat'], df_3y[variable], label=f'{variable.upper()}', linewidth=0.8, alpha=0.8)
+    axes[row, col].plot(df_3y['date_dateformat'], df_3y[variable],  linewidth=0.8, alpha=0.8, color = 'coral', label = '20% reduction (3 years)')
+    # Plot reg clim
+    axes[row, col].plot(df_regclim['date_dateformat'], df_regclim[variable], linewidth=0.8, alpha=0.8, color = 'blue', label = 'Regular climate')
+
     axes[row, col].set_ylabel(f'{variable.upper()}')
 
 # Add labels to the common x-axis and legend
 axes[-1, 0].set_xlabel('Date')
 axes[-1, 1].set_xlabel('Date')
 plt.suptitle(f'Time series - {freq} years precipitation reduction', y=1.02)
-plt.legend()
+plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
 
 # Adjust layout for better spacing
 plt.tight_layout()
