@@ -155,46 +155,49 @@ plt.savefig(os.path.join(path, 'AFL_timeseries_allfreq_20perc.png'))
 # Show the plot
 plt.show()
 
-# #Plot freq X regular climate:
-# # Frequencies to iterate over
-# frequencies = [1, 3, 5, 7]
+# Plot freq X regular climate:
+# Frequencies to iterate over
+frequencies = [1, 3, 5, 7]
 
-# # Create subplots
-# fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 8), sharex=True)
+# Create subplots
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 8), sharex=True)
 
-# # Iterate over the frequencies
-# for idx, freq in enumerate(frequencies, 1):
-#     # File name for the current frequency
-#     file_name = f'concatenated_series_AFL_20prec_{freq}y.csv'
+# Iterate over the frequencies
+for idx, freq in enumerate(frequencies, 1):
+    # File name for the current frequency
+    file_name = f'concatenated_series_AFL_20prec_{freq}y.csv'
     
-#     # Full path of the file
-#     file_path = os.path.join(path, file_name)
+    # Full path of the file
+    file_path = os.path.join(path, file_name)
 
-#     # Check if the file exists
-#     if os.path.exists(file_path):
-#         print(f'\nPlotting time series for frequency {freq} years...\n')
+    # Check if the file exists
+    if os.path.exists(file_path) and os.path.exists(path_regclim):
+        print(f'\nPlotting time series for frequency {freq} years...\n')
         
-#         # Load the DataFrame from the CSV file
-#         df = pd.read_csv(file_path)
-#         df['date_dateformat'] = pd.to_datetime(df['Date'])
+        # Load the DataFrame from the CSV file
+        df = pd.read_csv(file_path)
+        df['date_dateformat'] = pd.to_datetime(df['Date'])
+        df_regclim = pd.read_csv(path_regclim)
+        df_regclim['date_dateformat'] = pd.to_datetime(df_regclim['Date'])
 
-#         # Plot the time series for the current frequency
-#         axes[(idx-1)//2, (idx-1)%2].plot(df['date_dateformat'], df['npp'], label=f'Frequency {freq} years', linewidth=0.2, color = 'red')
+
+        # Plot the time series for the current frequency
+        axes[(idx-1)//2, (idx-1)%2].plot(df['date_dateformat'], df['npp'], label=f'Frequency {freq} years', linewidth=0.2, color = 'coral', alpha = 0.8)
         
-#         # Plot the time series for regular climate
-#         axes[(idx-1)//2, (idx-1)%2].plot(df_regclim['date_dateformat'], df_regclim['npp'], label='Regular Climate', linestyle='--', linewidth=0.2, color = 'black')
+        # Plot the time series for regular climate
+        axes[(idx-1)//2, (idx-1)%2].plot(df_regclim['date_dateformat'], df_regclim['npp'], label='Regular Climate', linewidth=0.2, color = 'black', alpha = 0.8)
 
 #         # Add labels to the axes and legend
-#         axes[(idx-1)//2, (idx-1)%2].set_xlabel('Date')
-#         axes[(idx-1)//2, (idx-1)%2].set_ylabel('NPP')
-#         axes[(idx-1)//2, (idx-1)%2].set_title(f'Time series - {freq} years precipitation reduction')
-#         axes[(idx-1)//2, (idx-1)%2].legend()
+        axes[(idx-1)//2, (idx-1)%2].set_xlabel('Date')
+        axes[(idx-1)//2, (idx-1)%2].set_ylabel('NPP')
+        axes[(idx-1)//2, (idx-1)%2].set_title(f'Time series - {freq} years precipitation reduction')
+        axes[(idx-1)//2, (idx-1)%2].legend()
 
 # # Adjust layout
-# plt.tight_layout()
+plt.tight_layout()
 
 # # Save the plot as a PNG file
-# plt.savefig(os.path.join(path, 'AFL_timeseries_allfreq_x_regclim_20perc.png'))
+plt.savefig(os.path.join(path, 'AFL_timeseries_allfreq_x_regclim_20perc.png'))
 
 # # Show the plot
-# plt.show()
+plt.show()
