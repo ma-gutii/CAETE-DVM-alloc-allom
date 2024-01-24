@@ -71,6 +71,7 @@ else:
 
     # obtain list of files
     files = os.listdir(path)
+    print(files)
 
     #iterates on csv files
     for file in files:
@@ -90,8 +91,8 @@ else:
             df['csap'] +
             df['cheart'] +
             df['csto']
-        )
-
+            )
+        # else:
 
             # Add df to the list
             list.append(df)
@@ -111,48 +112,48 @@ else:
 # #Plotting the time series:
 plt.figure(figsize=(13,9))
 
-# # Iterate over the frequencies
-# for freq in [0, 1, 3, 5, 7]:
-#     if freq == 0:
-#         file_path = path_regclim
-#     else: 
-#         # File name for the current frequency
-#         file_name = f'concatenated_series_AFL_20prec_{freq}y.csv'
+# Iterate over the frequencies
+for freq in [0, 1, 3, 5, 7]:
+    if freq == 0:
+        file_path = path_regclim
+    else: 
+        # File name for the current frequency
+        file_name = f'concatenated_series_AFL_20prec_{freq}y.csv'
 
-#         # Full path of the file
-#         file_path = os.path.join(path, file_name)
+        # Full path of the file
+        file_path = os.path.join(path, file_name)
 
 
-#     # Check if the file exists
-#     if os.path.exists(file_path):
-#         if freq == 0:
-#             print(f'\nPlotting time series for regular climate...\n')
-#             df = pd.read_csv(file_path)
-#             # Convert the 'Date' column to the date format
-#             df['date_dateformat'] = pd.to_datetime(df['Date'])
-#             # Plot the time series
-#             plt.plot(df['date_dateformat'], df['npp'], label=f'Regular climate', linewidth = 0.6, alpha=0.8, color = 'black', zorder = 5)
+    # Check if the file exists
+    if os.path.exists(file_path):
+        if freq == 0:
+            print(f'\nPlotting time series for regular climate...\n')
+            df = pd.read_csv(file_path)
+            # Convert the 'Date' column to the date format
+            df['date_dateformat'] = pd.to_datetime(df['Date'])
+            # Plot the time series
+            plt.plot(df['date_dateformat'], df['npp'], label=f'Regular climate', linewidth = 0.6, alpha=0.8, color = 'black', zorder = 5)
 
-#         else:
-#             print(f'\nPlotting time series for frequency {freq} years...\n')
-#             # Load the DataFrame from the CSV file
-#             df = pd.read_csv(file_path)
-#             # Convert the 'Date' column to the date format
-#             df['date_dateformat'] = pd.to_datetime(df['Date'])
-#             # Plot the time series
-#             plt.plot(df['date_dateformat'], df['npp'], label=f'Frequency {freq} years', linewidth = 0.8, alpha=0.8)
+        else:
+            print(f'\nPlotting time series for frequency {freq} years...\n')
+            # Load the DataFrame from the CSV file
+            df = pd.read_csv(file_path)
+            # Convert the 'Date' column to the date format
+            df['date_dateformat'] = pd.to_datetime(df['Date'])
+            # Plot the time series
+            plt.plot(df['date_dateformat'], df['npp'], label=f'Frequency {freq} years', linewidth = 0.8, alpha=0.8)
 
 # # Add labels to the axes and legend
-# plt.xlabel('Date')
-# plt.ylabel('NPP')
-# plt.title('Time series - 20% precipitation reduction')
-# plt.legend()
+plt.xlabel('Date')
+plt.ylabel('NPP')
+plt.title('Time series - 20% precipitation reduction')
+plt.legend()
 
-# # Save the plot as a PNG file
-# plt.savefig(os.path.join(path, 'AFL_timeseries_allfreq_20perc.png'))
+# Save the plot as a PNG file
+plt.savefig(os.path.join(path, 'AFL_timeseries_allfreq_20perc.png'))
 
-# # Show the plot
-# plt.show()
+# Show the plot
+plt.show()
 
 # #Plot freq X regular climate:
 # # Frequencies to iterate over
