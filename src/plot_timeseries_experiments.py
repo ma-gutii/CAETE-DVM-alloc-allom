@@ -28,18 +28,22 @@ while True:
         print('This acronym does not correspond')
         break
 
+perc_prec = input("What is the percentage of reduction? [0, 10, 20, 30] ")
+    
+    
+
 
 # Consolidate file paths
 base_path = "/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs"
 path_regclim = os.path.join(base_path, grd_acro, f"experiments/{grd_acro}_regularclimate/gridcell{grd}/concatenated_series_{grd_acro}_regularclimate.csv")
-path_csv_allfreq = os.path.join(base_path, grd_acro, "experiments/20perc_reduction", f"concatenated_series_{grd_acro}_20prec_allfreq.csv")
-path = os.path.join(base_path, grd_acro, "experiments/20perc_reduction/")
+path_csv_allfreq = os.path.join(base_path, grd_acro, f"experiments/{perc_prec}perc_reduction", f"concatenated_series_{grd_acro}_{perc_prec}prec_allfreq.csv")
+path = os.path.join(base_path, grd_acro, f"experiments/{perc_prec}perc_reduction/")
 
 # Use a function for frequency logic
 def get_file_path(freq):
     if freq == 0:
         return path_regclim
-    return os.path.join(base_path, grd_acro, f'experiments/20perc_reduction/concatenated_series_{grd_acro}_20prec_{freq}y.csv')
+    return os.path.join(base_path, grd_acro, f'experiments/{perc_prec}perc_reduction/concatenated_series_{grd_acro}_{perc_prec}prec_{freq}y.csv')
 
 # Avoid using reserved words
 dfs_list = []
@@ -57,21 +61,21 @@ else:
     df_regclim['prec_red_perc'] = 0.0
     df_regclim['total_carbon'] = df_regclim[['cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto']].sum(axis=1)
 
-    path = os.path.join(base_path, grd_acro, "experiments/20perc_reduction/")
+    path = os.path.join(base_path, grd_acro, f"experiments/{perc_prec}perc_reduction/")
     files = glob.glob(os.path.join(path, '*y.csv'))
 
     for file in files:
         frequency = int(file.split('_')[-1][0])
         df = pd.read_csv(file)
         df['frequency'] = frequency
-        df['prec_red_perc'] = 20.0
+        df['prec_red_perc'] = int(perc_prec)
         df['total_carbon'] = df[['cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto']].sum(axis=1)
         dfs_list.append(df)
 
     dfs_list.append(df_regclim)
     csv_allfreq = pd.concat(dfs_list, ignore_index=True)
     csv_allfreq['date_dateformat'] = pd.to_datetime(csv_allfreq['Date'])
-    csv_allfreq.to_csv(os.path.join(path, f'concatenated_series_{grd_acro}_20prec_allfreq.csv'), index=False)
+    csv_allfreq.to_csv(os.path.join(path, f'concatenated_series_{grd_acro}_{perc_prec}prec_allfreq.csv'), index=False)
 
 # # Plotting the time series
 # plt.figure(figsize=(13, 9))
@@ -93,11 +97,11 @@ else:
 # # Add labels to the axes and legend
 # plt.xlabel('Date')
 # plt.ylabel('NPP')
-# plt.title('Time series - 20% precipitation reduction')
+# plt.title('Time series - {perc_prec}% precipitation reduction')
 # plt.legend()
 
 # # Save the plot as a PNG file
-# plt.savefig(os.path.join(path, f'{grd_acro}_timeseries_allfreq_20perc.png'))
+# plt.savefig(os.path.join(path, f'{grd_acro}_timeseries_allfreq_{perc_prec}perc.png'))
 
 # # Show the plot
 # plt.show()
@@ -125,55 +129,59 @@ else:
 #         axes[(idx-1)//2, (idx-1)%2].legend()
 
 # plt.tight_layout()
-# plt.savefig(os.path.join(path, f'{grd_acro}_timeseries_allfreq_x_regclim_20perc.png'))
+# plt.savefig(os.path.join(path, f'{grd_acro}_timeseries_allfreq_x_regclim_{perc_prec}perc.png'))
 # plt.show()
 
-# Plotting other variables with 3 year frequency
-df = pd.read_csv(f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/20perc_reduction/concatenated_series_{grd_acro}_20prec_allfreq.csv')
-df['date_dateformat'] = pd.to_datetime(df['Date'])
-
-# Filter DataFrame for the desired frequency
-
-df_3y = df[df['frequency'] == 3]
-
+# Plotting other variables with 1 year frequency
 df_regclim = pd.read_csv(path_regclim)
 df_regclim['frequency'] = 0
 df_regclim['prec_red_perc'] = 0.0
 df_regclim['total_carbon'] = df_regclim[['cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto']].sum(axis=1)
 df_regclim['date_dateformat'] = pd.to_datetime(df_regclim['Date'])
 
+df = pd.read_csv(f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/{perc_prec}perc_reduction/concatenated_series_{grd_acro}_{perc_prec}prec_allfreq.csv')
+df['date_dateformat'] = pd.to_datetime(df['Date'])
 
-plt.figure(figsize=(15, 10))
-variables_to_plot = ['npp', 'photo', 'ls', 'evapm']
-freq = 3
+# Filter DataFrame for the desired frequency
+# Lista de frequências desejadas
+frequencies = [1, 3, 5, 7]
 
-# Number of subplots
-num_subplots = len(variables_to_plot)
+# Iterar sobre as frequências
+for freq in frequencies:
 
-# Create subplots
-fig, axes = plt.subplots(2, 2, figsize=(15,10), sharex=True)
+    # Filtrar o DataFrame para a frequência atual
+    df_freq = df[df['frequency'] == freq]
 
-# Plot each variable in a separate subplot
-for idx, variable in enumerate(variables_to_plot):
-    row = idx // 2
-    col = idx % 2
-    axes[row, col].plot(df_3y['date_dateformat'], df_3y[variable],  linewidth=0.8, alpha=0.8, color = 'coral', label = '20% reduction (3 years)')
-    # Plot reg clim
-    axes[row, col].plot(df_regclim['date_dateformat'], df_regclim[variable], linewidth=0.8, alpha=0.8, color = 'blue', label = 'Regular climate')
+    plt.figure(figsize=(16, 11))
+    variables_to_plot = ['npp', 'ls', 'evapm', 'cleaf', 'croot', 'csap', 'cheart', 'csto']
 
-    axes[row, col].set_ylabel(f'{variable.upper()}')
+    # Número de subplots
+    num_subplots = len(variables_to_plot)
 
-# Add labels to the common x-axis and legend
-axes[-1, 0].set_xlabel('Date')
-axes[-1, 1].set_xlabel('Date')
-plt.suptitle(f'Time series - {freq} years precipitation reduction', y=1.02)
-plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    # Criar subplots
+    fig, axes = plt.subplots(4, 2, figsize=(15,10), sharex=True)
 
-# Adjust layout for better spacing
-plt.tight_layout()
+    # Plotar cada variável em um subplot separado
+    for idx, variable in enumerate(variables_to_plot):
+        row = idx // 2
+        col = idx % 2
+        axes[row, col].plot(df_freq['date_dateformat'], df_freq[variable], linewidth=0.7, alpha=1, color='coral', label=f'{freq} years')
+        # Plotar reg clim
+        axes[row, col].plot(df_regclim['date_dateformat'], df_regclim[variable], linewidth=0.7, alpha=0.5, color='blue', label='Regular climate')
 
-# Save the plot as a PNG file
-plt.savefig(os.path.join(path, f'{grd_acro}_timeseries_freq{freq}_20perc_subplots.png'))
+        axes[row, col].set_ylabel(f'{variable.upper()}')
 
-# Show the plot
-plt.show()
+    # Adicionar rótulos para o eixo x comum e legenda
+    axes[-1, 0].set_xlabel('Date')
+    axes[-1, 1].set_xlabel('Date')
+    plt.suptitle(f'Time series - {freq} years precipitation reduction', y=1.02)
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+
+    # Ajustar o layout para melhor espaçamento
+    plt.tight_layout()
+
+    # Salvar o gráfico como um arquivo PNG
+    plt.savefig(os.path.join(path, f'{grd_acro}_timeseries_freq{freq}_{perc_prec}perc_subplots.png'))
+
+    # Mostrar o gráfico
+    plt.show()
