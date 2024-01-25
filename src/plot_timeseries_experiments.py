@@ -3,6 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import glob
 
+
 while True:
     grd_acro = input('Gridcell acronym [AFL, ALP, FEC, MAN, CAX]: ')
 
