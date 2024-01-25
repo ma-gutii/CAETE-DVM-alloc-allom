@@ -78,13 +78,12 @@ while True:
 #     'MAN_30prec_5y',
 #     'MAN_30prec_7y']
     
-run_names = ['CAX_10prec_1y']
 
 
 # run_name = input('Run name: ')
 for run_name in run_names:
     print('GRDDDDD == ', grd)
-    path = f"../outputs/AFL{run_name}/gridcell{grd}"
+    path = f"../outputs/{run_name}/gridcell{grd}"
     grd_name = f"gridcell{grd}"
 
 
