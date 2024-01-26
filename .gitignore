@@ -19,6 +19,7 @@ outputs/base_run/gridcell175-235/csv/*csv
 
 !outputs/MAN/experiments/MAN_10prec_1y/gridcell186-239/*.pkz
 outputs/
+!MAN/experiments/30perc_reduction/MAN_timeseries_allfreq_30perc_subplots.png
 
 
 
