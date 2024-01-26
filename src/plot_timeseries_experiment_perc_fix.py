@@ -137,11 +137,11 @@ axes[-1].set_xlabel('Date', fontsize=20)
 
 # Adicionar legenda fora do subplot
 handles, labels = axes[-1].get_legend_handles_labels()
-# fig.legend(handles, labels, bbox_to_anchor=(0.5, 1.02), loc='upper center')
+fig.legend(handles, labels, bbox_to_anchor=(0.5, 1.02), loc='upper center')
 
 
 # Ajustes na posição da legenda e espaçamento
-# fig.legend(handles, labels, bbox_to_anchor=(0.5, 1.02), loc='upper center')
+fig.legend(handles, labels, bbox_to_anchor=(0.5, 1.02), loc='upper center')
 fig.subplots_adjust(bottom=0.15, top=0.9)
 
 # Salvar o gráfico como um arquivo PNG
