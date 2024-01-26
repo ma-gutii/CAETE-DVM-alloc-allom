@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 import glob
-
+grd_acro = 'MAN'
 base_path = "/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/"
 # path_regclim = os.path.join(base_path, f"experiments/MAN_regularclimate/gridcell186-239/concatenated_series_MAN_regularclimate.csv")
 
@@ -23,27 +23,66 @@ base_path = "/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/"
 # # # # Você pode salvar result_df em um novo arquivo CSV se necessário
 # result_df.to_csv(os.path.join(base_path, "experiments/concatenated_series_MAN_allprec_3y.csv"), index=False)
 
-df_allperc = pd.read_csv(os.path.join(base_path, "experiments/concatenated_series_MAN_allprec_3y.csv"))
+df = pd.read_csv(os.path.join(base_path, "experiments/concatenated_series_MAN_allprec_3y.csv"))
 
-niveis_perc = df_allperc['perc'].unique()
-# Criando subplots para cada nível
-fig, axs = plt.subplots(len(niveis_perc), 1, figsize=(10, 5 * len(niveis_perc)), sharex=True)
+variables_to_plot = ['npp', 'ls', 'evapm', 'total_carbon']  # , 'cleaf', 'croot', 'csap', 'cheart', 'csto']
 
-# Iterando sobre cada nível e criando o gráfico correspondente
-for i, nivel in enumerate(niveis_perc):
-    dados_nivel = df_allperc[df_allperc['perc'] == nivel]
-    axs[i].plot(dados_nivel['date_dateformat'], dados_nivel['npp'])
-    axs[i].set_title(f'Nível {nivel}')
-    axs[i].set_ylabel('npp')
+# Lista de porcentagens desejadas
+percentages = [0, 10, 20, 30]
 
-# Adicionando rótulos ao eixo x ao último subplot
-axs[-1].set_xlabel('date_dateformat')
+# Criar subplots para cada variável
+plt.figure(figsize=(18, 20))
 
-# Adicionando um título geral para a figura
-fig.suptitle('Gráficos de NPP para cada nível de perc')
+# Número de subplots
+num_subplots = len(variables_to_plot)
 
-# Salvando a figura em um arquivo PNG
-plt.savefig('/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/graficos_npp_por_nivel.png')
+# Número de linhas e colunas
+num_rows = 4
+num_cols = 1
 
-# Exibindo a figura (opcional)
+# Criar subplots para cada variável
+fig, axes = plt.subplots(num_rows, num_cols, figsize=(10, 3 * num_rows), sharex=True)
+
+# Iterar sobre as variáveis
+for idx, variable in enumerate(variables_to_plot):
+    # Calcular a posição do subplot na matriz 4x1
+    row = idx
+
+    # Plotar cada porcentagem em um subplot separado
+    for perc_idx, perc in enumerate(percentages):
+        if perc == 0:
+            linestyle = '-'
+            label = 'Regular Climate'
+        else:
+            linestyle = '-'
+            label = f'{perc}% reduction'
+
+        # Filtrar o DataFrame para a porcentagem atual
+        df_perc = df[df['perc'] == perc]
+        
+        # Adicionar mais uma dimensão ao acesso aos subplots
+        if variable == 'ls':
+            # Aumentar a linewidth para 'ls'
+            axes[row].plot(df_perc['date_dateformat'], df_perc[variable], linewidth=2, alpha=0.7, linestyle=linestyle, label=label)
+        else:
+            axes[row].plot(df_perc['date_dateformat'], df_perc[variable], linewidth=0.5, alpha=0.7, linestyle=linestyle, label=label)
+
+        axes[row].set_ylabel(f'{variable}', fontsize=16)
+        axes[row].tick_params(axis='both', which='both', labelsize=12)
+
+# Adicionar rótulos para o eixo x comum
+axes[-1].set_xlabel('Date', fontsize=20)
+
+# Adicionar legenda fora do subplot
+handles, labels = axes[-1].get_legend_handles_labels()
+# fig.legend(handles, labels, bbox_to_anchor=(0.5, 1.02), loc='upper center')
+
+# Ajustes na posição da legenda e espaçamento
+# fig.legend(handles, labels, bbox_to_anchor=(0.5, 1.02), loc='upper center')
+fig.subplots_adjust(bottom=0.15, top=0.9)
+
+# Salvar o gráfico como um arquivo PNG
+plt.savefig(os.path.join(base_path, f'{grd_acro}_timeseries_allperc_subplots.png'), bbox_inches='tight')
+
+# Mostrar o gráfico
 plt.show()
