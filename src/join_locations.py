@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # MAN = pd.read_csv('/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/30perc_reduction/concatenated_series_MAN_30prec_3y.csv')
 # AFL = pd.read_csv('/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/AFL/experiments/30perc_reduction/concatenated_series_AFL_30prec_3y.csv')
@@ -25,3 +26,18 @@ import pandas as pd
 
 df = pd.read_csv('/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/ALL_LOCATIONS/concatenated_series_ALL_LOCATIONS_30prec_3y.csv')
 
+# Criar subplots para cada variável
+plt.figure(figsize=(18, 20))
+
+# Número de linhas e colunas
+num_rows = 1
+num_cols = 1
+
+# Criar subplots para cada variável
+fig, axes = plt.subplots(num_rows, num_cols, sharex=True)
+
+
+for location in set(df['location']):
+    # Filtrar o DataFrame para a localização atual
+    df_loc = df[df['location'] == location]
+    
