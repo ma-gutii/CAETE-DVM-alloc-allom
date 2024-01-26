@@ -3,153 +3,47 @@ import os
 import matplotlib.pyplot as plt
 import glob
 
+base_path = "/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/"
+# path_regclim = os.path.join(base_path, f"experiments/MAN_regularclimate/gridcell186-239/concatenated_series_MAN_regularclimate.csv")
 
-while True:
-    grd_acro = 'MAN' #input('Gridcell acronym [AFL, ALP, FEC, MAN, CAX]: ')
+# df = pd.read_csv('/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/concatenated_series_MAN_allprec_3y.csv')
+# df_regclim = pd.read_csv(path_regclim)
 
-    if grd_acro == 'ALP':
-        grd = '188-213'
-        break
-    elif grd_acro == 'FEC':
-        grd = '200-225'
-        break
-    elif grd_acro == 'MAN':
-        grd = '186-239'
-        break
-    elif grd_acro == 'CAX':
-        grd = '183-257'
-        break
-    elif grd_acro == 'NVX':
-        grd = '210-249'
-        break
-    elif grd_acro == 'AFL':
-        grd = '199-248'
-        break
-    else:
-        print('This acronym does not correspond')
-        break
+# df_regclim['perc'] = 0
 
-# perc_prec = 30 #input("What is the percentage of reduction? [0, 10, 20, 30] ")
+# # Concatenar os DataFrames
+# result_df = pd.concat([df, df_regclim], ignore_index=True)
 
-perc_prec_list = [0, 10, 20, 30]
-    
+# result_df['total_carbon'] = result_df[['cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto']].sum(axis=1)
+
+# result_df['date_dateformat'] = pd.to_datetime(result_df['Date'])
 
 
-# Consolidate file paths
-base_path = "/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs"
-path_regclim = os.path.join(base_path, grd_acro, f"experiments/{grd_acro}_regularclimate/gridcell{grd}/concatenated_series_{grd_acro}_regularclimate.csv")
-path_csv_allfreq = os.path.join(base_path, grd_acro, f"experiments/{perc_prec}perc_reduction", f"concatenated_series_{grd_acro}_{perc_prec}prec_allfreq.csv")
-path = os.path.join(base_path, grd_acro, f"experiments/{perc_prec}perc_reduction/")
+# # # # Agora, result_df contém ambos os DataFrames concatenados
+# # # # Você pode salvar result_df em um novo arquivo CSV se necessário
+# result_df.to_csv(os.path.join(base_path, "experiments/concatenated_series_MAN_allprec_3y.csv"), index=False)
 
-# Use a function for frequency logic
-def get_file_path(freq):
-    if freq == 0:
-        return path_regclim
-    return os.path.join(base_path, grd_acro, f'experiments/{perc_prec}perc_reduction/concatenated_series_{grd_acro}_{perc_prec}prec_{freq}y.csv')
+df_allperc = pd.read_csv(os.path.join(base_path, "experiments/concatenated_series_MAN_allprec_3y.csv"))
 
-# Avoid using reserved words
-dfs_list = []
+niveis_perc = df_allperc['perc'].unique()
+# Criando subplots para cada nível
+fig, axs = plt.subplots(len(niveis_perc), 1, figsize=(10, 5 * len(niveis_perc)), sharex=True)
 
-# Verify if the table with all frequencies for this experiment already exists
-if os.path.exists(path_csv_allfreq) and os.path.exists(path_regclim):
-    print('\n !!!!!!!!! The csv with all frequencies for this experiment already exists !!!!!!!!! \n')
-    csv_allfreq = pd.read_csv(path_csv_allfreq)
-    df_regclim = pd.read_csv(path_regclim)
-    
-else:
-    print('\n !!!!!!!!! Creating the csv with all frequencies for this experiment !!!!!!!!! \n')
-    df_regclim = pd.read_csv(path_regclim)
-    df_regclim['frequency'] = 0
-    df_regclim['prec_red_perc'] = 0.0
-    df_regclim['total_carbon'] = df_regclim[['cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto']].sum(axis=1)
+# Iterando sobre cada nível e criando o gráfico correspondente
+for i, nivel in enumerate(niveis_perc):
+    dados_nivel = df_allperc[df_allperc['perc'] == nivel]
+    axs[i].plot(dados_nivel['date_dateformat'], dados_nivel['npp'])
+    axs[i].set_title(f'Nível {nivel}')
+    axs[i].set_ylabel('npp')
 
-    path = os.path.join(base_path, grd_acro, f"experiments/{perc_prec}perc_reduction/")
-    files = glob.glob(os.path.join(path, '*y.csv'))
+# Adicionando rótulos ao eixo x ao último subplot
+axs[-1].set_xlabel('date_dateformat')
 
-    for file in files:
-        frequency = int(file.split('_')[-1][0])
-        df = pd.read_csv(file)
-        df['frequency'] = frequency
-        df['prec_red_perc'] = int(perc_prec)
-        df['total_carbon'] = df[['cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto']].sum(axis=1)
-        dfs_list.append(df)
+# Adicionando um título geral para a figura
+fig.suptitle('Gráficos de NPP para cada nível de perc')
 
-    dfs_list.append(df_regclim)
-    csv_allfreq = pd.concat(dfs_list, ignore_index=True)
-    csv_allfreq['date_dateformat'] = pd.to_datetime(csv_allfreq['Date'])
-    csv_allfreq.to_csv(os.path.join(path, f'concatenated_series_{grd_acro}_{perc_prec}prec_allfreq.csv'), index=False)
+# Salvando a figura em um arquivo PNG
+plt.savefig('/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/graficos_npp_por_nivel.png')
 
-    # Plotting other variables with 1 year frequency
-df_regclim = pd.read_csv(path_regclim)
-df_regclim['frequency'] = 0
-df_regclim['prec_red_perc'] = 0.0
-df_regclim['total_carbon'] = df_regclim[['cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto']].sum(axis=1)
-df_regclim['date_dateformat'] = pd.to_datetime(df_regclim['Date'])
-
-df = pd.read_csv(f'/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/{grd_acro}/experiments/{perc_prec}perc_reduction/concatenated_series_{grd_acro}_{perc_prec}prec_allfreq.csv')
-df['date_dateformat'] = pd.to_datetime(df['Date'])
-
-# Lista de frequências desejadas
-freq = 3
-   
-variables_to_plot = ['npp', 'ls', 'evapm', 'cleaf', 'croot', 'csap', 'cheart', 'csto']
-
-# Criar subplots para cada variável
-plt.figure(figsize=(18, 20))
-
-# Número de subplots
-num_subplots = len(variables_to_plot)
-
-# Número de linhas e colunas
-num_rows = 4
-num_cols = 2
-
-# Criar subplots para cada variável
-fig, axes = plt.subplots(num_rows, num_cols, figsize=(18, 2.5*num_rows), sharex=True)
-
-# Iterar sobre as variáveis
-for idx, variable in enumerate(variables_to_plot):
-
-    # Calcular a posição do subplot na matriz 4x2
-    row = idx // num_cols
-    col = idx % num_cols
-
-    # Plotar cada frequência em um subplot separado
-    for perc_prec in perc_prec_list:
-        if perc_prec == 0:
-            linestyle = '--'
-            label = 'Regular Climate'
-        else:
-            linestyle = '-'
-            label = f'{freq} years'
-
-        # Filtrar o DataFrame para a frequência atual
-        df_freq = df[df['frequency'] == freq]
-
-        # Plotar cada variável no subplot correspondente
-        axes[row, col].plot(df_freq['date_dateformat'], df_freq[variable], linewidth=0.5, alpha=0.7, linestyle=linestyle, label=label)
-
-        axes[row, col].set_ylabel(f'{variable.upper()}', fontsize = 18)
-
-  # Aumentar o tamanho das letras nos eixos
-        axes[row, col].tick_params(axis='both', which='both', labelsize=13)
-
-# Adicionar rótulos para o eixo x comum e legenda
-axes[-1, 0].set_xlabel('Date', fontsize=20)
-axes[-1, 1].set_xlabel('Date', fontsize=20)
-plt.suptitle(f'Time series for all Frequencies and Regular Climate', y=1.02, fontsize=16)
-
-
-# Ajustar o layout para melhor espaçamento
-plt.tight_layout()
-
-
-# Adicionar legenda fora do subplot
-handles, labels = axes[-1, -1].get_legend_handles_labels()
-fig.legend(handles, labels, bbox_to_anchor=(0.5, 1.15), loc='upper center')
-
-# Salvar o gráfico como um arquivo PNG
-plt.savefig(os.path.join(path, f'{grd_acro}_timeseries_allfreq_{perc_prec}perc_subplots.png'))
-
-# Mostrar o gráfico
+# Exibindo a figura (opcional)
 plt.show()
