@@ -10,6 +10,8 @@ src/*.cfg
 !src/prec_reduction_thesis.py
 src/RUN*
 !src/code_table_allom.csv
+!src/concatenated_series_MAN_30prec_3y.csv
+
 
 !outputs/*.py
 !outputs/*.csv
