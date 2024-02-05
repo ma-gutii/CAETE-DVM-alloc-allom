@@ -11,7 +11,7 @@ src/*.cfg
 src/RUN*
 !src/code_table_allom.csv
 !src/concatenated_series_MAN_30prec_3y.csv
-!src/concatenated_series_MAN_30prec_1y.csv
+!src/*.csv
 !/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/src/res_bfast.png
 
 
