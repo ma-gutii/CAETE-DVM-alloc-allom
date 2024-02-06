@@ -98,23 +98,23 @@ library(ggplot2)
 #   variable: NPP
 #----------------------------------------------
 # !!!!! note this is the monthly integrated data frame!!!!!!!
-# df_7y <- read.csv("/home/bianca/bianca/backup/Doutorado/tese/doc_resilience_chap/EWS_analysis/MAN_30prec_7y_monthly.csv")
+df_7y <- read.csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/MAN_regularclimate/gridcell186-239/MAN_regularclimate_monthly.csv")
 
 #selecting before 1st breakpoint:
-# df_7y_bp <- df_7y[df_7y$Date < "1987-08",]
+df_7y_bp <- df_7y[df_7y$Date < "1987-08",]
 # 
-# df_7y_bp_npp <- df_7y_bp$Monthly_NPP_Mean
+df_7y_bp_npp <- df_7y_bp$Monthly_NPP_Mean
 # 
-# df_7y_bp_npp_gws <- generic_ews(df_7y_bp_npp, winsize = 10, detrending = 'gaussian',
-                                # bandwidth = 10, logtransform = FALSE,interpolate = FALSE,
-                                # AR_n = TRUE, powerspectrum = TRUE)
+df_7y_bp_npp_gws <- generic_ews(df_7y_bp_npp, winsize = 10, detrending = 'gaussian',
+                                bandwidth = 10, logtransform = FALSE,interpolate = FALSE,
+                                AR_n = TRUE, powerspectrum = FALSE)
 # 
-# 
+
 # Create or display the plot
-# plot(df_7y_bp_npp_gws)
+plot(df_7y_bp_npp_gws)
 
 # Close the PNG device to save the plot
-# dev.off()
+dev.off()
 
 # ----------------------------------------------
 #   precipitation reduction: regular climate
@@ -154,23 +154,23 @@ library(ggplot2)
 # ----------------------------------------------
 
 
-# !!!!! note this is the monthly integrated data frame!!!!!!!
-df_regularclimate <- read.csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/MAN_regularclimate/gridcell186-239/MAN_regularclimate_monthly.csv")
+# # !!!!! note this is the monthly integrated data frame!!!!!!!
+# df_regularclimate <- read.csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/MAN_regularclimate/gridcell186-239/MAN_regularclimate_monthly.csv")
 
-# #selecting before 1st breakpoint:
-df_regularclimate_bp <- df_regularclimate[df_regularclimate$Date < "1991-11",]
+# # #selecting before 1st breakpoint:
+# df_regularclimate_bp <- df_regularclimate[df_regularclimate$Date < "1991-11",]
 
-df_regularclimate_bp_npp <- df_regularclimate_bp$Monthly_NPP_Mean
+# df_regularclimate_bp_npp <- df_regularclimate_bp$Monthly_NPP_Mean
 
-df_regularclimate_bp_npp_gws <- generic_ews(df_regularclimate_bp_npp, winsize = 10, detrending = 'gaussian',
-                                bandwidth = 10, logtransform = FALSE,interpolate = FALSE,
-                                AR_n = TRUE, powerspectrum = FALSE)
+# df_regularclimate_bp_npp_gws <- generic_ews(df_regularclimate_bp_npp, winsize = 10, detrending = 'gaussian',
+#                                 bandwidth = 10, logtransform = FALSE,interpolate = FALSE,
+#                                 AR_n = TRUE, powerspectrum = FALSE)
 
-df_regularclimate_bp_npp_gws$ar1
+# df_regularclimate_bp_npp_gws$ar1
 
-plot(df_regularclimate_bp_npp_gws)
-first_plot = recordPlot()
-# # Create or display the plot
-png("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/ews_30perc_before_3ybp_regclim.png")
-replayPlot(first_plot)
-dev.off()
+# plot(df_regularclimate_bp_npp_gws)
+# first_plot = recordPlot()
+# # # Create or display the plot
+# png("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/ews_30perc_before_3ybp_regclim.png")
+# replayPlot(first_plot)
+# dev.off()
