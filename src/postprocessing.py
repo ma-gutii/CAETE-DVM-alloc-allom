@@ -73,10 +73,7 @@ while True:
 #     'CAX_30prec_7y']
 
 run_names = [
-    'MAN_30prec_1y',
-    'MAN_30prec_3y',
-    'MAN_30prec_5y',
-    'MAN_30prec_7y']
+   'MAN_30prec_7y']
     
 
 

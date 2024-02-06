@@ -1,20 +1,20 @@
 import pandas as pd
 
-# Manaus - Regular climate
+# # Manaus - Regular climate
 
-#read csv
-df_regclim = pd.read_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/MAN_regularclimate/gridcell186-239/concatenated_series_MAN_regularclimate.csv")
+# #read csv
+# df_regclim = pd.read_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/MAN_regularclimate/gridcell186-239/concatenated_series_MAN_regularclimate.csv")
 
-# # Certifique-se de que a coluna 'date' está no formato de data
-df_regclim['date'] = pd.to_datetime(df_regclim['Date'])
+# # # Certifique-se de que a coluna 'date' está no formato de data
+# df_regclim['date'] = pd.to_datetime(df_regclim['Date'])
 
-# # Agrupe os dados por mês e faça a média da coluna 'npp'
-monthly_npp_mean_regclim = df_regclim.groupby(df_regclim['date'].dt.to_period("M"))['npp'].mean()
+# # # Agrupe os dados por mês e faça a média da coluna 'npp'
+# monthly_npp_mean_regclim = df_regclim.groupby(df_regclim['date'].dt.to_period("M"))['npp'].mean()
 
-# # Crie um novo DataFrame com os resultados
-result_df_regclim = pd.DataFrame({'Date': monthly_npp_mean_regclim.index, 'Monthly_NPP_Mean': monthly_npp_mean_regclim.values})
+# # # Crie um novo DataFrame com os resultados
+# result_df_regclim = pd.DataFrame({'Date': monthly_npp_mean_regclim.index, 'Monthly_NPP_Mean': monthly_npp_mean_regclim.values})
 
-result_df_regclim.to_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/MAN_regularclimate/gridcell186-239/MAN_regularclimate_monthly.csv")
+# result_df_regclim.to_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/MAN_regularclimate/gridcell186-239/MAN_regularclimate_monthly.csv")
 
 
 
@@ -84,15 +84,15 @@ result_df_regclim.to_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/ou
 #-------------------------------
 
 #read csv
-# df_7y = pd.read_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/30perc_reduction/MAN_30prec_7y/gridcell186-239/concatenated_series_MAN_30prec_7y.csv")
+df_7y = pd.read_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/30perc_reduction/MAN_30prec_7y/gridcell186-239/concatenated_series_MAN_30prec_7y.csv")
 
-# # # Certifique-se de que a coluna 'date' está no formato de data
-# df_7y['date'] = pd.to_datetime(df_7y['Date'])
+# # Certifique-se de que a coluna 'date' está no formato de data
+df_7y['date'] = pd.to_datetime(df_7y['Date'])
 
-# # # Agrupe os dados por mês e faça a média da coluna 'npp'
-# monthly_npp_mean_7y = df_7y.groupby(df_7y['date'].dt.to_period("M"))['npp'].mean()
+# # Agrupe os dados por mês e faça a média da coluna 'npp'
+monthly_npp_mean_7y = df_7y.groupby(df_7y['date'].dt.to_period("M"))['npp'].mean()
 
-# # # Crie um novo DataFrame com os resultados
-# result_df_7y = pd.DataFrame({'Date': monthly_npp_mean_7y.index, 'Monthly_NPP_Mean': monthly_npp_mean_7y.values})
+# # Crie um novo DataFrame com os resultados
+result_df_7y = pd.DataFrame({'Date': monthly_npp_mean_7y.index, 'Monthly_NPP_Mean': monthly_npp_mean_7y.values})
 
-# result_df_7y.to_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/30perc_reduction/MAN_30prec_7y/gridcell186-239/MAN_30prec_7y_monthly.csv")
+result_df_7y.to_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/30perc_reduction/MAN_30prec_7y/gridcell186-239/MAN_30prec_7y_monthly.csv")
