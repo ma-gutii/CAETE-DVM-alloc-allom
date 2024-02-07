@@ -19,7 +19,7 @@ caminho_saida_csv_mensal = '/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/
 # # # Substitua 'seuarquivo.pbz2' e 'saida_pr.csv' pelos caminhos reais dos seus arquivos
 # caminho_arquivo_pbz2 = '/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/input/central/input_data_186-239.pbz2'
 
-# caminho_saida_csv = '/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/prec_values.csv'
+caminho_saida_csv = '/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/prec_values.csv'
 
 # with bz2.BZ2File(caminho_arquivo_pbz2, mode='r') as fh:
 #     dados = pickle.load(fh)
@@ -30,6 +30,50 @@ caminho_saida_csv_mensal = '/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/
 # # Salvar os dados em um arquivo CSV
 # df_pr.to_csv(caminho_saida_csv, index=False)
 # print(f'Dados da variável "pr" (até o 13880º valor) salvos em {caminho_saida_csv}')
+# abrir arquivo de valor diário de precipitação
+daily_pr = pd.read_csv(caminho_saida_csv)
+# Converta a coluna 'data' para o tipo datetime
+daily_pr['date'] = pd.to_datetime(daily_pr['data'])
+
+daily_npp = pd.read_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/MAN_regularclimate/gridcell186-239/concatenated_series_MAN_regularclimate.csv")
+daily_npp['date'] = pd.to_datetime(daily_npp['Date'])
+
+# Plotando com dois eixos y
+fig, ax1 = plt.subplots(figsize=(10, 6))
+
+# Eixo y para a precipitação
+ax1.plot(daily_pr['date'], daily_pr['pr'], linestyle='-', color='b', label='Precipitação')
+ax1.set_xlabel('Data')
+ax1.set_ylabel('Precipitação', color='b')
+ax1.tick_params('y', colors='b')
+
+# Criar um segundo eixo y
+ax2 = ax1.twinx()
+
+# Eixo y para a NPP
+ax2.plot(daily_npp['date'], daily_npp['npp'], linestyle='-', color='g', label='NPP')
+ax2.set_ylabel('NPP', color='g')
+ax2.tick_params('y', colors='g')
+
+# Ajustes do gráfico
+fig.suptitle('Precipitação e NPP ao longo do tempo')
+fig.tight_layout(rect=[0, 0, 1, 0.96])  # Ajusta layout para evitar sobreposição de título
+plt.grid(True)
+plt.show()
+
+# # Plotando
+# plt.figure(figsize=(10, 6))
+# plt.plot(daily_pr['date'], daily_pr['pr'], linestyle='-', color='b')
+# plt.title('Precipitação ao longo do tempo')
+# plt.xlabel('Data')
+# plt.ylabel('Precipitação (pr)')
+# plt.grid(True)
+# plt.show()
+
+plt.savefig('/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/scripts/prec_daily.png')
+
+
+
 
 # # Calcular a média mensal de precipitação
 # df_pr['mes'] = df_pr['data'].dt.to_period('M')
@@ -65,24 +109,24 @@ caminho_saida_csv_mensal = '/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/
 # # Salvar o gráfico em um arquivo PNG
 # plt.savefig('/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/prec_monthly_regclim.png')
 
-intervalo = 1
-intervalo = int(intervalo) + 1 #+1 guarantee the right interval between applications
+# intervalo = 1
+# intervalo = int(intervalo) + 1 #+1 guarantee the right interval between applications
 
 
-df_mensal = pd.read_csv(caminho_saida_csv_mensal)
+# df_mensal = pd.read_csv(caminho_saida_csv_mensal)
 
-df_mensal_exp = copy.deepcopy(df_mensal)
+# df_mensal_exp = copy.deepcopy(df_mensal)
 
-pr_exp_values = []
+# pr_exp_values = []
 
-# Loop sobre os anos
-for year in range(1979, 2017):
-    start_date = f"{year}0101"
-    end_date = f"{year}1231"
+# # Loop sobre os anos
+# for year in range(1979, 2017):
+#     start_date = f"{year}0101"
+#     end_date = f"{year}1231"
 
-    pr_exp_values.append(df_mensal_exp['pr'][:13880])  # Adicione os valores originais para o ano atual
+#     pr_exp_values.append(df_mensal_exp['pr'][:13880])  # Adicione os valores originais para o ano atual
 
-    # Aplicar a redução de precipitação conforme a frequência desejada
-    if (year % intervalo == 0) and (start_date != '19790101'):
-        print(f"Aplicando a redução em {year}")
-        df_mensal_exp['pr'] = [valor * 0.7 for valor in df_mensal_exp['pr']]
+#     # Aplicar a redução de precipitação conforme a frequência desejada
+#     if (year % intervalo == 0) and (start_date != '19790101'):
+#         print(f"Aplicando a redução em {year}")
+#         df_mensal_exp['pr'] = [valor * 0.7 for valor in df_mensal_exp['pr']]
