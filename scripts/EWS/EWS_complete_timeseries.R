@@ -19,8 +19,7 @@ library(tidyr)
 #----------------------------------------------
 
 # # !!!!! note this is the monthly integrated data frame!!!!!!!
-df_1y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/
-                  MAN_30prec_1y_monthly.csv")
+df_1y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/MAN_30prec_1y_monthly.csv")
 
 #select the variable of interest
 df_1y_npp <- df_1y$Monthly_NPP_Mean
@@ -33,8 +32,8 @@ df_1y_npp_gws <- generic_ews(df_1y_npp, winsize = 15, detrending = 'loess',
 df_1y_npp_gws$frequency = "1"
 
 # 
-write.csv(df_1y_npp_gws, file =
-            "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_1y_timeseries_ews.csv", row.names = FALSE)
+# write.csv(df_1y_npp_gws, file =
+#             "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_1y_timeseries_ews.csv", row.names = FALSE)
 
 #----------------------------------------------
 #   precipitation reduction: 30%
@@ -56,8 +55,8 @@ df_3y_npp_gws <- generic_ews(df_3y_npp, winsize = 15, detrending = 'loess',
 df_3y_npp_gws$frequency = "3"
 
 # 
-write.csv(df_1y_npp_gws, file =
-            "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_3y_timeseries_ews.csv", row.names = FALSE)
+# write.csv(df_1y_npp_gws, file =
+#             "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_3y_timeseries_ews.csv", row.names = FALSE)
 
 #----------------------------------------------
 #   precipitation reduction: 30%
@@ -78,9 +77,9 @@ df_5y_npp_gws <- generic_ews(df_5y_npp, winsize = 15, detrending = 'loess',
 
 df_5y_npp_gws$frequency = "5"
 
-# 
-write.csv(df_5y_npp_gws, file =
-            "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_5y_timeseries_ews.csv", row.names = FALSE)
+# # 
+# write.csv(df_5y_npp_gws, file =
+#             "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_5y_timeseries_ews.csv", row.names = FALSE)
 
 
 #----------------------------------------------
@@ -103,8 +102,8 @@ df_7y_npp_gws <- generic_ews(df_7y_npp, winsize = 15, detrending = 'loess',
 df_7y_npp_gws$frequency = "7"
 
 # 
-write.csv(df_7y_npp_gws, file =
-            "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_7y_timeseries_ews.csv", row.names = FALSE)
+# write.csv(df_7y_npp_gws, file =
+#             "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_7y_timeseries_ews.csv", row.names = FALSE)
 
 
 #----------------------------------------------
@@ -127,9 +126,22 @@ df_regclim_npp_gws <- generic_ews(df_regclim_npp, winsize = 15, detrending = 'lo
 df_regclim_npp_gws$frequency = "regularclimate"
 
 # 
-write.csv(df_regclim_npp_gws, file =
-            "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_regclim_timeseries_ews.csv", row.names = FALSE)
+# write.csv(df_regclim_npp_gws, file =
+#             "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_regclim_timeseries_ews.csv", row.names = FALSE)
 
+
+#----------------------------------------------
+#   concat results for all time series
+#----------------------------------------------
+
+
+#concat the csvs with all frequencies
+df_allfreq_timeseries_npp_gws = rbind(df_regclim_npp_gws,df_7y_npp_gws,df_5y_npp_gws,
+                              df_3y_npp_gws, df_1y_npp_gws)
+
+
+write.csv(df_allfreq_timeseries_npp_gws, file =
+            "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/EWS/results_csv/MAN_30prec_allfreq_timeseries_ews.csv", row.names = FALSE)
 
 
 
