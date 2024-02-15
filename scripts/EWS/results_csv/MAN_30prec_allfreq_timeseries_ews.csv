@@ -1,4 +1,4 @@
-timeindex,ar1,sd,sk,kurt,cv,returnrate,densratio,acf1,frequency,
+timeindex,ar1,sd,sk,kurt,cv,returnrate,densratio,acf1,frequency,Dates
 1,0,0,0,0,0,0,0,0,regularclimate,1979-01
 2,0,0,0,0,0,0,0,0,regularclimate,1979-02
 3,0,0,0,0,0,0,0,0,regularclimate,1979-03

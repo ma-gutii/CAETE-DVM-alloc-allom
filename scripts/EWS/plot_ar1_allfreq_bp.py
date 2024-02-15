@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import numpy as np
 
-df = pd.read_csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_allfreq_bp1y_ews.csv")
+df = pd.read_csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/EWS/results_csv/MAN_30prec_allfreq_bp1y_ews.csv")
 
 
 tau_values = {'1': 0.406, '3': 0.445, '5': 0.292, '7': 0.269, 'regularclimate': 0.334}
@@ -27,4 +27,6 @@ plt.title('AR1 - Manaus - 30% prec reduction')
 plt.xlabel('Time Index')
 plt.ylabel('AR1')
 plt.legend()
+
+plt.savefig("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/EWS/ar1_allfreq_bp1y.png")
 plt.show()
