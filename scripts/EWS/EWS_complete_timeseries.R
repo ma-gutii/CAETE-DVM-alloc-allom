@@ -21,13 +21,34 @@ library(tidyr)
 # # !!!!! note this is the monthly integrated data frame!!!!!!!
 df_1y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/MAN_30prec_1y_monthly.csv")
 
+df_1y <- df_1y[df_5y$Date < "1987-08",]
 #select the variable of interest
 df_1y_npp <- df_1y$Monthly_NPP_Mean
 
+
+
 # Aplicar generic early warning signals
-df_1y_npp_gws <- generic_ews(df_1y_npp, winsize = 15, detrending = 'loess',
+df_1y_npp_gws <- generic_ews(df_1y_npp, winsize = 13, detrending = 'loess',
                              logtransform = FALSE, interpolate = FALSE, 
                              AR_n = TRUE, powerspectrum = TRUE)
+qda = qda_ews(df_1y_npp, param = NULL, winsize = 50,
+              detrending='gaussian', bandwidth=NULL,
+              boots = 10, s_level = 0.05, cutoff=0.05,
+              detection.threshold = 0.002, grid.size = 50,
+              logtransform=FALSE, interpolate=FALSE)
+sensitivity_ews(
+  df_1y_npp,
+  indicator = c("ar1", "sd", "acf1", "sk", "kurt", "cv", "returnrate", "densratio"),
+  winsizerange = c(20, 75),
+  incrwinsize = 5,
+  detrending = "gaussian",
+  bandwidthrange = c(5, 100),
+  spanrange = c(5, 100),
+  degree = NULL,
+  incrbandwidth = 20,
+  incrspanrange = 10,
+  logtransform = FALSE,
+  interpolate = FALSE)
 
 df_1y_npp_gws$frequency = "1"
 
