@@ -13,6 +13,9 @@ src/RUN*
 !src/concatenated_series_MAN_30prec_3y.csv
 !src/*.csv
 !/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/src/res_bfast.png
+src/30perc_reduction/
+src/30perc_reduction copy/
+
 
 
 !outputs/*.py
