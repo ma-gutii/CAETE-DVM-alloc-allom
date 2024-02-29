@@ -21,11 +21,25 @@ library(tidyr)
 # # !!!!! note this is the monthly integrated data frame!!!!!!!
 df_1y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/MAN_30prec_1y_monthly.csv")
 
-df_1y <- df_1y[df_5y$Date < "1987-08",]
+df_1y <- df_1y[df_1y$Date < "1987-08",]
 #select the variable of interest
 df_1y_npp <- df_1y$Monthly_NPP_Mean
 
-
+ddjnonparam_ews(df, bandwidth = 0.6,
+                na = 500,
+                logtransform = TRUE,
+                interpolate = FALSE)
+bdstest_ews(
+  timeseries = df_1y_npp,
+  ARMAoptim = TRUE,
+  ARMAorder = c(1, 0),
+  GARCHorder = c(0, 1),
+  embdim = 3,
+  epsilon = c(0.5, 0.75, 1),
+  boots = 1000,
+  logtransform = FALSE,
+  interpolate = FALSE
+)
 
 # Aplicar generic early warning signals
 df_1y_npp_gws <- generic_ews(df_1y_npp, winsize = 13, detrending = 'loess',

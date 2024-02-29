@@ -1,23 +1,28 @@
 import pandas as pd
 
-# # Manaus - Regular climate
+# # Manaus 
+#-------------------------------
+#        Regular climate
+#-------------------------------
 
 # #read csv
+
+#path server
 # df_regclim = pd.read_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/MAN_regularclimate/gridcell186-239/concatenated_series_MAN_regularclimate.csv")
 
-# # # Certifique-se de que a coluna 'date' está no formato de data
-# df_regclim['date'] = pd.to_datetime(df_regclim['Date'])
+#path local
+df_regclim = pd.read_csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/concatenated_series_MAN_30prec_.csv")
 
-# # # Agrupe os dados por mês e faça a média da coluna 'npp'
-# monthly_npp_mean_regclim = df_regclim.groupby(df_regclim['date'].dt.to_period("M"))['npp'].mean()
+# Certify the column 'date' is in the right format
+df_regclim['date'] = pd.to_datetime(df_regclim['Date'])
 
-# # # Crie um novo DataFrame com os resultados
-# result_df_regclim = pd.DataFrame({'Date': monthly_npp_mean_regclim.index, 'Monthly_NPP_Mean': monthly_npp_mean_regclim.values})
+# Define a list of columns to calculate monthly mean
+columns_to_mean = ['npp', 'photo', 'ar', 'evapm', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto']
 
-# result_df_regclim.to_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/MAN_regularclimate/gridcell186-239/MAN_regularclimate_monthly.csv")
+# Group data by month and calculate the mean for each column
+monthly_means_regclim = df_regclim.groupby(df_regclim['date'].dt.to_period("M"))[columns_to_mean].mean()
 
-
-
+monthly_means_regclim.to_csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_regularclimate_monthly.csv")
 
 
 # Manaus - 30% prec reduction
@@ -25,6 +30,19 @@ import pandas as pd
 #-------------------------------
 #           1y freq
 #-------------------------------
+
+df_1y = pd.read_csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/concatenated_series_MAN_30prec_1y.csv")
+
+# Certify the column 'date' is in the right format
+df_regclim['date'] = pd.to_datetime(df_regclim['Date'])
+
+# Define a list of columns to calculate monthly mean
+columns_to_mean = ['npp', 'photo', 'ar', 'evapm', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto']
+
+# Group data by month and calculate the mean for each column
+monthly_means_regclim = df_regclim.groupby(df_regclim['date'].dt.to_period("M"))[columns_to_mean].mean()
+
+monthly_means_regclim.to_csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_regularclimate_monthly.csv")
 
 # #read csv
 # df = pd.read_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/30perc_reduction/MAN_30prec_1y/gridcell186-239/concatenated_series_MAN_30prec_1y.csv")
@@ -84,15 +102,15 @@ import pandas as pd
 #-------------------------------
 
 #read csv
-df_7y = pd.read_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/30perc_reduction/MAN_30prec_7y/gridcell186-239/concatenated_series_MAN_30prec_7y.csv")
+# df_7y = pd.read_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/30perc_reduction/MAN_30prec_7y/gridcell186-239/concatenated_series_MAN_30prec_7y.csv")
 
-# # Certifique-se de que a coluna 'date' está no formato de data
-df_7y['date'] = pd.to_datetime(df_7y['Date'])
+# # # Certifique-se de que a coluna 'date' está no formato de data
+# df_7y['date'] = pd.to_datetime(df_7y['Date'])
 
-# # Agrupe os dados por mês e faça a média da coluna 'npp'
-monthly_npp_mean_7y = df_7y.groupby(df_7y['date'].dt.to_period("M"))['npp'].mean()
+# # # Agrupe os dados por mês e faça a média da coluna 'npp'
+# monthly_npp_mean_7y = df_7y.groupby(df_7y['date'].dt.to_period("M"))['npp'].mean()
 
-# # Crie um novo DataFrame com os resultados
-result_df_7y = pd.DataFrame({'Date': monthly_npp_mean_7y.index, 'Monthly_NPP_Mean': monthly_npp_mean_7y.values})
+# # # Crie um novo DataFrame com os resultados
+# result_df_7y = pd.DataFrame({'Date': monthly_npp_mean_7y.index, 'Monthly_NPP_Mean': monthly_npp_mean_7y.values})
 
-result_df_7y.to_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/30perc_reduction/MAN_30prec_7y/gridcell186-239/MAN_30prec_7y_monthly.csv")
+# result_df_7y.to_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/30perc_reduction/MAN_30prec_7y/gridcell186-239/MAN_30prec_7y_monthly.csv")

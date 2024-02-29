@@ -18,8 +18,15 @@ df_regclim <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/MAN_regula
 # # Converta a coluna 'Date' para o tipo de data 'yearmon'
 df_regclim$Date <- as.yearmon(df_regclim$Date)
 
-# # Crie um objeto de série temporal usando a função ts de uma maneira diferente
+# # Crie um objeto de série temporal usando a função ts 
 time_series_regclim <- ts(df_regclim$Monthly_NPP_Mean, start = c(1979, 1), frequency = 12)
+
+# Executar bfast 
+res_bfast_regclim <- bfast(time_series_regclim, h = 0.25, max.iter = 1)
+
+plot(res_bfast_regclim)
+
+res_bfast_regclim
 
 # #-------------------------------
 # # testing h values - reg clim
@@ -89,6 +96,14 @@ df_1y$Date <- as.yearmon(df_1y$Date)
 # # # Crie um objeto de série temporal usando a função ts de uma maneira diferente
 time_series_1y <- ts(df_1y$Monthly_NPP_Mean, start = c(1979, 1), frequency = 12)
 
+# Executar bfast 
+res_bfast_1y <- bfast(time_series_1y, h = 0.25, max.iter = 1)
+
+plot(res_bfast_1y)
+
+res_bfast_1y
+
+
 # #-------------------------------
 # # testing h values - 1y
 # #-------------------------------
@@ -146,6 +161,12 @@ df_3y$Date <- as.yearmon(df_3y$Date)
 
 # # # Crie um objeto de série temporal usando a função ts de uma maneira diferente
 time_series_3y <- ts(df_3y$Monthly_NPP_Mean, start = c(1979, 1), frequency = 12)
+
+res_bfast_3y <- bfast(time_series_3y, h = 0.25, max.iter = 1)
+
+plot(res_bfast_3y)
+
+res_bfast_3y
 
 #-------------------------------
 # testing h values - 3y
@@ -208,6 +229,12 @@ df_5y$Date <- as.yearmon(df_5y$Date)
 # # # Crie um objeto de série temporal usando a função ts de uma maneira diferente
 time_series_5y <- ts(df_5y$Monthly_NPP_Mean, start = c(1979, 1), frequency = 12)
 
+res_bfast_5y <- bfast(time_series_5y, h = 0.25, max.iter = 1)
+
+plot(res_bfast_5y)
+
+res_bfast_5y
+
 #-------------------------------
 # testing h values - 5y
 #-------------------------------
@@ -227,17 +254,17 @@ for (h in h_values) {
   # Executar bfast e armazenar o resultado na lista
   res_bfast_5y <- bfast(time_series_5y, h = h, max.iter = 1)
   # Criar o nome do arquivo com base no valor de h
-  filename <- file.path(dir_path, paste("5yfreq_h_", 
-                                        gsub("\\.", "_", as.character(h)), ".png", sep = ""))
+  # filename <- file.path(dir_path, paste("5yfreq_h_", 
+  #                                       gsub("\\.", "_", as.character(h)), ".png", sep = ""))
   
   # Iniciar a gravação do arquivo PNG
-  png(filename)
+  # png(filename)
   
   # Gerar o plot
   plot(res_bfast_5y, main = paste("h = ", h))
   
   # Encerrar a gravação do arquivo PNG
-  dev.off()
+  # dev.off()
   
   # Adicionar o resultado à lista
   result_list[[as.character(h)]] <- res_bfast_5y
@@ -270,6 +297,12 @@ df_7y$Date <- as.yearmon(df_7y$Date)
 
 # # # Crie um objeto de série temporal usando a função ts de uma maneira diferente
 time_series_7y <- ts(df_7y$Monthly_NPP_Mean, start = c(1979, 1), frequency = 12)
+
+res_bfast_7y <- bfast(time_series_7y, h = 0.25, max.iter = 1)
+
+plot(res_bfast_7y)
+
+res_bfast_7y
 
 #-------------------------------
 # testing h values - 7y

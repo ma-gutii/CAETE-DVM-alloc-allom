@@ -14,13 +14,14 @@ library(tidyr)
 
 ##############################################
 #       BREAK POINT FROM 1 YEAR FREQUENCY
-#                   1987-08
+#                  1) 1988-06
 ##############################################
 
 #----------------------------------------------
 #   precipitation reduction: 30%
 #   frequency: 1 year
-#   1st breakpoint: 1987-08
+#   1st breakpoint: 1988-06
+#   2nd breakpoint: 1999-02
 #   variable: NPP
 #----------------------------------------------
 
@@ -28,16 +29,41 @@ library(tidyr)
 df_1y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/MAN_30prec_1y_monthly.csv")
 # 
 # #selecting before 1st breakpoint:
-df_1y_bp <- df_1y[df_1y$Date < "1987-08",]
+df_1y_1bp <- df_1y[df_1y$Date < "1988-06",]
+
+# #selecting before 1st breakpoint:
+df_1y_2bp <- df_1y[df_1y$Date < "1999-02",]
+
+df_1y_3bp <- df_1y[df_1y$Date > "1999-02",]
+
+
 # 
 #select the variable of interest
-df_1y_bp_npp <- df_1y_bp$Monthly_NPP_Mean
+df_1y_1bp_npp <- df_1y_1bp$Monthly_NPP_Mean
+
+#select the variable of interest
+df_1y_2bp_npp <- df_1y_2bp$Monthly_NPP_Mean
+
+df_1y_3bp_npp <- df_1y_3bp$Monthly_NPP_Mean
+
 # 
 
 # Aplicar generic early warning signals
-df_1y_bp_npp_gws <- generic_ews(df_1y_bp_npp, winsize = 50, detrending = 'gaussian', 
-                                bandwidth = 10, logtransform = FALSE, interpolate = FALSE, 
-                                AR_n = FALSE, powerspectrum = TRUE)
+df_1y_bp_npp_gws_1bp <- generic_ews(df_1y_1bp_npp, winsize = 20, detrending = 'loess', 
+                                logtransform = FALSE, interpolate = FALSE, 
+                                AR_n = FALSE, powerspectrum = FALSE)
+
+# Aplicar generic early warning signals
+df_1y_bp_npp_gws_2bp <- generic_ews(df_1y_2bp_npp, winsize = 20, detrending = 'loess', 
+                                    logtransform = FALSE, interpolate = FALSE, 
+                                    AR_n = FALSE, powerspectrum = FALSE)
+
+##Take the Nas values?
+df_1y_bp_npp_gws_3bp <- generic_ews(df_1y_3bp_npp, winsize = 50, detrending = 'loess', 
+                                    logtransform = FALSE, interpolate = FALSE, 
+                                    AR_n = FALSE, powerspectrum = FALSE)
+
+
 
 df_1y_bp_npp_gws$frequency = "1"
 

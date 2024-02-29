@@ -90,20 +90,26 @@ ploting <- function(output_csv_path, freq) {
   file = read.csv(output_csv_path)
   if (freq == "1"){
     title <- "Freq: 1 year | Prec. red: 30% | Location: Manaus "
+    #put vertical lines in the brakpoints
+    xintercept = c(114,242)
     
   } else if (freq == "3"){
     title <- "Freq: 3 years | Prec. red: 30% | Location: Manaus "
+    xintercept = c(155,325)
     
     
   } else if (freq == "5"){
     title <- "Freq: 5 years | Prec. red: 30% | Location: Manaus "
+    xintercept = c(225)
     
     
   } else if (freq == "7"){
     title <- "Freq: 7 years | Prec. red: 30% | Location: Manaus "
+    xintercept = c(227,341)
     
   } else if (freq == "regclim"){
     title <- "Freq: NA | Prec. red: reg. clim. | Location: Manaus "
+    xintercept = c(234)
     
   }
   
@@ -127,7 +133,8 @@ ploting <- function(output_csv_path, freq) {
           theme(legend.text = element_text(color = "black"),
                 legend.position = "top",
                 legend.title = element_blank(),  # Remove legend title
-                legend.box.background = element_rect(colour = "black")))
+                legend.box.background = element_rect(colour = "black"))+
+          geom_vline(xintercept = xintercept, linetype = "dashed", color = "grey"))
 }
 
 
