@@ -3,7 +3,7 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 
-
+output_path = "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/EWS/csv_allvar/"
 #----------------------------------------------
 
 #               MANAUS
@@ -19,56 +19,29 @@ library(tidyr)
 #----------------------------------------------
 
 # # !!!!! note this is the monthly integrated data frame!!!!!!!
-df_1y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/MAN_30prec_1y_monthly.csv")
+df_1y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_30prec_1y_monthly.csv")
 
-df_1y <- df_1y[df_1y$Date < "1987-08",]
-#select the variable of interest
-df_1y_npp <- df_1y$Monthly_NPP_Mean
+# Specify the columns to process
+columns_to_process <- names(df_1y)[-1]
 
-ddjnonparam_ews(df, bandwidth = 0.6,
-                na = 500,
-                logtransform = TRUE,
-                interpolate = FALSE)
-bdstest_ews(
-  timeseries = df_1y_npp,
-  ARMAoptim = TRUE,
-  ARMAorder = c(1, 0),
-  GARCHorder = c(0, 1),
-  embdim = 3,
-  epsilon = c(0.5, 0.75, 1),
-  boots = 1000,
-  logtransform = FALSE,
-  interpolate = FALSE
-)
+# Loop through each column and apply generic early warning signals
+for (col_name in columns_to_process) {
+  ews_results <- generic_ews(df_1y[[col_name]],
+                             winsize = 15, detrending = 'loess',
+                             logtransform = FALSE, interpolate = FALSE,
+                             AR_n = FALSE, powerspectrum = FALSE)
 
-# Aplicar generic early warning signals
-df_1y_npp_gws <- generic_ews(df_1y_npp, winsize = 13, detrending = 'loess',
-                             logtransform = FALSE, interpolate = FALSE, 
-                             AR_n = TRUE, powerspectrum = TRUE)
-qda = qda_ews(df_1y_npp, param = NULL, winsize = 50,
-              detrending='gaussian', bandwidth=NULL,
-              boots = 10, s_level = 0.05, cutoff=0.05,
-              detection.threshold = 0.002, grid.size = 50,
-              logtransform=FALSE, interpolate=FALSE)
-sensitivity_ews(
-  df_1y_npp,
-  indicator = c("ar1", "sd", "acf1", "sk", "kurt", "cv", "returnrate", "densratio"),
-  winsizerange = c(20, 75),
-  incrwinsize = 5,
-  detrending = "gaussian",
-  bandwidthrange = c(5, 100),
-  spanrange = c(5, 100),
-  degree = NULL,
-  incrbandwidth = 20,
-  incrspanrange = 10,
-  logtransform = FALSE,
-  interpolate = FALSE)
+  # Create a new data frame with the results
+  result_df <- data.frame(ews_results, var = col_name)
+  result_df$frequency = "1y"
+  # Save the result to a separate CSV file for each variable
+  write.csv(result_df, file = paste0(output_path, "ews_results_1y_", col_name, ".csv"), row.names = FALSE)
 
-df_1y_npp_gws$frequency = "1"
-
-# 
-# write.csv(df_1y_npp_gws, file =
-#             "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_1y_timeseries_ews.csv", row.names = FALSE)
+  # Save the plot with the complement of the column name and specified path
+  # png(paste0(output_path, "ews_plot_", col_name, ".png"))
+  # plot(ews_results, main = col_name)
+  dev.off()
+}
 
 #----------------------------------------------
 #   precipitation reduction: 30%
@@ -76,18 +49,30 @@ df_1y_npp_gws$frequency = "1"
 #----------------------------------------------
 
 # # !!!!! note this is the monthly integrated data frame!!!!!!!
-df_3y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/MAN_30prec_3y_monthly.csv")
+df_3y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_30prec_3y_monthly.csv")
 
+# Specify the columns to process
+columns_to_process <- names(df_3y)[-1]
 
-#select the variable of interest
-df_3y_npp <- df_3y$Monthly_NPP_Mean
-
-# Aplicar generic early warning signals
-df_3y_npp_gws <- generic_ews(df_3y_npp, winsize = 15, detrending = 'loess',
+# Loop through each column and apply generic early warning signals
+for (col_name in columns_to_process) {
+  ews_results <- generic_ews(df_3y[[col_name]], 
+                             winsize = 15, detrending = 'loess',
                              logtransform = FALSE, interpolate = FALSE, 
-                             AR_n = TRUE, powerspectrum = TRUE)
+                             AR_n = FALSE, powerspectrum = FALSE)
+  
+  # Create a new data frame with the results
+  result_df <- data.frame(ews_results, var = col_name)
+  result_df$frequency = "3y"
+  # Save the result to a separate CSV file for each variable
+  write.csv(result_df, file = paste0(output_path, "ews_results_3y_", col_name, ".csv"), row.names = FALSE)
+  
+  # Save the plot with the complement of the column name and specified path
+  # png(paste0(output_path, "ews_plot_", col_name, ".png"))
+  # plot(ews_results, main = col_name)
+  dev.off()
+}
 
-df_3y_npp_gws$frequency = "3"
 
 # 
 # write.csv(df_1y_npp_gws, file =
@@ -98,24 +83,31 @@ df_3y_npp_gws$frequency = "3"
 #   frequency: 5 year
 #----------------------------------------------
 
+
 # # !!!!! note this is the monthly integrated data frame!!!!!!!
-df_5y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/MAN_30prec_5y_monthly.csv")
+df_5y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_30prec_5y_monthly.csv")
 
+# Specify the columns to process
+columns_to_process <- names(df_5y)[-1]
 
-#select the variable of interest
-df_5y_npp <- df_5y$Monthly_NPP_Mean
-
-# Aplicar generic early warning signals
-df_5y_npp_gws <- generic_ews(df_5y_npp, winsize = 15, detrending = 'loess',
+# Loop through each column and apply generic early warning signals
+for (col_name in columns_to_process) {
+  ews_results <- generic_ews(df_5y[[col_name]], 
+                             winsize = 15, detrending = 'loess',
                              logtransform = FALSE, interpolate = FALSE, 
-                             AR_n = TRUE, powerspectrum = TRUE)
-
-df_5y_npp_gws$frequency = "5"
-
-# # 
-# write.csv(df_5y_npp_gws, file =
-#             "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_5y_timeseries_ews.csv", row.names = FALSE)
-
+                             AR_n = FALSE, powerspectrum = FALSE)
+  
+  # Create a new data frame with the results
+  result_df <- data.frame(ews_results, var = col_name)
+  result_df$frequency = "5y"
+  # Save the result to a separate CSV file for each variable
+  write.csv(result_df, file = paste0(output_path, "ews_results_5y_", col_name, ".csv"), row.names = FALSE)
+  
+  # Save the plot with the complement of the column name and specified path
+  # png(paste0(output_path, "ews_plot_", col_name, ".png"))
+  # plot(ews_results, main = col_name)
+  dev.off()
+}
 
 #----------------------------------------------
 #   precipitation reduction: 30%
@@ -123,22 +115,30 @@ df_5y_npp_gws$frequency = "5"
 #----------------------------------------------
 
 # # !!!!! note this is the monthly integrated data frame!!!!!!!
-df_7y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/MAN_30prec_7y_monthly.csv")
+df_7y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_30prec_7y_monthly.csv")
 
+# Specify the columns to process
+columns_to_process <- names(df_7y)[-1]
 
-#select the variable of interest
-df_7y_npp <- df_7y$Monthly_NPP_Mean
-
-# Aplicar generic early warning signals
-df_7y_npp_gws <- generic_ews(df_7y_npp, winsize = 15, detrending = 'loess',
+# Loop through each column and apply generic early warning signals
+for (col_name in columns_to_process) {
+  ews_results <- generic_ews(df_7y[[col_name]], 
+                             winsize = 15, detrending = 'loess',
                              logtransform = FALSE, interpolate = FALSE, 
-                             AR_n = TRUE, powerspectrum = TRUE)
+                             AR_n = FALSE, powerspectrum = FALSE)
+  
+  # Create a new data frame with the results
+  result_df <- data.frame(ews_results, var = col_name)
+  result_df$frequency = "7y"
+  # Save the result to a separate CSV file for each variable
+  write.csv(result_df, file = paste0(output_path, "ews_results_7y_", col_name, ".csv"), row.names = FALSE)
+  
+  # Save the plot with the complement of the column name and specified path
+  # png(paste0(output_path, "ews_plot_", col_name, ".png"))
+  # plot(ews_results, main = col_name)
+  dev.off()
+}
 
-df_7y_npp_gws$frequency = "7"
-
-# 
-# write.csv(df_7y_npp_gws, file =
-#             "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_7y_timeseries_ews.csv", row.names = FALSE)
 
 
 #----------------------------------------------
@@ -147,36 +147,30 @@ df_7y_npp_gws$frequency = "7"
 #----------------------------------------------
 
 # # !!!!! note this is the monthly integrated data frame!!!!!!!
-df_regclim <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/src/MAN_regularclimate_monthly.csv")
 
+# Read CSV file
+df_regclim <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_regularclimate_monthly.csv")
 
-#select the variable of interest
-df_regclim_npp <- df_regclim$Monthly_NPP_Mean
+# Specify the columns to process
+columns_to_process <- names(df_regclim)[-1]
 
-# Aplicar generic early warning signals
-df_regclim_npp_gws <- generic_ews(df_regclim_npp, winsize = 15, detrending = 'loess',
+# Loop through each column and apply generic early warning signals
+for (col_name in columns_to_process) {
+  ews_results <- generic_ews(df_regclim[[col_name]], 
+                             winsize = 15, detrending = 'loess',
                              logtransform = FALSE, interpolate = FALSE, 
-                             AR_n = TRUE, powerspectrum = TRUE)
-
-df_regclim_npp_gws$frequency = "regularclimate"
-
-# 
-# write.csv(df_regclim_npp_gws, file =
-#             "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/MAN_30prec_regclim_timeseries_ews.csv", row.names = FALSE)
-
-
-#----------------------------------------------
-#   concat results for all time series
-#----------------------------------------------
-
-
-#concat the csvs with all frequencies
-df_allfreq_timeseries_npp_gws = rbind(df_regclim_npp_gws,df_7y_npp_gws,df_5y_npp_gws,
-                              df_3y_npp_gws, df_1y_npp_gws)
-
-
-write.csv(df_allfreq_timeseries_npp_gws, file =
-            "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/EWS/results_csv/MAN_30prec_allfreq_timeseries_ews.csv", row.names = FALSE)
-
-
+                             AR_n = FALSE, powerspectrum = FALSE)
+  
+  # Create a new data frame with the results
+  result_df <- data.frame(ews_results, var = col_name)
+  
+  result_df$frequency = "regclim"
+  # Save the result to a separate CSV file for each variable
+  write.csv(result_df, file = paste0(output_path, "ews_results_regclim_", col_name, ".csv"), row.names = FALSE)
+  
+  # Save the plot with the complement of the column name and specified path
+  # png(paste0(output_path, "ews_plot_", col_name, ".png"))
+  # plot(ews_results, main = col_name)
+  dev.off()
+}
 
