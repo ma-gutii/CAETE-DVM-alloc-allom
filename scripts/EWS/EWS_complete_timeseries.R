@@ -34,6 +34,7 @@ for (col_name in columns_to_process) {
   # Create a new data frame with the results
   result_df <- data.frame(ews_results, var = col_name)
   result_df$frequency = "1y"
+  
   # Save the result to a separate CSV file for each variable
   write.csv(result_df, file = paste0(output_path, "ews_results_1y_", col_name, ".csv"), row.names = FALSE)
 
@@ -42,6 +43,11 @@ for (col_name in columns_to_process) {
   # plot(ews_results, main = col_name)
   dev.off()
 }
+
+
+result <- read.csv('/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/EWS/csv_allvar/ews_results_1y_ar.csv')
+
+
 
 #----------------------------------------------
 #   precipitation reduction: 30%
