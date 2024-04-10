@@ -1,6 +1,6 @@
 import pandas as pd
 
-columns_to_mean = ['npp', 'photo', 'ar', 'lai','f5','evapm', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto', 'ctotal','wue']
+columns_to_mean = ['npp', 'photo', 'ar', 'lai','f5','evapm', 'cleaf', 'cwood', 'croot', 'csap', 'cheart', 'csto', 'ctotal','wue', 'ls']
 
 # # Manaus 
 #-------------------------------

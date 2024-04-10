@@ -2,10 +2,12 @@ library(bfast)
 library(zoo)
 
 #output path to save the plots of ecosystem functions
-output_path_plots <- "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/bfast/plots_ecosystem_functions/"
+output_path_plots <- "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/bfast/plots_ecosystem_functions/plot_anova_trend/"
 
-columns_to_process <- c("npp", "photo", "ar","lai","f5","evapm", "cleaf", 
-                        "croot", "cwood", "cheart", "csap", "csto", "ctotal","wue")
+# columns_to_process <- c("npp", "photo", "ar","lai","f5","evapm", "cleaf", 
+#                         "croot", "cwood", "cheart", "csap", "csto", "ctotal","wue")
+
+columns_to_process <- c("npp", "ctotal","evapm","wue")
 
 # ################################
 # #-------------------------------
@@ -32,17 +34,34 @@ names(time_series_list_regclim) <- names(df_regclim[, -1])
 
 bfast_res_list_regclim <- list()
 
-# Executar bfast e plotar resultados
+res_bfast_regclim <- bfast(time_series_list_regclim$npp,
+                           h = 0.25, max.iter = 1)
+plot(res_bfast_regclim, type = "trend", ylab = "Trend")
 
+# # Executar bfast e plotar resultados
+# 
 for (col_name in columns_to_process) {
-  res_bfast_regclim <- bfast(time_series_list_regclim[[col_name]], 
+  res_bfast_regclim <- bfast(time_series_list_regclim[[col_name]],
                        h = 0.25, max.iter = 1)
   bfast_res_list_regclim[[col_name]] <- res_bfast_regclim
+
   
   # Save the plot 
-  # png(paste0(output_path_plots, "bfast_regclim_", col_name, ".png"))
-  # plot(res_bfast_regclim, main = col_name)
-  # dev.off()
+  png(paste0(output_path_plots, "bfast_regclim_anova_", col_name, ".png"))
+  plot(res_bfast_regclim, main = col_name, type = "components", ANOVA = TRUE)
+  dev.off()
+}
+
+for (col_name in columns_to_process) {
+  res_bfast_regclim <- bfast(time_series_list_regclim[[col_name]],
+                             h = 0.25, max.iter = 1)
+  bfast_res_list_regclim[[col_name]] <- res_bfast_regclim
+  
+  
+  # Save the plot 
+  png(paste0(output_path_plots, "bfast_regclim_trend_", col_name, ".png"))
+  plot(res_bfast_regclim, main = col_name, type = "trend", ANOVA = TRUE)
+  dev.off()
 }
 
 
@@ -121,16 +140,30 @@ bfast_res_list_1y <- list()
 # Executar bfast 
 # Executar bfast e plotar resultados
 
+# # Executar bfast e plotar resultados
+# 
 for (col_name in columns_to_process) {
-  res_bfast_1y <- bfast(time_series_list_1y[[col_name]], 
+  res_bfast_1y <- bfast(time_series_list_1y[[col_name]],
                              h = 0.25, max.iter = 1)
-  
   bfast_res_list_1y[[col_name]] <- res_bfast_1y
   
-  # png(paste0(output_path_plots, "bfast_1y_", col_name, ".png"))
-  # 
-  # plot(res_bfast_1y, main = col_name)
-  # dev.off()
+  
+  # Save the plot 
+  png(paste0(output_path_plots, "bfast_1y_anova_", col_name, ".png"))
+  plot(res_bfast_1y, main = col_name, type = "components", ANOVA = TRUE)
+  dev.off()
+}
+
+for (col_name in columns_to_process) {
+  res_bfast_1y <- bfast(time_series_list_1y[[col_name]],
+                             h = 0.25, max.iter = 1)
+  bfast_res_list_1y[[col_name]] <- res_bfast_1y
+  
+  
+  # Save the plot 
+  png(paste0(output_path_plots, "bfast_1y_trend_", col_name, ".png"))
+  plot(res_bfast_1y, main = col_name, type = "trend", ANOVA = TRUE)
+  dev.off()
 }
 
 
@@ -211,23 +244,35 @@ time_series_list_3y <- lapply(df_3y[, -1], function(col) {
 names(time_series_list_3y) <- names(df_3y[, -1])
 
 bfast_res_list_3y <- list()
+
+res_bfast_3y <- bfast(time_series_list_3y$npp, 
+                      h = 0.25, max.iter = 1)
 # Executar bfast 
 # Executar bfast e plotar resultados
 
 for (col_name in columns_to_process) {
-  res_bfast_3y <- bfast(time_series_list_3y[[col_name]], 
+  res_bfast_3y <- bfast(time_series_list_3y[[col_name]],
                         h = 0.25, max.iter = 1)
-  
   bfast_res_list_3y[[col_name]] <- res_bfast_3y
   
-  # png(paste0(output_path_plots, "bfast_3y_", col_name, ".png"))
-  # 
-  # plot(res_bfast_3y, main = col_name)
-  # dev.off()
+  
+  # Save the plot 
+  png(paste0(output_path_plots, "bfast_3y_anova_", col_name, ".png"))
+  plot(res_bfast_3y, main = col_name, type = "components", ANOVA = TRUE)
+  dev.off()
 }
 
-bfast_res_list_3y
-
+for (col_name in columns_to_process) {
+  res_bfast_3y <- bfast(time_series_list_3y[[col_name]],
+                        h = 0.25, max.iter = 1)
+  bfast_res_list_3y[[col_name]] <- res_bfast_3y
+  
+  
+  # Save the plot 
+  png(paste0(output_path_plots, "bfast_3y_trend_", col_name, ".png"))
+  plot(res_bfast_3y, main = col_name, type = "trend", ANOVA = TRUE)
+  dev.off()
+}
 
 # # # Converta a coluna 'Date' para o tipo de data 'yearmon'
 # df_3y$Date <- as.yearmon(df_3y$Date)
@@ -304,20 +349,31 @@ time_series_list_5y <- lapply(df_5y[, -1], function(col) {
 names(time_series_list_5y) <- names(df_5y[, -1])
 
 bfast_res_list_5y <- list()
-# Executar bfast 
-# Executar bfast e plotar resultados
 
+
+# Executar bfast 
 for (col_name in columns_to_process) {
-  res_bfast_5y <- bfast(time_series_list_5y[[col_name]], 
+  res_bfast_5y <- bfast(time_series_list_5y[[col_name]],
                         h = 0.25, max.iter = 1)
-  
   bfast_res_list_5y[[col_name]] <- res_bfast_5y
   
-  # png(paste0(output_path_plots, "bfast_5y_", col_name, ".png"))
-  # 
-  # plot(res_bfast_5y, main = col_name)
-  # 
-  # dev.off()
+  
+  # Save the plot 
+  png(paste0(output_path_plots, "bfast_5y_anova_", col_name, ".png"))
+  plot(res_bfast_5y, main = col_name, type = "components", ANOVA = TRUE)
+  dev.off()
+}
+
+for (col_name in columns_to_process) {
+  res_bfast_5y <- bfast(time_series_list_5y[[col_name]],
+                        h = 0.25, max.iter = 1)
+  bfast_res_list_5y[[col_name]] <- res_bfast_5y
+  
+  
+  # Save the plot 
+  png(paste0(output_path_plots, "bfast_5y_trend_", col_name, ".png"))
+  plot(res_bfast_5y, main = col_name, type = "trend", ANOVA = TRUE)
+  dev.off()
 }
 
 
@@ -403,18 +459,32 @@ bfast_res_list_7y<- list()
 # Executar bfast 
 # Executar bfast e plotar resultados
 
+
+# Executar bfast 
 for (col_name in columns_to_process) {
-  res_bfast_7y <- bfast(time_series_list_7y[[col_name]], 
+  res_bfast_7y <- bfast(time_series_list_7y[[col_name]],
                         h = 0.25, max.iter = 1)
-  
   bfast_res_list_7y[[col_name]] <- res_bfast_7y
   
-  # png(paste0(output_path_plots, "bfast_7y_", col_name, ".png"))
-  # 
-  # plot(res_bfast_7y, main = col_name)
-  # 
-  # dev.off()
+  
+  # Save the plot 
+  png(paste0(output_path_plots, "bfast_7y_anova_", col_name, ".png"))
+  plot(res_bfast_7y, main = col_name, type = "components", ANOVA = TRUE)
+  dev.off()
 }
+
+for (col_name in columns_to_process) {
+  res_bfast_7y <- bfast(time_series_list_7y[[col_name]],
+                        h = 0.25, max.iter = 1)
+  bfast_res_list_7y[[col_name]] <- res_bfast_7y
+  
+  
+  # Save the plot 
+  png(paste0(output_path_plots, "bfast_7y_trend_", col_name, ".png"))
+  plot(res_bfast_7y, main = col_name, type = "trend", ANOVA = TRUE)
+  dev.off()
+}
+
 
 #-------------------------------
 # testing h values - 7y

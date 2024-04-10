@@ -20,7 +20,10 @@ output_path = "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/EWS/csv_allvar/
 
 # # !!!!! note this is the monthly integrated data frame!!!!!!!
 df_1y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_30prec_1y_monthly.csv")
-
+ews_results <- generic_ews(df_1y$npp,
+                           winsize = 15, detrending = 'loess',
+                           logtransform = FALSE, interpolate = FALSE,
+                           AR_n = FALSE, powerspectrum = FALSE)
 # Specify the columns to process
 columns_to_process <- names(df_1y)[-1]
 
@@ -40,7 +43,7 @@ for (col_name in columns_to_process) {
 
   # Save the plot with the complement of the column name and specified path
   # png(paste0(output_path, "ews_plot_", col_name, ".png"))
-  # plot(ews_results, main = col_name)
+  plot(ews_results, main = col_name)
   dev.off()
 }
 
@@ -158,7 +161,32 @@ for (col_name in columns_to_process) {
 df_regclim <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_regularclimate_monthly.csv")
 
 # Specify the columns to process
-columns_to_process <- names(df_regclim)[-1]
+# columns_to_process <- names(df_regclim)[-1]
+
+ews_results <- generic_ews(df_1y[[col_name]],
+                             winsize = 15, detrending = 'loess',
+                             logtransform = FALSE, interpolate = FALSE,
+                             AR_n = FALSE, powerspectrum = FALSE)
+
+ews_results <- generic_ews(df_1y$npp,
+                           winsize = 15, detrending = 'loess',
+                           logtransform = FALSE, interpolate = FALSE,
+                           AR_n = FALSE, powerspectrum = FALSE)
+
+ews_results <- generic_ews(df_1y$ctotal,
+                           winsize = 15, detrending = 'loess',
+                           logtransform = FALSE, interpolate = FALSE,
+                           AR_n = FALSE, powerspectrum = FALSE)
+
+ews_results <- generic_ews(df_1y$evapm,
+                           winsize = 15, detrending = 'loess',
+                           logtransform = FALSE, interpolate = FALSE,
+                           AR_n = FALSE, powerspectrum = FALSE)
+
+ews_results <- generic_ews(df_1y$wue,
+                           winsize = 15, detrending = 'loess',
+                           logtransform = FALSE, interpolate = FALSE,
+                           AR_n = FALSE, powerspectrum = FALSE)
 
 # Loop through each column and apply generic early warning signals
 for (col_name in columns_to_process) {
@@ -168,15 +196,15 @@ for (col_name in columns_to_process) {
                              AR_n = FALSE, powerspectrum = FALSE)
   
   # Create a new data frame with the results
-  result_df <- data.frame(ews_results, var = col_name)
+  # result_df <- data.frame(ews_results, var = col_name)
   
-  result_df$frequency = "regclim"
+  # result_df$frequency = "regclim"
   # Save the result to a separate CSV file for each variable
-  write.csv(result_df, file = paste0(output_path, "ews_results_regclim_", col_name, ".csv"), row.names = FALSE)
+  # write.csv(result_df, file = paste0(output_path, "ews_results_regclim_", col_name, ".csv"), row.names = FALSE)
   
   # Save the plot with the complement of the column name and specified path
   # png(paste0(output_path, "ews_plot_", col_name, ".png"))
-  # plot(ews_results, main = col_name)
-  dev.off()
+  plot(ews_results, main = col_name)
+  # dev.off()
 }
 
