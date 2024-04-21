@@ -15,7 +15,7 @@ src/RUN*
 !/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/src/res_bfast.png
 src/30perc_reduction/
 src/30perc_reduction copy/
-
+!/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/prec_values_monthly_grouped.csv
 
 
 !outputs/*.py
