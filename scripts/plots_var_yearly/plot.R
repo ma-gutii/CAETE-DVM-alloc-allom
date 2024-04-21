@@ -78,27 +78,41 @@ cores <- c("1y" = "firebrick3",
            "regclim" = "steelblue1")
 
 # Lista das variáveis que deseja plotar
-variaveis <- c("npp", "ctotal", "evapm", "wue")
+variaveis <- c("npp", "ctotal", "evapm", "wue", "ls")
 
-# Normalização dos dados usando Z-score
-df_combined_normalized <- df_combined %>%
-  mutate_at(vars(variaveis), scale)
+# Normalização dos dados para o intervalo de 0 a 1
+normalize_0_1 <- function(x) {
+  (x - min(x)) / (max(x) - min(x))
+}
 
-# Plot das séries temporais normalizadas para cada variável
-df_plot <- df_combined_normalized %>%
-  pivot_longer(cols = variaveis)
+# Aplicar a função de normalização às variáveis desejadas
+df_normalized <- df_combined %>%
+  mutate(across(variaveis, normalize_0_1))
 
-ggplot(data = df_plot, aes(x = date, y = value, color = frequency)) +
-  geom_line() +
-  scale_color_manual(values = cores) +
-  labs(title = "Séries Temporais Normalizadas",
-       x = "Data",
-       color = "Frequency") +
-  theme_minimal() +
-  facet_wrap(~name, nrow = 2, ncol = 2, scales = "free_y") +
-  lapply(unique(df_plot$name), function(var) {
-    list(
-      labs(y = var)
-    )
-  })
+# Especifique o diretório onde deseja salvar os plots
+directory <- "/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/plots_var_yearly/"
 
+# Criar e salvar cada plot separadamente
+plots <- lapply(unique(df_normalized$name), function(var) {
+  plot <- ggplot(data = filter(df_normalized, name == var), aes(x = date, y = value, color = frequency)) +
+    geom_line() +
+    scale_color_manual(values = cores) +
+    labs(title = "",
+         x = "Year",
+         y = "Normalized value",
+         color = "Frequency of disturbance") +
+    theme_minimal() +
+    theme(legend.position = "bottom")
+  
+  # Definir o nome do arquivo com o diretório especificado
+  file_name <- paste(directory, "normalized_plot_", var, ".png", sep = "")
+  
+  # Salvar o plot como um arquivo PNG
+  ggsave(plot = plot, filename = file_name, width = 8, height = 6, dpi = 300)
+  
+  return(plot)
+  dev.off()
+})
+
+# Imprimir os plots
+print(plots)

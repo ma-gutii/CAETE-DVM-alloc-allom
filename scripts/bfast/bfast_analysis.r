@@ -47,9 +47,9 @@ for (col_name in columns_to_process) {
 
   
   # Save the plot 
-  png(paste0(output_path_plots, "bfast_regclim_anova_", col_name, ".png"))
-  plot(res_bfast_regclim, main = col_name, type = "components", ANOVA = TRUE)
-  dev.off()
+  # png(paste0(output_path_plots, "bfast_regclim_anova_", col_name, ".png"))
+  # plot(res_bfast_regclim, main = col_name, type = "components", ANOVA = TRUE)
+  # dev.off()
 }
 
 for (col_name in columns_to_process) {
