@@ -40,7 +40,7 @@ all_years = range(start_year, end_year)
 
 # #Select the PLS ID for the alives
 all_group_numbers = final_merged_df['GroupNumber'].unique()
-# print(all_group_numbers)
+print(all_group_numbers.size)
 
 # Creating a pandas DataFrame 'all_combinations' by generating all possible combinations
 # of 'YEAR' from the list 'all_years' and 'GroupNumber' from the list 'all_group_numbers'.
@@ -72,14 +72,14 @@ final_merged_df.to_csv(final_file_path, index=False)
 
 print("Your file has been created! Find it in:", path_csv)
 
-#exclude files of PLSs csv for each spin
-temp_files = os.listdir(path_csv)
+# #exclude files of PLSs csv for each spin
+# temp_files = os.listdir(path_csv)
 
-for file in temp_files:
-    if file.startswith('baserun') and file.endswith('.csv'):
-        print(file)
-        file_path2 = os.path.join(path_csv, file)
-        os.remove(file_path2)
+# for file in temp_files:
+#     if file.startswith('baserun') and file.endswith('.csv'):
+#         print(file)
+#         file_path2 = os.path.join(path_csv, file)
+#         os.remove(file_path2)
 
 
 
