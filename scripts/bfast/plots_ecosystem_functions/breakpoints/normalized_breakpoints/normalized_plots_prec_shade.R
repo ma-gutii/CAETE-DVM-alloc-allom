@@ -5,30 +5,34 @@ library(bfast)
 
 # Carregar dados
 df_regclim <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_regularclimate_monthly.csv")
-df_1y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_30prec_1y_monthly.csv")
+# df_1y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_30prec_1y_monthly.csv")
 df_7y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_30prec_7y_monthly.csv")
 
+df_1y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mean_tables/MAN_30prec_1y_monthly_NA.csv")
 
 # Lista dos dataframes com suas frequências
 df_list <- list(df_regclim = df_regclim, df_1y = df_1y, df_7y = df_7y)
 
 # Normalização dos dados para o intervalo de 0 a 1
 normalize_0_1 <- function(x) {
-  (x - min(x)) / (max(x) - min(x))
+  if (max(x) - min(x) == 0) {
+    return(rep(0, length(x)))  # Retorna um vetor de zeros do mesmo comprimento de x
+  } else {
+    return((x - min(x)) / (max(x) - min(x)))
+  }
 }
-
 # Definindo os breakpoints para cada variável e frequência
 breakpoints <- list(npp = list(df_regclim = list(bp1 = "1998-06", bp2 = ""),
-                               df_1y = list(bp1 = "1988-06", bp2 = "1999-02"),
+                               df_1y = list(bp1 = "1987-10", bp2 = "1999-02"),
                                df_7y = list(bp1 = "1997-11", bp2 = "2007-05")),
                     ctotal = list(df_regclim = list(bp1 = "1992-12", bp2 = "2002-09"),
-                                  df_1y = list(bp1 = "1990-08", bp2 = "2006-10"),
+                                  df_1y = list(bp1 = "1990-07", bp2 = "1999-07"),
                                   df_7y = list(bp1 = "2006-01", bp2 = "")),
                     evapm = list(df_regclim = list(bp1 = "1998-05", bp2 = ""),
-                                 df_1y = list(bp1 = "1997-11", bp2 = "2007-05"),
+                                 df_1y = list(bp1 = "1987-11", bp2 = "1998-03"),
                                  df_7y = list(bp1 = "2007-06", bp2 = "")),
                     wue = list(df_regclim = list(bp1 = "1989-07", bp2 = "2004-10"),
-                               df_1y = list(bp1 = "1997-06", bp2 = "2006-12"),
+                               df_1y = list(bp1 = "1991-10", bp2 = "1998-10"),
                                df_7y = list(bp1 = "1989-07", bp2 = "2004-10")))
 
 
