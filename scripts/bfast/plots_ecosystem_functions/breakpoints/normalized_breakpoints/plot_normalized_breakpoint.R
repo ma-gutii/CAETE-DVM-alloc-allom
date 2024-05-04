@@ -9,6 +9,7 @@ df_7y <- read.csv("/home/bianca/bianca/CAETE-DVM-alloc-allom/scripts/monthly_mea
 
 # Lista dos dataframes com suas frequências
 df_list <- list(df_regclim = df_regclim, df_1y = df_1y, df_7y = df_7y)
+df_list <- list(df_regclim = df_regclim)
 
 # Normalização dos dados para o intervalo de 0 a 1
 normalize_0_1 <- function(x) {
@@ -151,6 +152,7 @@ for (df_name in names(df_list)) {
     print(df_name)
     print(variavel)
     print(slopes)
+    print(res_bfast)
     
     # Aguardar um segundo para visualização (opcional)
     Sys.sleep(1)
