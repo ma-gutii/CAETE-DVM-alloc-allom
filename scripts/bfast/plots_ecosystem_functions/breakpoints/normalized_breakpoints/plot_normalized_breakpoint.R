@@ -141,7 +141,7 @@ for (df_name in names(df_list)) {
     
     # Executar bfast
     res_bfast <- bfast(time_series_list[[variavel]], h = 0.25, max.iter = 1)
-    
+    print(res_bfast$Mags)
     plot(res_bfast, type = "components", ANOVA = TRUE)
     
     # Exibir o nome do dataframe e da variável
