@@ -28,6 +28,8 @@ import numpy as np
 from caete_module import photo as model
 from caete_module import global_par as gp
 
+#modificacoes 
+
 __author__ = 'JP Darela'
 
 # Cache data of allocation coefficients
