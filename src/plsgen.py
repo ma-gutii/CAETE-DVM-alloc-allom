@@ -28,8 +28,7 @@ import numpy as np
 from caete_module import photo as model
 from caete_module import global_par as gp
 
-#modificacoes 
-#modificacao2
+#Importar pacotes acima para manipulacoes de dados de calculos matematicos
 
 __author__ = 'JP Darela'
 
@@ -53,6 +52,8 @@ def vec_ranging(values, new_min, new_max):
 
     return np.array(output, dtype=np.float32)
 
+#criacao de um novo intervalo de valores baseados nos valores anteriores e atualizamos com os novos valores
+#essa funcao detorna como um dado de saida em forma de arranjo numpy para futuras manipulacoes
 
 def check_viability(trait_values, wood):
     """ Check the viability of allocation(a) & residence time(ŧ) combinations.
@@ -76,6 +77,8 @@ def check_viability(trait_values, wood):
             return False
         return True
 
+#essa funcao tem como objetivo detectar se a combinacao de alocacao de c e tempo de residencia de c eh viavel para determinada pls
+#essa viabilidade so eh possivel se a pls acumular biomassa o suficiente
 
 def assertion_data_size(dsize):
     """ Assertion of datasets sizes """
@@ -86,6 +89,8 @@ def assertion_data_size(dsize):
     assert diffg + diffw == dsize
     return diffg, diffw
 
+#divide o conjunto de dados em proporcoes pre definidas, no caso 20%, ai temos o retorno de duas variaveis a partir do conjunto de entrada
+#Dividir dados entre gramineas (g) e platas lenhosas (w)
 
 def turnover_combinations(verbose=False):
     """CREATE the residence time and allocation combinations"""
@@ -136,6 +141,9 @@ def turnover_combinations(verbose=False):
 
     return a1, a2
 
+#funcao para definir alocacao de carbono entre os tecidos vegetais de gramineas e plantas lenhosas
+#verbose fala o numero total de combinacoes de plantas criadas
+#no comando np.arrange, o primeiero argumento eh o ponto de inicio de valores, o segundo o ponto final e o terceiro o espacamento entre os valores
 
 def calc_ratios1(NPLS):
     # LEAF POOL
@@ -327,11 +335,14 @@ def table_gen(NPLS, fpath=None):
     """AKA main - generate a trait table for CAETÊ - save it to a .csv"""
 
     diffg, diffw = assertion_data_size(NPLS)
+    #chamada para dividir numero total de estrategias de graminea e lenhosas
     plsa_wood, plsa_grass = turnover_combinations(True)
+    #gerar combinacoes de biomassa para estretagias de gramineas e lenhosas
 
     alloc_w = []
     alloc_g = []
     r_ceil = 10000
+    #listas para armazenas combinacoes de plantas
 
 # REVER O TEMPO DE RESIDÊNCIA DAS RAÌZES FINAS - VARIAR ENTRE 1 mes e 2 anos
     index0 = 0
@@ -340,8 +351,9 @@ def table_gen(NPLS, fpath=None):
 
     rtime_leaf = np.random.uniform(0.166, 8.3333, r_ceil) #8.33 anos = 100 meses (reference: Pavlick et al 2013)
     rtime_froot = np.random.uniform(0.08333, 8.3333, r_ceil) # 0.08333 anos = 1mês e 8.33 = 100 meses (reference: Pavlick et al 2013)
+    #gerar valores uniformes para distribuicao de tempo de residencia de folhas e raizes em gramineas
     print("CREATE GRASSy STRATEGIES - Checking potential npp/alocation")
-    while index0 < diffg:
+    while index0 < diffg: #loop continua ate atingir o numero de gramineas necessario
         restime = np.zeros(shape=(3,), dtype=np.float64)
 
         allocatio = plsa_grass[np.random.randint(0, plsa_grass.shape[0])]
