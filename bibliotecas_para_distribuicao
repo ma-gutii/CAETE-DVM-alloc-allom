@@ -1,0 +1,6 @@
+Quais sao as bibliotecas do python que podem auxiliar para desenvolver analises e curvas de distribuicao?
+- matplotlib: biblioteca para analisar dados
+- spicy: biblioteca que apresenta funcoes que auxiliam no desenvolvimento das distribuicoes
+- statsmodels: biblioteca com modelos estatisticos que auxiliam no ajuste de graficos
+
+- numpy: biblioteca utilizada para gerar conjunto de dados, calculos matematicos, matrizes, amostragens...
