@@ -2,5 +2,13 @@ Quais sao as bibliotecas do python que podem auxiliar para desenvolver analises 
 - matplotlib: biblioteca para analisar dados
 - spicy: biblioteca que apresenta funcoes que auxiliam no desenvolvimento das distribuicoes
 - statsmodels: biblioteca com modelos estatisticos que auxiliam no ajuste de graficos
-
 - numpy: biblioteca utilizada para gerar conjunto de dados, calculos matematicos, matrizes, amostragens...
+
+Tipos de distribuicoes dados
+- Distribuicao normal: Apresenta formato de sino -> valores distribuidos simetricamente em ambos os lados da media; media e mediana estao localizadas no pico do sino; 
+
+-Distribuicao exponencial: apresenta um decaimento ou uma crescimento exponencial; curva vai aumentando ou diminuindo progressivamente com o passar do tempo
+
+- Distribuicao uniforme continua: todos os dados apresentam a mesma probabilidade de ocuparem um intervalo especifico
+
+- Distribuicao log-normal: Se assemelha a distribuicao normal, mas apresenta uma calda assimetrica em uma das extremidades
