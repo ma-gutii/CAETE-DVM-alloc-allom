@@ -27,7 +27,10 @@ from joblib import Parallel, delayed
 import numpy as np
 from caete_module import photo as model
 from caete_module import global_par as gp
-
+#os fornece funções para interagir com o sistema operacional
+#sys oferece funções e variáveis usadas para manipular diferentes partes do ambiente de execução do Python
+#csv fornece funções para ler e escrever arquivos no formato CSV
+#numpy é uma biblioteca fundamental para computação numérica em Python
 #Importar pacotes acima para manipulacoes de dados de calculos matematicos
 
 __author__ = 'JP Darela'
@@ -54,6 +57,7 @@ def vec_ranging(values, new_min, new_max):
 
 #criacao de um novo intervalo de valores baseados nos valores anteriores e atualizamos com os novos valores
 #essa funcao detorna como um dado de saida em forma de arranjo numpy para futuras manipulacoes
+#cada elemento no array será representado como um número de ponto flutuante de 32 bits.
 
 def check_viability(trait_values, wood):
     """ Check the viability of allocation(a) & residence time(ŧ) combinations.
@@ -79,6 +83,10 @@ def check_viability(trait_values, wood):
 
 #essa funcao tem como objetivo detectar se a combinacao de alocacao de c e tempo de residencia de c eh viavel para determinada pls
 #essa viabilidade so eh possivel se a pls acumular biomassa o suficiente
+#assert é uma declaração usada para testar uma condição.wood não seja None. Se wood for None, o programa irá parar.
+#np.array(model.spinup3(lim, trait_values)) = transformar em array o spinup entre essas variaveis
+#Verifica se todos os três valores em rtur (posições 0, 1 e 2) são menores ou iguais a lim
+
 
 def assertion_data_size(dsize):
     """ Assertion of datasets sizes """
@@ -173,7 +181,8 @@ def calc_ratios1(NPLS):
     
     #CONSTANT
     #================================================================================    
-        
+        #shape: Define o tamanho ou formato do array. No caso, o valor é 5000, o que significa que o array terá 5000 elementos.
+        #fill_value: Define o valor com o qual o array será preenchido. No exemplo, esse valor é N0.
         #code for constant value of n2c and p2c
         pool_n2c = np.full(5000, N0)
         pool_p2c = np.full(5000, P0)
@@ -206,7 +215,8 @@ def calc_ratios1(NPLS):
     idx = np.random.randint(0, x1.shape[0], size=NPLS)
     sampleNP = x1[idx, :]
     return sampleNP
-
+#índices aleatórios de um array entre 0 e x1.shape com o numero de indices no intervalo igual a NPLS
+#Cria uma amostra (sampleNP) das linhas do array x1, escolhendo-as aleatoriamente de acordo com os índices gerados.
 
 def calc_ratios2(NPLS):
     # WOOD POOL
@@ -355,18 +365,25 @@ def table_gen(NPLS, fpath=None):
     print("CREATE GRASSy STRATEGIES - Checking potential npp/alocation")
     while index0 < diffg: #loop continua ate atingir o numero de gramineas necessario
         restime = np.zeros(shape=(3,), dtype=np.float64)
-
+        #cria um array preenchido por 0, com 3 elementos
         allocatio = plsa_grass[np.random.randint(0, plsa_grass.shape[0])]
+        #gera um numero aleatorio entre 0 e plsa_grass
         restime[0] = rtime_leaf[np.random.randint(0, r_ceil)]
         restime[1] = 0.0
         restime[2] = rtime_froot[np.random.randint(0, r_ceil)]
+        #atribuicoes aos 3 elementos de tempo de residencia
 
         data_to_test0 = np.concatenate((restime, allocatio), axis=0,)
+        #Combina dois arrays restime e allocatio ao longo do eixo 0 (linha).
         if check_viability(data_to_test0, False):
+            #Esta função deve verificar se a combinação de restime e allocatio é "viável" de acordo com certas condições definidas na função.
             alloc_g.append(data_to_test0)
             index0 += 1
+            # Uma variável contador que é incrementada em 1 a cada vez que uma combinação viável é encontrada.
         sys.stdout.write('\r%s' % (str(index0)))
+        # Exibe o valor atual de index0 no terminal, indicando o progresso, sem saltar para uma nova linha. Isso atualiza o contador no mesmo lugar da tela repetidamente.
     sys.stdout.flush()
+    #Garante que o valor de index0 seja mostrado em tempo real no terminal, ao invés de esperar que o buffer se esvazie automaticamente.
     print("\n")
     print("CREATE WOODY STRATEGIES - Checking potential npp/alocation")
     # Creating woody plants (maybe herbaceous)
@@ -412,6 +429,7 @@ def table_gen(NPLS, fpath=None):
     # # C4 STYLE
     c4 = np.zeros((NPLS,), dtype=np.float64)
     n123 = ceil(alloc_g.shape[0] * 0.50)
+    #calcular 50% do tamanho do array alloc_g
     c4[0: n123 - 1] = 1.0
 
     # # Nitrogen and Phosphorus content in carbon pools
@@ -429,6 +447,8 @@ def table_gen(NPLS, fpath=None):
 
     np.place(awood_n2c, test, 0.0)
     np.place(awood_p2c, test, 0.0)
+    #np.place() altera valores de um array com base em uma condição booleana.
+    #Neste código, os valores dos arrays awood_n2c e awood_p2c são alterados para 0.0 onde a máscara test for True.
 
     root = calc_ratios3(NPLS)
     froot_n2c = root[:, 0]
@@ -438,6 +458,7 @@ def table_gen(NPLS, fpath=None):
     pdia = np.random.uniform(0.01, 0.10, NPLS)
     np.place(pdia, test, 0.0)
     woods = np.where(alloc[:, 4] > 0.0)[0]
+    #Retorna os índices das linhas em alloc onde a quinta coluna contém valores maiores que 0.0.
     # return woods 
 
     for i in woods:
@@ -460,6 +481,7 @@ def table_gen(NPLS, fpath=None):
     if fpath is not None:
 
         pls_table = np.vstack(stack)
+        #empilha arrays verticalmente, ou seja, ao longo de um novo eixo de linha (eixo 0).
 
         # # ___side_effects
         if not fpath.exists():
