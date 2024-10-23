@@ -417,14 +417,14 @@ def table_gen(NPLS, fpath=None):
     # g1 = vec_ranging(np.random.beta(1.2, 2, NPLS), 1.0, 15.0) # dimensionles
     # # vcmax = np.random.uniform(3e-5, 100e-5,N) # molCO2 m-2 s-1
     resorption = np.random.uniform(0.2, 0.7, NPLS)
-    sla_random = np.random.uniform(0.006, 0.050, NPLS)#m2/g : TRY (range original: 0.009, 0.040)
+    sla_random = np.random.uniform(0.001, 0.090, NPLS)#m2/g : TRY (range original: 0.009, 0.040)
                                                   #we increased the range (range original: 0.5,0.9)to increase
                                                   #the probability of occurence inside the real range
                                                   
-    wd_random = np.random.uniform(0.3, 1.0, NPLS) #g/cm3 : Global WD Database (Zanne et al., 2009).
+    wd_random = np.random.uniform(0.1, 2.0, NPLS) #g/cm3 : Global WD Database (Zanne et al., 2009).
                                                   #we increased the range (range original: 0.5,0.9)to increase
                                                   #the probability of occurence inside the real range
-    restime_sap = np.random.uniform(10., 20., NPLS)
+    restime_sap = np.random.uniform(5., 30., NPLS)
 
     # # C4 STYLE
     c4 = np.zeros((NPLS,), dtype=np.float64)
