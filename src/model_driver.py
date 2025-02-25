@@ -133,10 +133,11 @@ if not sombrero:
         "Give a name to your run (ASCII letters and numbers only. No spaces): ")
     dump_folder = Path(f'../outputs/{outf}').resolve()
     nc_outputs = Path(os.path.join(dump_folder, Path("nc_outputs"))).resolve()
+    print("\n")
     print(
         f"The raw model results & the PLS table will be saved at: {dump_folder}\n")
     print(f"The final netCDF files will be stored at: {nc_outputs}\n")
-    print('nc outputs----------------->', nc_outputs)
+   
 
 if not sombrero:
     zone = input("Select a zone [c: central, s: south, e: east, nw: NW]")
