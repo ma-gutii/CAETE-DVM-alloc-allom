@@ -322,6 +322,9 @@ p_7 <- p_7 + theme_minimal() +
   scale_colour_manual(values = "salmon", name = "", labels = "") +
   scale_fill_manual(values = c("darkblue" = "darkblue", "skyblue" = "skyblue"), name = "")
 
+# Combina os gráficos em uma única grade
+combined_plots_wue <- grid.arrange(p, p_7, p_1, ncol = 3)
+
 ###################
 ###plotting ls
 ###################
@@ -390,5 +393,5 @@ p_7 <- p_7 + theme_minimal() +
 # Combina os gráficos em uma única grade
 combined_plots_ls <- grid.arrange(p, p_7, p_1, ncol = 3)
 
-grid.arrange(combined_plots_npp, combined_plots_ctotal, combined_plots_evapm, combined_plots_wue, ncol = 1, nrow = 4)
+grid.arrange(combined_plots_npp, combined_plots_ctotal, combined_plots_evapm, combined_plots_wue,combined_plots_ls, ncol = 1, nrow = 5)
 

@@ -65,6 +65,7 @@ df_combined %>%
                                           "wue" = "Water use efficiency",
                                           "ls" = "N. of surviving strategies")))
 
+
   
 
 #normalizado:
@@ -78,7 +79,7 @@ cores <- c("1y" = "lightsalmon2",
            "regclim" = "steelblue3")
 
 # Lista das variáveis que deseja plotar
-variaveis <- c("npp", "ctotal", "evapm", "wue", "csto", "cleaf", "croot")
+variaveis <- c("npp", "ctotal", "evapm", "wue", "csto", "cleaf", "croot", "cheart", "csto", "csap", "cwood", "photo")
 
 # Normalização dos dados para o intervalo de 0 a 1
 normalize_0_1 <- function(x) {
@@ -95,7 +96,7 @@ cores <- c("1y" = "lightsalmon2",
            "regclim" = "steelblue3")
 
 # Lista das variáveis que deseja plotar
-variaveis <- c("npp", "ctotal", "evapm", "wue", "csto", "cleaf", "croot")
+# variaveis <- c("npp", "ctotal", "evapm", "wue", "csto", "cleaf", "croot")
 
 # Normalização dos dados para o intervalo de 0 a 1
 normalize_0_1 <- function(x) {
@@ -124,6 +125,27 @@ for (var in variaveis) {
   
   print(plot)
 }
+
+# Criar e exibir cada plot separadamente
+for (var in variaveis) {
+  plot <- ggplot(data = df_normalized, aes(x = date, y = !!sym(var), color = frequency)) +
+    geom_line(size=1) +
+    scale_color_manual(values = cores) +
+    labs(
+      x = "Year",
+      y = "Normalized value",
+      size = 18) +  # Define o tamanho da fonte
+    theme_minimal() +
+    theme(
+      axis.title = element_text(size = 18),  # Tamanho da fonte dos rótulos dos eixos
+      axis.text = element_text(size = 16),   # Tamanho da fonte dos números dos eixos
+      plot.title = element_text(size = 22),  # Tamanho da fonte do título do gráfico
+      legend.position = "none") +  # Remover a legenda
+    ggtitle(paste(var))  # Adiciona o título com o nome da variável
+  
+  print(plot)
+}
+
 
 library(gridExtra)
 
