@@ -41,7 +41,7 @@ while True:
         break
     elif server == 'n':
         # Set the main_path accordingly for local machine
-        main_path = '/home/bianca/bianca/CAETE-DVM-alloc-allom/'
+        main_path = '/home/amazonfaceme/marcelagutierrez/novas_rodadas/CAETE-DVM-alloc-allom/outputs/'
         break
 # run_names = ['ALP_30prec_1y']
 # run_names = [
@@ -72,9 +72,10 @@ while True:
 #     'CAX_30prec_5y',
 #     'CAX_30prec_7y']
 
-run_names = [
-   'MAN_30prec_7y']
-    
+run_name = input("Choose the run name: ")
+run_names = [run_name]
+
+print(f"Run names: {run_names}")
 
 
 # run_name = input('Run name: ')
@@ -121,7 +122,7 @@ for run_name in run_names:
         p.pkz2csv(file, path, grd_name, run_name, int(spin_id), date_range, grd_acro)
 
     # # Navigate to the specified folder to access spins
-    os.chdir(f'{main_path}{run_name}/{grd_name}/')
+    os.chdir(f'{main_path}/{run_name}/{grd_name}/')
 
     for date_range in run_breaks_hist2:
         print('Joining together all time series, dates, and spins =====',date_range)

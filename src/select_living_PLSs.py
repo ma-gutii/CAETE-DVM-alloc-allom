@@ -5,7 +5,7 @@ import re
 
 run_name = input("What is the run name? ")
 grd_name = "186-239"
-path_csv = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/30perc_reduction/{run_name}/gridcell{grd_name}/csv"
+path_csv = f"/home/amazonfaceme/marcelagutierrez/novas_rodadas/CAETE-DVM-alloc-allom/outputs/{run_name}/gridcell{grd_name}/csv"
 start_year = int("1979")
 end_year = int("2016")
 end_year = end_year + 1
@@ -74,7 +74,7 @@ final_merged_df.to_csv(final_file_path, index=False)
 
 # #Now get the trait values from attrs (without considering the occupation)
 # # Read file with all pls traits
-pls_traits = pd.read_csv("/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/state_start/MAN_save_spin_1/pls_attrs-6000.csv")
+pls_traits = pd.read_csv("/home/amazonfaceme/marcelagutierrez/novas_rodadas/CAETE-DVM-alloc-allom/outputs/rodada_normal/pls_attrs-6000.csv")
 
 # # Get the PIDs, that is, the alive PLSs
 pids_to_select = final_merged_df['PID'].unique()
@@ -96,8 +96,8 @@ ocp_traits['g1_ocp'] = ocp_traits['OC']*ocp_traits['g1']
 # path_output = f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/{run_name}/"
 # # Save the final merged and sorted DataFra  prinme to a new CSV file
 # final_merged_path = os.path.join(path_output, f"PLS_alive_traits_{run_name}.csv")
-ocp_traits.to_csv(f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/src/PLS_alive_traits_{run_name}.csv", index=False)
-ocp_traits.to_csv(f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/outputs/MAN/experiments/30perc_reduction/{run_name}/PLS_alive_traits_{run_name}.csv", index=False)
+#ocp_traits.to_csv(f"/home/amazonfaceme/biancarius/CAETE-DVM-alloc-allom/src/PLS_alive_traits_{run_name}.csv", index=False)
+ocp_traits.to_csv(f"/home/amazonfaceme/marcelagutierrez/novas_rodadas/CAETE-DVM-alloc-allom/outputs/{run_name}/PLS_alive_traits_{run_name}.csv", index=False)
 
 
 
