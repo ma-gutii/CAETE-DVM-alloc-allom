@@ -400,7 +400,7 @@ def apply_fun(grid:grd, allometry = allom)->grd:
  
 def apply_fun0(grid:grd, allometry = allom)->grd:
     if allom:
-        grid.run_caete_allom('19790101', '19891231', spinup=35,
+        grid.run_caete_allom('19790101', '20161231', spinup=35,
                    fix_co2='1980', save=True, nutri_cycle=False)
     else:
         grid.run_caete('19790101', '19891231', spinup=35,

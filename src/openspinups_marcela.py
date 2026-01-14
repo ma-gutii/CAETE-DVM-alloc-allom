@@ -4,10 +4,10 @@ import joblib
 
 # Caminho para o arquivo .pkz
 path = f"/home/amazonfaceme/marcelagutierrez/novas_rodadas/CAETE-DVM-alloc-allom/outputs"
-run_name = "spin_10"
+run_name = "simulacao_normal"
 grd = '186-239'
 start_year = 1979
-end_year = 1989
+end_year = 2016
 
 # Abrir o arquivo PKZ
 with open(f"{path}/{run_name}/gridcell{grd}/spin35.pkz", 'rb') as fh:

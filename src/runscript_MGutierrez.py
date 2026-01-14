@@ -79,7 +79,7 @@ def zip_gridtime(grd_pool, interval):
     return res
    
 # Loop para executar para cada ano de '19790101' a '20161231'
-for year in range(1979, 2016):
+for year in range(1979, 2017):
     start_date = f"{year}0101"
     end_date = f"{year}1231"
 

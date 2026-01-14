@@ -110,8 +110,8 @@ for run_name in run_names:
 
 
    # Adjust according to the period you used to run the mode (1st and last year of simulation)
-   start_year = 1979
-   end_year   = 2017
+   start_year = '1979-01-01'
+   end_year = '1989-12-31'
   
    # Initialize an empty list to store metadata for each simulation spin (year).
    # Each entry in this list will be a tuple containing the start date, end date,
