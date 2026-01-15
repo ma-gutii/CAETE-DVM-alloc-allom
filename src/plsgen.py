@@ -381,18 +381,29 @@ def table_gen(NPLS, fpath=None):
     # # # COMBINATIONS
     # # # Random samples from  distributions (g1, tleaf ...)
     # # # Random variables
-    g1 = np.random.uniform(0.1, 19.0, NPLS)
+    #g1 = np.random.uniform(0.1, 19.0, NPLS)
+    mediag1 = (0.1 + 19.0) / 2       # O centro (9.55)
+    desviog1 = (19.0 - 0.1) / 6      # Regra prática: range/6 cobre ~99.7% dos dados
+    g1 = np.random.normal(loc=mediag1, scale=desviog1, size=NPLS)
     # g1 = vec_ranging(np.random.beta(1.2, 2, NPLS), 1.0, 15.0) # dimensionles
     # # vcmax = np.random.uniform(3e-5, 100e-5,N) # molCO2 m-2 s-1
     resorption = np.random.uniform(0.2, 0.7, NPLS)
-    sla_random = np.random.uniform(0.006, 0.050, NPLS)#m2/g : TRY (range original: 0.009, 0.040)
+    #sla_random = np.random.uniform(0.006, 0.050, NPLS)#m2/g : TRY (range original: 0.009, 0.040)
                                                   #we increased the range (range original: 0.5,0.9)to increase
                                                   #the probability of occurence inside the real range
+    media_sla = (0.006 + 0.050) / 2      # Centro: 0.028
+    desvio_sla = (0.050 - 0.006) / 6     # Desvio: ~0.0073
+    sla_random = np.random.normal(loc=media_sla, scale=desvio_sla, size=NPLS)
                                                   
-    wd_random = np.random.uniform(0.3, 1.0, NPLS) #g/cm3 : Global WD Database (Zanne et al., 2009).
+    #wd_random = np.random.uniform(0.3, 1.0, NPLS) #g/cm3 : Global WD Database (Zanne et al., 2009).
                                                   #we increased the range (range original: 0.5,0.9)to increase
                                                   #the probability of occurence inside the real range
+    media_wd = (0.3 + 1.0) / 2           # Centro: 0.65
+    desvio_wd = (1.0 - 0.3) / 6          # Desvio: ~0.116
+    wd_random = np.random.normal(loc=media_wd, scale=desvio_wd, size=NPLS)
+
     restime_sap = np.random.uniform(10., 20., NPLS)
+
 
     # # C4 STYLE
     c4 = np.zeros((NPLS,), dtype=np.float64)
